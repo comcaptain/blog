@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<!-- This is the configuration of connection pool hikari -->
+	<!-- http://brettwooldridge.github.io/HikariCP/ -->
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="maximumPoolSize" value="100" />
+		<property name="dataSourceClassName"
+			value="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" />
+		<property name="dataSourceProperties">
+			<props>
+				<prop key="databaseName">pygmalion</prop>
+				<prop key="serverName">localhost</prop>
+				<prop key="user">root</prop>
+				<prop key="password">base</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+		<constructor-arg index="0" ref="hikariConfig"></constructor-arg>
+	</bean>
+	<!-- Because LocalSessionFactoryBean implements FactoryBean<SessionFactory>, 
+		so this bean will return a SessionFactory object. -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- if you use annotation to define the ORM, then you have to list every 
+			class in hibernate.cfg.xml Now with spring's help, you can specify the package 
+			that contains ORM beans and remove all those classes in hibernate.cfg.xml -->
+		<property name="packagesToScan" value="sgq.web.pygmalion.bean"></property>
+		<property name="hibernateProperties">
+			<props>
+				<!-- whether to update database schema according to your ORM defination 
+					NEVER USE THIS IN PRODUCTION ENVIRONMENT validate | update | create | create-drop 
+					look at http://stackoverflow.com/questions/438146/hibernate-hbm2ddl-auto-possible-values-and-what-they-do 
+					for detail -->
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="daoCommonInjection" abstract="true">
+	    <property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<bean id="articleDao" class="sgq.web.pygmalion.dao.ArticleDao" parent="daoCommonInjection">
+	</bean>
+	<bean id="articleService" class="sgq.web.pygmalion.service.ArticleService">
+		<property name="articleDao" ref="articleDao"></property>
+	</bean>
+	<bean id="homeAction" class="sgq.web.pygmalion.action.HomeAction">
+		<property name="articleService" ref="articleService"></property>
+	</bean>
+	<bean id="articleAction" class="sgq.web.pygmalion.action.ArticleAction">
+		<property name="articleService" ref="articleService"></property>
+	</bean>
+</beans>
