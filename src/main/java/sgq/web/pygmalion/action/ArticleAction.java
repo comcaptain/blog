@@ -4,8 +4,9 @@ import sgq.web.pygmalion.bean.Article;
 import sgq.web.pygmalion.service.ArticleService;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
 
-public class ArticleAction extends ActionSupport {
+public class ArticleAction extends ActionSupport implements ModelDriven<Article> {
 
 	private static final long serialVersionUID = 6803354488640376096L;
 
@@ -15,8 +16,17 @@ public class ArticleAction extends ActionSupport {
 	
 	private int id;
 	
-	public String execute() {
-		this.setArticle(this.articleService.getArticleById(this.id));
+	public String display() {
+		this.setModel(this.articleService.getArticleById(this.id));
+		return SUCCESS;
+	}
+	
+	public String edit() {
+		this.setModel(this.articleService.getArticleById(this.id));
+		return SUCCESS;
+	}
+	
+	public String executeUpdate() {
 		return SUCCESS;
 	}
 
@@ -28,20 +38,20 @@ public class ArticleAction extends ActionSupport {
 		this.articleService = articleService;
 	}
 
-	public Article getArticle() {
-		return article;
-	}
-
-	public void setArticle(Article article) {
-		this.article = article;
-	}
-
 	public int getId() {
 		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	@Override
+	public Article getModel() {
+		return this.article;
+	}
+	public void setModel(Article article) {
+		this.article = article;
 	}
 
 

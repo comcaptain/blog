@@ -9,8 +9,11 @@
 		<action name="home" class="homeAction" method="home">
 			<result name="success">/main/jsp/main.jsp</result>
 		</action>
-		<action name="article" class="articleAction">
+		<action name="article" class="articleAction" method="display">
 			<result name="success">/main/jsp/article.jsp</result>
+		</action>
+		<action name="editArticle" class="articleAction" method="edit">
+			<result name="success">/main/jsp/editArticle.jsp</result>
 		</action>
 	</package>
 </struts>
