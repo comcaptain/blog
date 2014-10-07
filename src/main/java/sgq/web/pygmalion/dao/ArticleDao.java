@@ -1,5 +1,6 @@
 package sgq.web.pygmalion.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -24,6 +25,27 @@ public class ArticleDao extends BaseDao{
 	}
 	public Article getArticleById(int articleId) {
 		Session session = this.sessionFactory.openSession();
-		return (Article) session.get(Article.class, articleId);
+		try {
+			return (Article) session.get(Article.class, articleId);
+		}
+		finally {
+			session.close();
+		}
+	}
+	public int saveArticle(Article article) {
+		Session session = this.sessionFactory.openSession();
+		try {
+			if (article.getCreateTime() == null) article.setCreateTime(new Date());
+			article.setUpdateTime(new Date());
+			session.saveOrUpdate(article);
+			session.flush();
+			return 1;
+		}
+		catch(Exception e) {
+			return 0;
+		}
+		finally {
+			session.close();
+		}
 	}
 }

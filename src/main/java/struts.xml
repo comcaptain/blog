@@ -16,4 +16,14 @@
 			<result name="success">/main/jsp/editArticle.jsp</result>
 		</action>
 	</package>
+	<package name="ajax" namespace="/ajax" extends="json-default">
+		<interceptors>
+			<interceptor name="json" class="org.apache.struts2.json.JSONInterceptor"></interceptor>
+		</interceptors>
+		<action name="saveArticle" class="articleAction" method="save">
+			<result name="success" type="json">
+				<param name="root">operationStatus</param>
+			</result>
+		</action>
+	</package>
 </struts>

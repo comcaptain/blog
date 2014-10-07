@@ -11,9 +11,12 @@
 </head>
 <body>
 <div class="page-header" id="titleArea">
+	<s:include value="/common/jsp/navigation.jsp">
+		<s:param name="extraClass">vertical-navigation</s:param>
+	</s:include>
 	<img id="headImage" src="<s:url value="/main/images/head.jpg" />" />
 </div>
-<div class="container">
+<div class="container" id="container">
 <ul class="timeline">
 <s:set var="isEven" value="false" />
 <s:iterator var="thumbnailMonthlyGroup" value="thumbnailMonthlyGroups">

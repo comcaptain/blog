@@ -21,13 +21,15 @@ public class Article {
 	private String title;
 	@Column(name="content")
 	private String content;
+	@Column(name="markdown")
+	private String markdown;
 	@Column(name="thumbnail")
 	private String thumbnail;
 	@Column(name="create_time")
 	private Date createTime;
 	@Column(name="update_time")
 	private Date updateTime;
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "author")
 	private User author;
 	public Article() {
@@ -82,5 +84,11 @@ public class Article {
 	}
 	public void setThumbnail(String thumbnail) {
 		this.thumbnail = thumbnail;
+	}
+	public String getMarkdown() {
+		return markdown;
+	}
+	public void setMarkdown(String markdown) {
+		this.markdown = markdown;
 	}
 }

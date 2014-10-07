@@ -1,5 +1,6 @@
 html, body {
 	font-family: 'Microsoft YaHei', 'Hiragino Sans GB', STHeiti, 'WenQuanYi Micro Hei', SimSun, sans-serif, Lucida, Verdana, serif;
+	word-break: break-all;
 }
 body {
 	background: rgba(203,209,194,1);
@@ -13,4 +14,26 @@ body {
 }
 .container.full-height {
 	min-height: 100%;
+}
+blockquote {
+	font-size: 13px;
+}
+.vertical-navigation {
+	padding: 0;
+	margin: 0 auto;
+	list-style-type: none;
+	position: fixed;
+	top: 5px;
+}
+.vertical-navigation li {
+	height: 40px;
+	width: 50px;
+}
+.vertical-navigation li span {
+	line-height: 30px;
+	color: white;
+	font-size: 20px;
+}
+.navigation-item {
+	cursor: pointer;
 }

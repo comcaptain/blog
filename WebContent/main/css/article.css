@@ -26,10 +26,11 @@
 	right: 10px;
 }
 
-#contentContainer {
-	white-space: pre-wrap;
-}
-
 #controlLayer {
 	position: absolute;
+}
+
+.timestamp {
+	font-size: 12px;
+	color: rgb(148, 153, 158);
 }

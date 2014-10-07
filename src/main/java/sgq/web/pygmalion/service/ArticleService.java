@@ -9,7 +9,9 @@ import java.util.List;
 import sgq.web.pygmalion.bean.Article;
 import sgq.web.pygmalion.bean.ArticleDailyGroup;
 import sgq.web.pygmalion.bean.ArticleMonthlyGroup;
+import sgq.web.pygmalion.bean.User;
 import sgq.web.pygmalion.dao.ArticleDao;
+import sgq.web.pygmalion.util.SessionUtil;
 
 public class ArticleService {
 	private ArticleDao articleDao;
@@ -32,6 +34,13 @@ public class ArticleService {
 		return this.groupThrumbnails(articles);
 	}
 	
+	public int save(Article article) {
+		User author = new User();
+		author.setUserId(SessionUtil.getCurrentUserId());
+		if (article.getArticleId() == 0) article.setAuthor(author);
+		return this.articleDao.saveArticle(article);
+	}
+
 	private List<ArticleMonthlyGroup> groupThrumbnails(List<Article> thumbnails) {
 		List<ArticleMonthlyGroup> monthlyGroupList = new LinkedList<ArticleMonthlyGroup>();
 		if (thumbnails == null || thumbnails.size() == 0) return monthlyGroupList;

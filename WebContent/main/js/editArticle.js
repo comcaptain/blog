@@ -1,10 +1,12 @@
-function MdEditor(content, title, preview, option) {
+function MdEditor(title, content, titlePreview, contentPreview, option) {
 	this.content = content;
 	this.$content = $(content);
 	this.title = title;
 	this.$title = $(title);
-	this.preview = preview;
-	this.$preview = $(preview);
+	this.contentPreview = contentPreview;
+	this.$contentPreview = $(contentPreview);
+	this.titlePreview = titlePreview;
+	this.$titlePreview = $(titlePreview);
 	this.option = option;
 	this.reader = new stmd.DocParser();
 	this.writer = new stmd.HtmlRenderer();
@@ -14,10 +16,11 @@ function MdEditor(content, title, preview, option) {
 }
 MdEditor.prototype = {
 	defaultOption: {
-		autoHeight: true,
+		autoHeight: false,
 		localCache: true,
 		$colNoContainer: undefined,
-		$rowNoContainer: undefined
+		$rowNoContainer: undefined,
+		saveCallback: undefined
 	},
 	init: function() {
 		this.option = $.extend(this.defaultOption, this.option);
@@ -37,6 +40,21 @@ MdEditor.prototype = {
 			this.onContentChange();
 		}, editor));
 		this.$title.on("click paste mouseup keyup cut", $.proxy(this.onChange, editor));
+		$(document).on("keydown", function(event) {
+			if (event.keyCode == 83 && event.ctrlKey) {
+				event.preventDefault();
+				editor.onSave.call(editor);
+			}
+		});
+	},
+	getThumbnail: function() {
+		var thumbnail = this.$contentPreview.find(":first-child")[0].innerText;
+		thumbnail = thumbnail.length >  200 ? thumbnail.substring(0, 200) : thumbnail;
+		return thumbnail;
+	},
+	onSave: function() {
+		this.render(true);
+		this.option.saveCallback(this.title.value, this.contentPreview.innerHTML, this.content.value, this.getThumbnail());
 	},
 	onChange: function() {
 		if (this.option.autoHeight) this.autoHeightHandler();
@@ -88,26 +106,64 @@ MdEditor.prototype = {
 		sessionStorage.setItem("title", this.title.value);
 		sessionStorage.setItem("content", this.content.value);
 	},
-	render: function() {
+	render: function(isSync) {
 		if (typeof this.timer != "undefined") clearTimeout(this.timer);
 		var editor = this;
-		this.timer = setTimeout(function() {
+		function localRender() {
 			var html = editor.writer.renderBlock(editor.reader.parse(editor.content.value));
-			html = '<h1 class="title">' + editor.$title.val() + '</h1>' + html;
-			editor.preview.innerHTML = html;
-		}, 0);
+			editor.titlePreview.innerText = editor.$title.val();
+			editor.contentPreview.innerHTML = html;
+		}
+		if (isSync) {
+			localRender();
+		}
+		else {
+			this.timer = setTimeout(localRender, 0);
+		}
 	}
 };
 $.fn.extend({
-	mdEditor: function(title, previw, option) {
-		return new MdEditor(this[0], title, preview, option);
+	mdEditor: function(title, titlePreview, contentPreview, option) {
+		return new MdEditor(title, this[0], titlePreview, contentPreview, option);
 	}
 });
 var editor;
+var messageTimer;
+function showMessage(msg) {
+	$("#messageArea").show().text(msg);
+	if (messageTimer) clearTimeout(messageTimer);
+	messageTimer = setTimeout(function() {
+		$("#messageArea").fadeOut(1000, function() {
+			this.innerHTML = "";
+		})
+	}, 3000);
+}
 $(document).ready(function() {
-	editor = $("#content").mdEditor($("#title")[0], $("#preview")[0], {
+	editor = $("#content").mdEditor($("#title")[0], $("#title_preview")[0], $("#content_preview")[0], {
 		$colNoContainer: $("#columnNo"),
-		$rowNoContainer: $("#rowNo")
+		$rowNoContainer: $("#rowNo"),
+		saveCallback: function(title, content, markdown, thumbnail) {
+			$.ajax({
+				type: "post",
+				cache: false,
+				url: "ajax/saveArticle",
+				data: {
+					"model.title": title,
+					"model.content": content,
+					"model.markdown": markdown,
+					"model.thumbnail": thumbnail,
+					"model.articleId": $("#articleId").val()
+				},
+				success: function(data) {
+					if (data == 1) {
+						showMessage("保存成功");
+					}
+					else {
+						showMessage("保存失败");
+					}
+				}
+			});
+		}
 	});
 	editor.init();
 });
