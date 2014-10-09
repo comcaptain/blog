@@ -48,6 +48,12 @@ MdEditor.prototype = {
 				editor.onSave.call(editor);
 			}
 		});
+		this.$content.on("keydown", function(event) {
+			if (event.keyCode == 13) {
+				event.preventDefault();
+				editor.onEnter.call(editor);
+			}
+		});
 	},
 	getThumbnail: function() {
 		var thumbnail = this.$contentPreview.find(":first-child")[0].innerText;

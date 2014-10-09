@@ -5,17 +5,19 @@
 }
 #title {
 	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
-	text-align: center;
+	padding-bottom: 15px;
+	border-bottom: 1px solid silver;
 }
 #author {
 	text-align: center;
+	display: none;
 }
 
 #content {
 	margin: 20px 0 0 0;
 	min-height: 530px;
 	position: relative;
-	font-size: 18px;
+	font-size: 16px;
 	padding-bottom: 62px;
 }
 

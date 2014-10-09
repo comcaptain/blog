@@ -2,6 +2,7 @@ body {
 	background: white;
 	padding-top: 20px;
 	overflow: hidden;
+	font-size: 15px;
 }
 #title {
 	width: 100%;
