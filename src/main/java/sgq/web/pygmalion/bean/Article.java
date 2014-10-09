@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.struts2.json.annotations.JSON;
+
 @Entity
 @Table(name="article")
 public class Article {
@@ -61,12 +63,14 @@ public class Article {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	@JSON(format="yyyy-MM-dd HH:mm:ss")
 	public Date getCreateTime() {
 		return createTime;
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+	@JSON(format="yyyy-MM-dd HH:mm:ss")
 	public Date getUpdateTime() {
 		return updateTime;
 	}

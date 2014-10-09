@@ -10,3 +10,11 @@ window.onload = function() {
 		$(window).resize(adjustNavigationIcons);
 	}
 }
+$(document).ready(function() {
+	$(document).on("click", "a.confirm", function(event) {
+		event.preventDefault();
+		if (confirm("你确定要" + this.getAttribute("title") + "吗？")) {
+			window.location.href = this.getAttribute("href");
+		}
+	});
+});

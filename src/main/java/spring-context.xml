@@ -50,10 +50,10 @@
 	<bean id="articleService" class="sgq.web.pygmalion.service.ArticleService">
 		<property name="articleDao" ref="articleDao"></property>
 	</bean>
-	<bean id="homeAction" class="sgq.web.pygmalion.action.HomeAction">
+	<bean id="homeAction" class="sgq.web.pygmalion.action.HomeAction" scope="prototype">
 		<property name="articleService" ref="articleService"></property>
 	</bean>
-	<bean id="articleAction" class="sgq.web.pygmalion.action.ArticleAction">
+	<bean id="articleAction" class="sgq.web.pygmalion.action.ArticleAction" scope="prototype">
 		<property name="articleService" ref="articleService"></property>
 	</bean>
 </beans>

@@ -24,9 +24,11 @@ MdEditor.prototype = {
 	},
 	init: function() {
 		this.option = $.extend(this.defaultOption, this.option);
+		this.dataUpdateTime = this.option.dataUpdateTime;
+		this.dataId = this.option.dataId;
 		if (this.option.localCache) {
 			this.loadContentFromCache();
-			setInterval(this.updateContentInCache, 1000);
+			setInterval($.proxy(this.updateContentInCache, this), 1000000);
 		}
 		this.onChange();
 		this.onContentChange();
@@ -76,6 +78,11 @@ MdEditor.prototype = {
 	onCursorChange: function() {
 		
 	},
+	refreshCacheInfo: function(dataUpdateTime, dataId) {
+		this.dataUpdateTime = dataUpdateTime;
+		this.dataId = dataId;
+		this.updateContentInCache();
+	},
 	updateCursorPosition: function() {
 		var text = this.content.value;
 		var cursorIndex = (this.content.selectionDirection === "forward" ? this.content.selectionStart : this.content.selectionEnd);
@@ -97,12 +104,21 @@ MdEditor.prototype = {
 		this.content.rows = lineCount + 2;
 	},
 	loadContentFromCache: function() {
-		var titleCache = sessionStorage.getItem("title");
-		if (titleCache) this.$title.val(titleCache);
-		var contentCache = sessionStorage.getItem("content");
-		if (contentCache) this.$content.val(contentCache);
+		var cacheDataId = sessionStorage.getItem("dataId");
+		var cacheDataUpdateTime = sessionStorage.getItem("dataUpdateTime");
+		console.log(sessionStorage);
+		console.log(this.dataId);
+		console.log(this.dataUpdateTime);
+		if (cacheDataId == this.dataId && cacheDataUpdateTime == this.dataUpdateTime) {
+			var titleCache = sessionStorage.getItem("title");
+			if (titleCache) this.$title.val(titleCache);
+			var contentCache = sessionStorage.getItem("content");
+			if (contentCache) this.$content.val(contentCache);
+		}
 	},
 	updateContentInCache: function () {
+		sessionStorage.setItem("dataId", this.dataId);
+		sessionStorage.setItem("dataUpdateTime", this.dataUpdateTime);
 		sessionStorage.setItem("title", this.title.value);
 		sessionStorage.setItem("content", this.content.value);
 	},
@@ -142,6 +158,8 @@ $(document).ready(function() {
 	editor = $("#content").mdEditor($("#title")[0], $("#title_preview")[0], $("#content_preview")[0], {
 		$colNoContainer: $("#columnNo"),
 		$rowNoContainer: $("#rowNo"),
+		dataUpdateTime: window.updateTime,
+		dataId: window.articleId,
 		saveCallback: function(title, content, markdown, thumbnail) {
 			$.ajax({
 				type: "post",
@@ -152,11 +170,17 @@ $(document).ready(function() {
 					"model.content": content,
 					"model.markdown": markdown,
 					"model.thumbnail": thumbnail,
-					"model.articleId": $("#articleId").val()
+					"model.articleId": window.articleId
 				},
 				success: function(data) {
-					if (data == 1) {
+					if (data.articleId) {
 						showMessage("保存成功");
+						if (!window.articleId) {
+							window.history.replaceState( {} , title, "editArticle?id=" + data.articleId );
+						}
+						window.updateTime = data.updateTime;
+						window.articleId = data.articleId;
+						editor.refreshCacheInfo(data.updateTime, data.articleId);
 					}
 					else {
 						showMessage("保存失败");

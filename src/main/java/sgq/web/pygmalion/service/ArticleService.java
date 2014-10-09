@@ -34,11 +34,15 @@ public class ArticleService {
 		return this.groupThrumbnails(articles);
 	}
 	
-	public int save(Article article) {
+	public Article save(Article article) {
 		User author = new User();
 		author.setUserId(SessionUtil.getCurrentUserId());
 		if (article.getArticleId() == 0) article.setAuthor(author);
 		return this.articleDao.saveArticle(article);
+	}
+
+	public void deleteArticle(int id) {
+		this.articleDao.deleteArticle(id);
 	}
 
 	private List<ArticleMonthlyGroup> groupThrumbnails(List<Article> thumbnails) {

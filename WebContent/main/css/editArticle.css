@@ -8,7 +8,7 @@ body {
 	border: 0;
 	line-height: 40px;
 	height: 40px;
-	font-size: 30px;
+	font-size: 27px;
 	border-bottom: 1px solid silver;
 	outline: none;
 	margin: 0 0 10px 0;
@@ -47,4 +47,7 @@ body {
 	height: 600px;
 	overflow-y: auto;
 	overflow-x: hidden;
+}
+#title_preview {
+	font-size: 27px;
 }

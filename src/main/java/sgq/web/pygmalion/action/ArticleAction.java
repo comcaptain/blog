@@ -16,12 +16,6 @@ public class ArticleAction extends ActionSupport implements ModelDriven<Article>
 	
 	private int id;
 	
-	/**
-	 * 0: failed
-	 * 1: succeeded
-	 */
-	private int operationStatus;
-	
 	public String display() {
 		this.setModel(this.articleService.getArticleById(this.id));
 		return SUCCESS;
@@ -33,7 +27,16 @@ public class ArticleAction extends ActionSupport implements ModelDriven<Article>
 	}
 	
 	public String save() {
-		this.operationStatus = this.articleService.save(article);
+		this.setModel(this.articleService.save(article));
+		return SUCCESS;
+	}
+	
+	public String newArticle() {
+		return SUCCESS;
+	}
+	
+	public String deleteArticle() {
+		this.articleService.deleteArticle(this.id);
 		return SUCCESS;
 	}
 
@@ -60,14 +63,5 @@ public class ArticleAction extends ActionSupport implements ModelDriven<Article>
 	public void setModel(Article article) {
 		this.article = article;
 	}
-
-	public int getOperationStatus() {
-		return operationStatus;
-	}
-
-	public void setOperationStatus(int operationStatus) {
-		this.operationStatus = operationStatus;
-	}
-
 
 }

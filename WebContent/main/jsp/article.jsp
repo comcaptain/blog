@@ -12,6 +12,7 @@
 <div class="container full-height" id="container">
 	<s:include value="/common/jsp/navigation.jsp">
 		<s:param name="extraClass">vertical-navigation</s:param>
+		<s:param name="navArticleId"><s:property value="model.articleId" /></s:param>
 	</s:include>
 	<h1 id="title"><s:property value="model.title" /></h1>
 	<div id="author">by <s:property value="model.author.userName" /></div>

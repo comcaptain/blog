@@ -37,3 +37,16 @@ blockquote {
 .navigation-item {
 	cursor: pointer;
 }
+.horizontal-navigation {
+	display: inline-block;
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+.horizontal-navigation li {
+	display: inline-block;
+	width: 30px;
+}
+.horizontal-navigation li span {
+	color: white;
+}

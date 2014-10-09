@@ -15,6 +15,14 @@
 		<action name="editArticle" class="articleAction" method="edit">
 			<result name="success">/main/jsp/editArticle.jsp</result>
 		</action>
+		<action name="newArticle" class="articleAction" method="newArticle">
+			<result name="success">/main/jsp/editArticle.jsp</result>
+		</action>
+		<action name="deleteArticle" class="articleAction" method="deleteArticle">
+			<result name="success" type="redirectAction">
+				<param name="actionName">home</param>
+			</result>
+		</action>
 	</package>
 	<package name="ajax" namespace="/ajax" extends="json-default">
 		<interceptors>
@@ -22,7 +30,9 @@
 		</interceptors>
 		<action name="saveArticle" class="articleAction" method="save">
 			<result name="success" type="json">
-				<param name="root">operationStatus</param>
+				<param name="root">model</param>
+				<param name="includeProperties">articleId,updateTime</param>
+				<param name=""></param>
 			</result>
 		</action>
 	</package>
