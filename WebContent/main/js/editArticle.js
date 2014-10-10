@@ -38,10 +38,16 @@ MdEditor.prototype = {
 		else {
 			this.title.focus();
 		}
+		this.hashCode = hashCode(this.title.value + this.content.value);
 		this.bindEvents();
 	},
 	bindEvents: function() {
 		var editor = this;
+		window.onbeforeunload = function() {
+			if (editor.hashCode != hashCode(editor.title.value + editor.content.value)) {
+				return "有未保存的修改，确定离开吗？";
+			}
+		}
 		this.$content.on("click paste mouseup keyup cut", $.proxy(function() {
 			this.onChange();
 			this.onContentChange();
@@ -58,8 +64,11 @@ MdEditor.prototype = {
 			if (event.keyCode == 13) {
 				editor.onEnter(event);
 			}
-			else if(event.keyCode == 75 && event.ctrlKey) {
+			else if (event.keyCode == 75 && event.ctrlKey) {
 				editor.toggleSelectionIndent("    ", event);
+			}
+			else if (event.which == '190') {
+				console.log(event);
 			}
 		});
 	},
@@ -178,6 +187,7 @@ MdEditor.prototype = {
 		this.dataUpdateTime = dataUpdateTime;
 		this.dataId = dataId;
 		this.updateContentInCache();
+		this.hashCode = hashCode(this.title.value + this.content.value);
 	},
 	updateCursorPosition: function() {
 		var text = this.content.value;
