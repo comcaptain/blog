@@ -13,6 +13,8 @@
 	<s:include value="/common/jsp/navigation.jsp">
 		<s:param name="extraClass">vertical-navigation</s:param>
 		<s:param name="navArticleId"><s:property value="model.articleId" /></s:param>
+		<s:param name="showEdit">1</s:param>
+		<s:param name="showDelete">1</s:param>
 	</s:include>
 	<h1 id="title"><s:property value="model.title" /></h1>
 	<div id="author"><s:property value="model.author.userName" /></div>

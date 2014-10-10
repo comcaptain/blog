@@ -32,7 +32,12 @@ MdEditor.prototype = {
 		}
 		this.onChange();
 		this.onContentChange();
-		this.content.focus();
+		if (this.title.value) {
+			this.content.focus();
+		}
+		else {
+			this.title.focus();
+		}
 		this.bindEvents();
 	},
 	bindEvents: function() {
@@ -49,9 +54,12 @@ MdEditor.prototype = {
 			}
 		});
 		this.$content.on("keydown", function(event) {
+			//enter
 			if (event.keyCode == 13) {
-				event.preventDefault();
-				editor.onEnter.call(editor);
+				editor.onEnter(event);
+			}
+			else if(event.keyCode == 75 && event.ctrlKey) {
+				editor.toggleSelectionIndent("    ", event);
 			}
 		});
 	},
@@ -69,8 +77,90 @@ MdEditor.prototype = {
 		if (this.option.localCache) this.updateContentInCache();
 		this.render();
 	},
-	onEnter: function() {
-		
+	onEnter: function(event) {
+		var textValue = this.content.value;
+		var lowerSelectionBound = this.content.selectionStart;
+		var higherSelectionBound = this.content.selectionEnd;
+		var lineStart = lowerSelectionBound - 1;
+		while (lineStart > 0) {
+			var c = textValue.charAt(lineStart);
+			if (c == '\n') {
+				lineStart++; break;
+			}
+			lineStart--;
+		}
+		var listMatches = textValue.substring(lineStart, lowerSelectionBound).match(/^(\s*)((?:(?:\d+\.)|-|\+|\*) )/);
+		if (listMatches) {
+			event.preventDefault();
+			var listSign = listMatches[2];
+			if (listSign.match(/^\d+\. $/)) {
+				listSign = parseInt(listSign.substring(0, listSign.length - 1)) + 1 + ". ";
+			}
+			var insertValue = "\n" + listMatches[1] + listSign;
+			if (document.queryCommandSupported('insertText')) {
+				document.execCommand('insertText', false, insertValue);
+			}
+			else {
+				this.content.value = textValue.substring(0, lowerSelectionBound) + insertValue + textValue.substring(higherSelectionBound);
+				var newCursorPosition = lowerSelectionBound + insertValue.length;
+				this.content.setSelectionRange(newCursorPosition, newCursorPosition);
+			}
+		}
+	},
+	toggleSelectionIndent: function(indentText, event) {
+		if (document.queryCommandSupported('forwardDelete') && document.queryCommandSupported('insertText')) {
+			var text = this.content.value;
+			var lowerSelectionBound = this.content.selectionStart;
+			var higherSelectionBound = this.content.selectionEnd;
+			event.preventDefault();
+			while (lowerSelectionBound > 0) {
+				if (text.charAt(lowerSelectionBound - 1) == '\n') {
+					break;
+				}
+				lowerSelectionBound--;
+			}
+			var selectedLines = text.substring(lowerSelectionBound, higherSelectionBound);
+			var lineMatch = selectedLines.match(/\n/g);
+			var lineCount = (lineMatch ? lineMatch.length : 0) + 1;
+			var indentMatch = selectedLines.match(new RegExp("(?:\n|^)" + indentText,"g"));
+			var indentCount = indentMatch ? indentMatch.length : 0;
+			//delete mode
+			if (lineCount == indentCount) {
+				var isLineStart = true;
+				var indexDiff = 0;
+				for (var i = lowerSelectionBound; i == lowerSelectionBound || i < higherSelectionBound; i++) {
+					if (isLineStart) {
+						this.content.setSelectionRange(i - indexDiff , i - indexDiff);
+						for (var j = 0; j < indentText.length; j++) document.execCommand('forwardDelete', false, undefined);
+						isLineStart = false;
+						indexDiff += indentText.length;
+					}
+					if (text.charAt(i) == "\n") {
+						isLineStart = true;
+					}
+				}
+				higherSelectionBound -= indexDiff;
+			}
+			//indent mode
+			else {
+				var isLineStart = true;
+				var indexDiff = 0;
+				for (var i = lowerSelectionBound; i == lowerSelectionBound || i < higherSelectionBound; i++) {
+					if (isLineStart) {
+						this.content.setSelectionRange(i + indexDiff , i + indexDiff);
+						document.execCommand('insertText', false, indentText);
+						isLineStart = false;
+						indexDiff += indentText.length;
+					}
+					if (text.charAt(i) == "\n") {
+						isLineStart = true;
+					}
+				}
+				higherSelectionBound += indexDiff;
+			}
+			//recover selection range
+			this.content.setSelectionRange(lowerSelectionBound, higherSelectionBound);
+		}
 	},
 	onContentChange: function() {
 		this.updateCursorPosition();
@@ -112,9 +202,6 @@ MdEditor.prototype = {
 	loadContentFromCache: function() {
 		var cacheDataId = sessionStorage.getItem("dataId");
 		var cacheDataUpdateTime = sessionStorage.getItem("dataUpdateTime");
-		console.log(sessionStorage);
-		console.log(this.dataId);
-		console.log(this.dataUpdateTime);
 		if (cacheDataId == this.dataId && cacheDataUpdateTime == this.dataUpdateTime) {
 			var titleCache = sessionStorage.getItem("title");
 			if (titleCache) this.$title.val(titleCache);
