@@ -17,7 +17,7 @@ function MdEditor(title, content, titlePreview, contentPreview, option) {
 MdEditor.prototype = {
 	defaultOption: {
 		autoHeight: false,
-		localCache: true,
+		localCache: false,
 		$colNoContainer: undefined,
 		$rowNoContainer: undefined,
 		saveCallback: undefined
@@ -64,11 +64,21 @@ MdEditor.prototype = {
 			if (event.keyCode == 13) {
 				editor.onEnter(event);
 			}
+			//ctrl k
 			else if (event.keyCode == 75 && event.ctrlKey) {
 				editor.toggleSelectionIndent("    ", event);
 			}
-			else if (event.which == '190') {
-				console.log(event);
+			//ctrl shift b
+			else if (event.keyCode == 66 && event.ctrlKey && event.shiftKey) {
+				editor.toggleSelectionIndent(">", event);
+			}
+			//ctrl b
+			else if (event.keyCode == 66 && event.ctrlKey && !event.shiftKey) {
+				editor.wrapSelection("**", event);
+			}
+			//ctrl d
+			else if (event.keyCode == 68 && event.ctrlKey) {
+				editor.deleteSelection(event);
 			}
 		});
 	},
@@ -171,6 +181,45 @@ MdEditor.prototype = {
 			this.content.setSelectionRange(lowerSelectionBound, higherSelectionBound);
 		}
 	},
+	wrapSelection: function(wrapString, event) {
+		if (document.queryCommandSupported('insertText')) {
+			event.preventDefault();
+			var lowerBound = this.content.selectionStart;
+			var upperBound = this.content.selectionEnd;
+			this.content.setSelectionRange(lowerBound, lowerBound);
+			document.execCommand('insertText', false, wrapString);
+			this.content.setSelectionRange(upperBound + wrapString.length, upperBound + wrapString.length);
+			document.execCommand('insertText', false, wrapString);
+			this.content.setSelectionRange(lowerBound, upperBound + wrapString.length * 2);
+		}
+	},
+	deleteSelection: function(event) {
+		if (document.queryCommandSupported('forwardDelete')) {
+			event.preventDefault();
+			var lowerBound = this.content.selectionStart;
+			var upperBound = this.content.selectionEnd;
+			var text = this.content.value;
+			if (text.charAt(lowerBound) == '\n') {
+				lowerBound--;
+			}
+			while (lowerBound > 0) {
+				if (text.charAt(lowerBound) == '\n') {
+					lowerBound++;
+					break;
+				}
+				lowerBound--;
+			}
+			while (upperBound < text.length) {
+				if (text.charAt(upperBound) == '\n') {
+					upperBound++;
+					break;
+				}
+				upperBound++;
+			}
+			this.content.setSelectionRange(lowerBound, upperBound);
+			document.execCommand('forwardDelete', false, undefined);
+		}
+	},
 	onContentChange: function() {
 		this.updateCursorPosition();
 		if (this.option.$colNoContainer) {
@@ -243,7 +292,9 @@ MdEditor.prototype = {
 };
 $.fn.extend({
 	mdEditor: function(title, titlePreview, contentPreview, option) {
-		return new MdEditor(title, this[0], titlePreview, contentPreview, option);
+		var editor = new MdEditor(title, this[0], titlePreview, contentPreview, option);
+		editor.init();
+		return editor;
 	}
 });
 var editor;
@@ -292,5 +343,4 @@ $(document).ready(function() {
 			});
 		}
 	});
-	editor.init();
 });
