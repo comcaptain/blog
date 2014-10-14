@@ -32,8 +32,17 @@
 			<result name="success" type="json">
 				<param name="root">model</param>
 				<param name="includeProperties">articleId,updateTime</param>
-				<param name=""></param>
 			</result>
+		</action>
+		<action name="login" class="loginAction" method="login">
+			<result name="success" type="json">
+				<param name="includeProperties">errorMessage</param>
+			</result>
+		</action>
+	</package>
+	<package name="component" namespace="/component" extends="struts-default">
+		<action name="loginDisplay" class="loginAction" method="display">
+			<result name="success">/component/jsp/login.jsp</result>
 		</action>
 	</package>
 </struts>

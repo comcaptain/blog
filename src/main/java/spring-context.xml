@@ -47,13 +47,21 @@
 	</bean>
 	<bean id="articleDao" class="sgq.web.pygmalion.dao.ArticleDao" parent="daoCommonInjection">
 	</bean>
+	<bean id="userDao" class="sgq.web.pygmalion.dao.UserDao" parent="daoCommonInjection">
+	</bean>
 	<bean id="articleService" class="sgq.web.pygmalion.service.ArticleService">
 		<property name="articleDao" ref="articleDao"></property>
+	</bean>
+	<bean id="userService" class="sgq.web.pygmalion.service.UserService">
+		<property name="userDao" ref="userDao"></property>
 	</bean>
 	<bean id="homeAction" class="sgq.web.pygmalion.action.HomeAction" scope="prototype">
 		<property name="articleService" ref="articleService"></property>
 	</bean>
 	<bean id="articleAction" class="sgq.web.pygmalion.action.ArticleAction" scope="prototype">
 		<property name="articleService" ref="articleService"></property>
+	</bean>
+	<bean id="loginAction" class="sgq.web.pygmalion.action.LoginAction" scope="prototype">
+		<property name="userService" ref="userService"></property>
 	</bean>
 </beans>

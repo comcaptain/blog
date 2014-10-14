@@ -19,6 +19,18 @@ public class User {
 	private String userName;
 	@Column(name="password")
 	private String password;
+	@Column(name="priority")
+	private int priority;
+	@Column(name="locked")
+	private boolean locked;
+	public User() {
+		
+	}
+	public User(int userId, int priority, boolean locked) {
+		this.userId = userId;
+		this.priority = priority;
+		this.locked = locked;
+	}
 	public int getUserId() {
 		return userId;
 	}
@@ -42,5 +54,17 @@ public class User {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public int getPriority() {
+		return priority;
+	}
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+	public boolean isLocked() {
+		return locked;
+	}
+	public void setLocked(boolean locked) {
+		this.locked = locked;
 	}
 }
