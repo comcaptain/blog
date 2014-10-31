@@ -6,6 +6,13 @@
 	<constant name="struts.devMode" value="true" />
 	<constant name="struts.i18n.encoding" value="UTF-8" />
 	<package name="main" namespace="/" extends="struts-default">
+		<interceptors>
+			<interceptor name="accessControl" class="sgq.web.pygmalion.interceptor.AccessControlInterceptor"></interceptor>
+			<interceptor-stack name="globalStack">
+				<interceptor-ref name="accessControl"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="globalStack"></default-interceptor-ref>
 		<action name="home" class="homeAction" method="home">
 			<result name="success">/main/jsp/main.jsp</result>
 		</action>

@@ -1,6 +1,8 @@
 package sgq.web.pygmalion.action;
 
+import sgq.web.pygmalion.annotation.Privilege;
 import sgq.web.pygmalion.bean.Article;
+import sgq.web.pygmalion.enums.PrivilegeEnum;
 import sgq.web.pygmalion.service.ArticleService;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -20,7 +22,9 @@ public class ArticleAction extends ActionSupport implements ModelDriven<Article>
 		this.setModel(this.articleService.getArticleById(this.id));
 		return SUCCESS;
 	}
-	
+	@Privilege(
+		requiredPrivileges={PrivilegeEnum.EDIT_ARTICLE}
+	)
 	public String edit() {
 		this.setModel(this.articleService.getArticleById(this.id));
 		return SUCCESS;
