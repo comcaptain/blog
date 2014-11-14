@@ -74,7 +74,11 @@ MdEditor.prototype = {
 			}
 			//ctrl b
 			else if (event.keyCode == 66 && event.ctrlKey && !event.shiftKey) {
-				editor.wrapSelection("**", event);
+				editor.wrapSelection(event, "**");
+			}
+			//ctrl shift d
+			else if (event.keyCode == 68 && event.ctrlKey && event.shiftKey) {
+				editor.wrapSelection(event, "<del>", "</del>");
 			}
 			//ctrl d
 			else if (event.keyCode == 68 && event.ctrlKey) {
@@ -181,7 +185,7 @@ MdEditor.prototype = {
 			this.content.setSelectionRange(lowerSelectionBound, higherSelectionBound);
 		}
 	},
-	wrapSelection: function(wrapString, event) {
+	wrapSelection: function(event, wrapString, wrapString2) {
 		if (document.queryCommandSupported('insertText')) {
 			event.preventDefault();
 			var lowerBound = this.content.selectionStart;
@@ -189,7 +193,7 @@ MdEditor.prototype = {
 			this.content.setSelectionRange(lowerBound, lowerBound);
 			document.execCommand('insertText', false, wrapString);
 			this.content.setSelectionRange(upperBound + wrapString.length, upperBound + wrapString.length);
-			document.execCommand('insertText', false, wrapString);
+			document.execCommand('insertText', false, wrapString2 ? wrapString2 : wrapString);
 			this.content.setSelectionRange(lowerBound, upperBound + wrapString.length * 2);
 		}
 	},

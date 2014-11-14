@@ -50,3 +50,10 @@ blockquote {
 .horizontal-navigation li span {
 	color: white;
 }
+#globalAlert {
+	position: fixed;
+	top: 50%;
+	left: 20%;
+	width: 60%;
+	font-size: 25px;
+}

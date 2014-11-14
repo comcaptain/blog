@@ -1,45 +1,42 @@
 package sgq.web.pygmalion.action;
 
-import sgq.web.pygmalion.annotation.Privilege;
-import sgq.web.pygmalion.bean.Article;
-import sgq.web.pygmalion.enums.PrivilegeEnum;
+import sgq.web.pygmalion.annotation.LoginProtected;
+import sgq.web.pygmalion.exception.PrivilegeException;
+import sgq.web.pygmalion.model.ArticleModel;
 import sgq.web.pygmalion.service.ArticleService;
 
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.ModelDriven;
 
-public class ArticleAction extends ActionSupport implements ModelDriven<Article> {
+public class ArticleAction extends BaseAction implements ModelDriven<ArticleModel> {
 
 	private static final long serialVersionUID = 6803354488640376096L;
 
 	private ArticleService articleService;
 	
-	private Article article;
+	private ArticleModel article;
 	
 	private int id;
 	
 	public String display() {
-		this.setModel(this.articleService.getArticleById(this.id));
+		this.setModel(new ArticleModel(this.articleService.getArticleById(this.id)));
 		return SUCCESS;
 	}
-	@Privilege(
-		requiredPrivileges={PrivilegeEnum.EDIT_ARTICLE}
-	)
+	@LoginProtected
 	public String edit() {
-		this.setModel(this.articleService.getArticleById(this.id));
+		this.setModel(new ArticleModel(this.articleService.getArticleById(this.id)));
 		return SUCCESS;
 	}
-	
-	public String save() {
-		this.setModel(this.articleService.save(article));
+	@LoginProtected
+	public String save() throws PrivilegeException {
+		this.setModel(new ArticleModel(this.articleService.save(article)));
 		return SUCCESS;
 	}
-	
+	@LoginProtected
 	public String newArticle() {
 		return SUCCESS;
 	}
-	
-	public String deleteArticle() {
+	@LoginProtected
+	public String deleteArticle() throws PrivilegeException {
 		this.articleService.deleteArticle(this.id);
 		return SUCCESS;
 	}
@@ -61,10 +58,10 @@ public class ArticleAction extends ActionSupport implements ModelDriven<Article>
 	}
 
 	@Override
-	public Article getModel() {
+	public ArticleModel getModel() {
 		return this.article;
 	}
-	public void setModel(Article article) {
+	public void setModel(ArticleModel article) {
 		this.article = article;
 	}
 

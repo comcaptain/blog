@@ -13,8 +13,9 @@
 	<s:include value="/common/jsp/navigation.jsp">
 		<s:param name="extraClass">vertical-navigation</s:param>
 		<s:param name="navArticleId"><s:property value="model.articleId" /></s:param>
-		<s:param name="showEdit">1</s:param>
-		<s:param name="showDelete">1</s:param>
+		<s:param name="showCreate"><s:property value="model.creatable" /></s:param>
+		<s:param name="showEdit"><s:property value="model.editable" /></s:param>
+		<s:param name="showDelete"><s:property value="model.deletable" /></s:param>
 	</s:include>
 	<h1 id="title"><s:property value="model.title" /></h1>
 	<div id="author"><s:property value="model.author.userName" /></div>

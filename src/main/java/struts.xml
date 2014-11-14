@@ -5,10 +5,23 @@
 <struts>
 	<constant name="struts.devMode" value="true" />
 	<constant name="struts.i18n.encoding" value="UTF-8" />
-	<package name="main" namespace="/" extends="struts-default">
+	<package name="struts-pygmalion" namespace="/" extends="struts-default">
 		<interceptors>
-			<interceptor name="accessControl" class="sgq.web.pygmalion.interceptor.AccessControlInterceptor"></interceptor>
+			<interceptor name="accessControl" class="sgq.web.pygmalion.interceptor.LoginInterceptor"></interceptor>
+		</interceptors>
+		<global-results>
+			<result name="redirectToLogin">warning.html</result>
+			<result name="redirectToHacker">warning.html</result>
+		</global-results>
+		<global-exception-mappings>
+			<exception-mapping result="redirectToLogin" exception="sgq.web.pygmalion.exception.LoginException"></exception-mapping>
+			<exception-mapping result="redirectToHacker" exception="sgq.web.pygmalion.exception.LoginPrivilege"></exception-mapping>
+		</global-exception-mappings>
+	</package>
+	<package name="main" namespace="/" extends="struts-pygmalion">		
+		<interceptors>
 			<interceptor-stack name="globalStack">
+				<interceptor-ref name="defaultStack"/>
 				<interceptor-ref name="accessControl"></interceptor-ref>
 			</interceptor-stack>
 		</interceptors>
@@ -31,23 +44,41 @@
 			</result>
 		</action>
 	</package>
-	<package name="ajax" namespace="/ajax" extends="json-default">
+	<package name="ajax" namespace="/ajax" extends="json-default,struts-pygmalion">
 		<interceptors>
 			<interceptor name="json" class="org.apache.struts2.json.JSONInterceptor"></interceptor>
+			<interceptor-stack name="globalStack">
+				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="accessControl"></interceptor-ref>
+				<interceptor-ref name="json"></interceptor-ref>
+			</interceptor-stack>
 		</interceptors>
+		<default-interceptor-ref name="globalStack"></default-interceptor-ref>
 		<action name="saveArticle" class="articleAction" method="save">
 			<result name="success" type="json">
 				<param name="root">model</param>
 				<param name="includeProperties">articleId,updateTime</param>
 			</result>
 		</action>
-		<action name="login" class="loginAction" method="login">
+		<action name="secretLogin" class="loginAction" method="login">
 			<result name="success" type="json">
-				<param name="includeProperties">errorMessage</param>
+				<param name="includeProperties">errorMessage,resultStatus</param>
+			</result>
+		</action>
+		<action name="secretLogout" class="loginAction" method="logout">
+			<result name="success" type="json">
+				<param name="includeProperties">errorMessage,resultStatus</param>
 			</result>
 		</action>
 	</package>
-	<package name="component" namespace="/component" extends="struts-default">
+	<package name="component" namespace="/component" extends="struts-pygmalion">	
+		<interceptors>
+			<interceptor-stack name="globalStack">
+				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="accessControl"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="globalStack"></default-interceptor-ref>
 		<action name="loginDisplay" class="loginAction" method="display">
 			<result name="success">/component/jsp/login.jsp</result>
 		</action>

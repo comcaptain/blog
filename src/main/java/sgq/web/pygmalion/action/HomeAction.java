@@ -5,9 +5,7 @@ import java.util.List;
 import sgq.web.pygmalion.bean.ArticleMonthlyGroup;
 import sgq.web.pygmalion.service.ArticleService;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-public class HomeAction extends ActionSupport {
+public class HomeAction extends BaseAction {
 	
 	private String userName;
 	private String password;

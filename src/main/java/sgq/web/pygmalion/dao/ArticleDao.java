@@ -32,19 +32,10 @@ public class ArticleDao extends BaseDao{
 			session.close();
 		}
 	}
-	public Article saveArticle(Article formData) {
+	public Article saveArticle(Article article) {
 		Session session = this.sessionFactory.openSession();
 		try {
-			Article article;
-			if (formData.getArticleId() > 0) {
-				article = (Article) session.get(Article.class, formData.getArticleId());
-				article.setContent(formData.getContent());
-				article.setThumbnail(formData.getThumbnail());
-				article.setMarkdown(formData.getMarkdown());
-				article.setTitle(formData.getTitle());
-			}
-			else {
-				article = formData;
+			if (article.getArticleId() == 0) {
 				article.setCreateTime(new Date());
 			}
 			article.setUpdateTime(new Date());

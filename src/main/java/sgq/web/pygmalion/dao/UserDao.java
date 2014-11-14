@@ -11,22 +11,18 @@ import sgq.web.pygmalion.exception.LoginException;
 public class UserDao extends BaseDao{
 
 	@SuppressWarnings("unchecked")
-	public User login(String userName, String password) throws LoginException {
+	public User getUserByLoginUserId(String loginUserId) throws LoginException {
 		Session session = this.sessionFactory.openSession();
-		User user = null;
 		try {
-			List<User> users = session.createQuery("select new User(userId, priority, locked) from User where loginUserId = :userName and password = :password")
-					.setParameter("userName", userName)
-					.setParameter("password", password)
+			List<User> users = session.createQuery("from User where loginUserId = :loginUserId")
+					.setParameter("loginUserId", loginUserId)
 					.setMaxResults(1)
 					.list();
-			if (users == null || users.size() == 0) throw new LoginException("用户名或者密码不正确");
-			user = users.get(0);
-			if (user.isLocked()) throw new LoginException("用户已经被锁定了");
+			if (users == null || users.size() == 0) return null;
+			return users.get(0);
 		}
 		finally {
 			session.close();
 		}
-		return user;
 	}
 }

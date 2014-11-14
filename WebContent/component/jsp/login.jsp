@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
-  <form role="form" action="login" autocomplete="off">
+  <form role="form" action="secretLogin" autocomplete="off">
   <div class="modal-dialog" style="margin-top: 13%;">
     <div class="modal-content">
       <div class="modal-header">

@@ -11,6 +11,9 @@ import sgq.web.pygmalion.bean.ArticleDailyGroup;
 import sgq.web.pygmalion.bean.ArticleMonthlyGroup;
 import sgq.web.pygmalion.bean.User;
 import sgq.web.pygmalion.dao.ArticleDao;
+import sgq.web.pygmalion.enums.PrivilegeEnum;
+import sgq.web.pygmalion.exception.PrivilegeException;
+import sgq.web.pygmalion.model.ArticleModel;
 import sgq.web.pygmalion.util.SessionUtil;
 
 public class ArticleService {
@@ -34,15 +37,48 @@ public class ArticleService {
 		return this.groupThrumbnails(articles);
 	}
 	
-	public Article save(Article article) {
-		User author = new User();
-		author.setUserId(SessionUtil.getCurrentUserId());
-		if (article.getArticleId() == 0) article.setAuthor(author);
+	public Article save(ArticleModel articleData) throws PrivilegeException {
+		Article article = null;
+		if (articleData.getArticleId() == 0) {
+			article = articleData.getNewArticle();
+			User author = new User();
+			author.setUserId(SessionUtil.getCurrentUserId());
+			article.setAuthor(author);
+		}
+		else {
+			Article articleInDB = this.getArticleById(articleData.getArticleId());
+			if (!this.canEditArticle(articleInDB)) {
+				throw new PrivilegeException(SessionUtil.getCurrentUserId() + " wants to edit article " + articleData.getArticleId() + " illegally!");
+			}
+			articleData.mergeArticle(articleInDB);
+			article = articleInDB;
+		}
 		return this.articleDao.saveArticle(article);
 	}
 
-	public void deleteArticle(int id) {
+	public void deleteArticle(int id) throws PrivilegeException {
+		if (!this.canDeleteArticle(id)) {
+			throw new PrivilegeException(SessionUtil.getCurrentUserId() + " wants to delete article " + id + " illegally!");
+		}
 		this.articleDao.deleteArticle(id);
+	}
+	
+	public boolean canDeleteArticle(int articleId) {
+		Article article = this.getArticleById(articleId);
+		if (article.getAuthor().getUserId() == SessionUtil.getCurrentUserId()) return true;
+		if (SessionUtil.getRole().containsPrivilege(PrivilegeEnum.DELETE_ARTICLE)) return true;
+		return false;
+	}
+	
+	public boolean canEditArticle(int articleId) {
+		Article article = this.getArticleById(articleId);
+		return this.canEditArticle(article);
+	}
+	
+	public boolean canEditArticle(Article article) {
+		if (article.getAuthor().getUserId() == SessionUtil.getCurrentUserId()) return true;
+		if (SessionUtil.getRole().containsPrivilege(PrivilegeEnum.EDIT_ARTICLE)) return true;
+		return false;
 	}
 
 	private List<ArticleMonthlyGroup> groupThrumbnails(List<Article> thumbnails) {

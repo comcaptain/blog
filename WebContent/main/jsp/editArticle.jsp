@@ -19,8 +19,8 @@ var updateTime = '<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /
 		<s:include value="/common/jsp/navigation.jsp">
 			<s:param name="extraClass">horizontal-navigation</s:param>
 			<s:param name="navArticleId"><s:property value="model.articleId" /></s:param>
-			<s:param name="showArticle">1</s:param>
-			<s:param name="showDelete">1</s:param>
+			<s:param name="showArticle"><s:property value="model.editable" /></s:param>
+			<s:param name="showDelete"><s:property value="model.deletable" /></s:param>
 		</s:include>
 		<span id="cursorPosition">行<span id="rowNo"></span>，列<span id="columnNo"></span></span>
 		<span id="messageArea"></span>	

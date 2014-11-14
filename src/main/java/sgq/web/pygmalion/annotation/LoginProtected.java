@@ -5,10 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import sgq.web.pygmalion.enums.PrivilegeEnum;
-
-@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Privilege {
-	PrivilegeEnum[] requiredPrivileges();
+@Retention(RetentionPolicy.RUNTIME)
+public @interface LoginProtected {
 }
