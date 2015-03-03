@@ -24,13 +24,19 @@
 #timeBox {
 	text-align: right;
 	position: absolute;
-	bottom: 10px;
-	right: 10px;
+	top: -23px;
+	right: 0;
 }
-
+#timeBox > * {
+	display: inline-block;
+}
+#createTime {
+	margin-right: 5px;
+}
 #controlLayer {
 	position: absolute;
 }
+
 
 .timestamp {
 	font-size: 12px;
