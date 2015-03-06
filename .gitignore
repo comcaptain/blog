@@ -1,5 +1,6 @@
 # Created by https://www.gitignore.io
 
+.classpath
 ### Maven ###
 target/
 pom.xml.tag
@@ -38,6 +39,9 @@ local.properties
 .settings/
 .loadpath
 
+# Eclipse Core
+.project
+
 # External tool builders
 .externalToolBuilders/
 
@@ -47,14 +51,18 @@ local.properties
 # CDT-specific
 .cproject
 
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
 # PDT-specific
 .buildpath
 
-# sbteclipse plugin 
+# sbteclipse plugin
 .target
 
 # TeXlipse plugin
 .texlipse
+
 
 
 #mac

@@ -43,6 +43,9 @@
 				<param name="actionName">home</param>
 			</result>
 		</action>
+		<action name="console" class="consoleAction" method="display">
+			<result name="success">/console_resources/jsp/console.jsp</result>
+		</action>
 	</package>
 	<package name="ajax" namespace="/ajax" extends="json-default,struts-pygmalion">
 		<interceptors>
