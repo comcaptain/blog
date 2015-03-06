@@ -67,12 +67,7 @@
 				var cmdConsole = this;
 				try {
 					this.thinking();
-					if (this.isApplicationRunning() && !this.isApplicationCommandRegistered()) {
-						this.activeApplication.currentHandler.call(this.activeApplication, inputStr);
-					}
-					else {
-						this.processCommand(inputStr);
-					}
+					this.processCommand(inputStr).then(this.onExecuteComplete.bind(this));
 				}
 				catch (e) {
 					var message = null;
@@ -127,13 +122,11 @@
 				this.startNewInput();
 				this._replaceCommand(inputStr);
 			},
-			onExecuteComplete: function(message) {
+			onExecuteComplete: function(message, exitApplication) {
 				if (message) this.displayMessage(message);
-				this.startNewInput();
-			},
-			onApplicationComplete: function(message) {
-				if (message) this.displayMessage(message);
-				this._stopApplication();
+				if (exitApplication) {
+					this._stopApplication();
+				}
 				this.startNewInput();
 			},
 			startNewInput: function() {
@@ -199,7 +192,7 @@
     		},
     		_startApplication: function(application, optionStr) {
     			this.activeApplication = application;
-    			application.start(optionStr);
+    			return application.start(optionStr);
     		},
     		_stopApplication: function() {
     			this.displayMessage(new ConsoleMessage(this.activeApplication.name + " exited.", "orange"));
@@ -225,30 +218,31 @@
     		processCommand: function(inputStr) {
 				var commandStr = inputStr;
 				var hasOption = false;
+				//to do application specific history
+				this.addCommandHistory(inputStr);
+				if (this.isApplicationRunning() && !this.activeApplication.isInputMode()) {
+					return this.activeApplication.execute(inputStr);
+				}
+				var optionStr = undefined;
 				if (inputStr.indexOf(" ") >= 0) {
 					commandStr = inputStr.substr(0, inputStr.indexOf(" "));
-					var optionStr = inputStr.substr(inputStr.indexOf(" "));
+					optionStr = inputStr.substr(inputStr.indexOf(" "));
 					hasOption = true;
 				}
-				this.addCommandHistory(inputStr);
 				var command = this.isApplicationRunning() ? this.registeredApplicationCommands[commandStr] : this.registeredCommands[commandStr];
 				if (command) {
 					this.currentCommand = command;
 					if (hasOption) {
 						var data = command.analyzeCommand(optionStr);
-						command.execute(data).then(this.onExecuteComplete.bind(this));
+						return command.execute(data);
 					}
-					else {
-						command.execute().then(this.onExecuteComplete.bind(this));
-					}
+					return command.execute();
 				}
-				else if (this.registeredApplications[commandStr] && !this.isApplicationRunning()){
+				if (this.registeredApplications[commandStr] && !this.isApplicationRunning()){
 					if (hasOption) {
-						this._startApplication(this.registeredApplications[commandStr], optionStr)
+						return this._startApplication(this.registeredApplications[commandStr], optionStr);
 					}
-					else {
-						this._startApplication(this.registeredApplications[commandStr])
-					}
+					return this._startApplication(this.registeredApplications[commandStr]);
 				}
 				else {
 					throw "Command " + commandStr + " is not supported. Press Tab to get supported commands list.";

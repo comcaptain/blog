@@ -8,7 +8,7 @@ function Application() {
 	};
 	this.start = function(optionStr) {
 		this.displayMessage(new ConsoleMessage(this.name + " started\n" + this.welcome, "orange"))
-		this.main.call(this, optionStr);
+		return this.main(optionStr);
 	};
 }
 Application.prototype = {
@@ -22,20 +22,22 @@ Application.prototype = {
 		if (typeof message == "string") message = this.wrapMessage(message);
 		this.console.displayMessage(message);
 	},
-	end: function(message) {
-		if (typeof message == "string") message = this.wrapMessage(message);
-		this.console.onApplicationComplete(message);
-	},
-	next: function(message, nextHandler) {
-		if (typeof message == "string") message = this.wrapMessage(message);
-		this.currentHandler = nextHandler;
-		this.console.onExecuteComplete(message);
+	setNextHandler: function(newHandler) {
+		this.currentHandler = newHandler;
 	},
 	setApplicationCommands: function(cmds) {
 		this.console.setApplicationCommands(cmds);
 	},
+	isInputMode: function() {
+		return this.currentHandler ? true : false;
+	},
 	clearRegisteredApplicationCommands: function() {
 		this.console.clearRegisteredApplicationCommands();
-	}
+	},
+	execute: function(inputStr) {
+		return new Promise(function(resolve, reject) {
+			this.currentHandler(inputStr).then(resolve);
+		});
+	},
 };
 Application.prototype.constructor = Application;

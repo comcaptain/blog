@@ -22,6 +22,7 @@ $(document).ready(function() {
 		this.end(new ConsoleMessage(eval(data[0]["value"][0]), "green"));
 	};
 	cmdObj.registerCommand(cmd);
+	cmdObj.registerApplication(new JPLeaner());
 });
 </script>
 </head>

@@ -196,22 +196,25 @@ $.extend(JPLearner.prototype, {
 		});
 	},
 	main: function(optionStr) {
-		this.executeServerAction("retrieveWordSetList", {}).then(function(wordSets) {
-			this.wordSets = wordSets;
-			var message = "There're total " + wordSets.length + " wordsets:";
-			this.displayMessage(message);
-			var tableMessage = new CmdDisplayTable(3);
-			tableMessage.withBorder = true;
-			tableMessage.addTr(["ID", "name", "description"]);
-			for (var i in wordSets) {
-				tableMessage.addTr([i, wordSets[i]["name"], wordSets[i]["description"]]);
-			}
-			this.displayMessage(new CmdMessage(tableMessage));
-			this.next("Please enter the id:", this.selectWordSet);
+		return new Promise(function(resolve, reject) {
+			this.executeServerAction("retrieveWordSetList", {}).then(function(wordSets) {
+				this.wordSets = wordSets;
+				var message = "There're total " + wordSets.length + " wordsets:";
+				this.displayMessage(message);
+				var tableMessage = new CmdDisplayTable(3);
+				tableMessage.withBorder = true;
+				tableMessage.addTr(["ID", "name", "description"]);
+				for (var i in wordSets) {
+					tableMessage.addTr([i, wordSets[i]["name"], wordSets[i]["description"]]);
+				}
+				this.displayMessage(new CmdMessage(tableMessage));
+				this.setNextHandler(this.selectWordSet);
+				resolve("Please enter the id:");
+			}.bind(this));
 		});
 	},
-	selectWordSet: function(optionStr) {
-		var inputIndex = parseInt(optionStr);
+	selectWordSet: function(inputStr) {
+		var inputIndex = parseInt(inputStr);
 		var wordSet = this.wordSets[inputIndex];
 		this.wordSet = wordSet;
 		if (!wordSet) throw "Invalid word set id, please enter again:";

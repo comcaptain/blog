@@ -6,7 +6,7 @@ function Command(content, hint) {
 	this.console = null;
 }
 Command.prototype = {
-	name: "CmdConsoleCommand",
+	name: "ConsoleCommand",
 	wrapMessage: function(strMessage) {
 		return new ConsoleMessage(strMessage, "green")
 	},
@@ -136,7 +136,7 @@ Command.prototype = {
 	]
 	*/
 	executeImpl: function(data, resolve) {
-		return "default execute";
+		return resolve("default execute");
 	},
 	execute: function(data) {
 		return new Promise(function(resolve, reject) {
@@ -146,10 +146,6 @@ Command.prototype = {
 			}
 			this.executeImpl(data, resolve)
 		}.bind(this));
-	},
-	end: function(message) {
-		if (typeof message == "string") message = this.wrapMessage(message);
-		this.console.onExecuteComplete(message);
 	},
 	displayMessage: function(message) {
 		if (typeof message == "string") message = this.wrapMessage(message);
