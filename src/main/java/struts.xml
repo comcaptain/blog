@@ -73,6 +73,11 @@
 				<param name="includeProperties">errorMessage,resultStatus</param>
 			</result>
 		</action>
+		<action name="retrieveWordSetList" class="consoleAction" method="retrieveWordSetList">
+			<result name="success" type="json">
+				<param name="includeProperties">loginFirst</param>
+			</result>
+		</action>
 	</package>
 	<package name="component" namespace="/component" extends="struts-pygmalion">	
 		<interceptors>

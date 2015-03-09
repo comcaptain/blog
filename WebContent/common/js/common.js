@@ -41,6 +41,7 @@ function loginHandler(event) {
 		type: 'post',
 		url: 'ajax/' + $form.attr("action"),
 		data: $form.serializeArray(),
+		cache: false,
 		success: function(data) {
 			if (data.resultStatus == "success") {
 				$form.find("#messageArea").removeClass("text-danger").addClass("text-success").text("登录成功");
@@ -60,6 +61,7 @@ $(document).ready(function() {
 		}
 	});
 	$(document).on("keydown", function(event) {
+		//ctrl shift l
 		if (event.keyCode == 76 && event.shiftKey && event.ctrlKey) {
 			if ($("#loginModal").length > 0) $("#loginModal").modal("show");
 			else {
@@ -77,6 +79,7 @@ $(document).ready(function() {
 			}
 			event.preventDefault();
 		}
+		//ctrl q
 		else if (event.keyCode == 81 && event.ctrlKey) {
 			event.preventDefault();
 			$.ajax({

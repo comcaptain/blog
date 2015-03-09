@@ -11,6 +11,7 @@
 <script type="text/javascript" src="<s:url value="./console_resources/js/console_message_model.js"/>"></script>
 <script type="text/javascript" src="<s:url value="./console_resources/js/command.js"/>"></script>
 <script type="text/javascript" src="<s:url value="./console_resources/js/console.js"/>"></script>
+<script type="text/javascript" src="<s:url value="./console_resources/js/jplearner.js"/>"></script>
 <link rel="stylesheet" type="text/css" href="<s:url value="./console_resources/css/console.css"/>">
 <script type="text/javascript">
 var cmdObj;
@@ -22,7 +23,7 @@ $(document).ready(function() {
 		this.end(new ConsoleMessage(eval(data[0]["value"][0]), "green"));
 	};
 	cmdObj.registerCommand(cmd);
-	cmdObj.registerApplication(new JPLeaner());
+	cmdObj.registerApplication(new JPLearner());
 });
 </script>
 </head>

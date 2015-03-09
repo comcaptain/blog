@@ -197,21 +197,56 @@ $.extend(JPLearner.prototype, {
 	},
 	main: function(optionStr) {
 		return new Promise(function(resolve, reject) {
-			this.executeServerAction("retrieveWordSetList", {}).then(function(wordSets) {
-				this.wordSets = wordSets;
-				var message = "There're total " + wordSets.length + " wordsets:";
-				this.displayMessage(message);
-				var tableMessage = new CmdDisplayTable(3);
-				tableMessage.withBorder = true;
-				tableMessage.addTr(["ID", "name", "description"]);
-				for (var i in wordSets) {
-					tableMessage.addTr([i, wordSets[i]["name"], wordSets[i]["description"]]);
+			this.executeServerAction("retrieveWordSetList", {}).then(function(data) {
+				if (data.loginFirst) {
+					this.setNextHandler(this.login);
+					resolve(this.infoMessage("Please enter username:"));
 				}
-				this.displayMessage(new CmdMessage(tableMessage));
-				this.setNextHandler(this.selectWordSet);
-				resolve("Please enter the id:");
+				else {
+					resolve({message: this.infoMessage("Login complete, exit"), exitApplication: true});
+					return;
+					this.wordSets = data.wordSets;
+					var message = "There're total " + wordSets.length + " wordsets:";
+					this.displayMessage(message);
+					var tableMessage = new CmdDisplayTable(3);
+					tableMessage.withBorder = true;
+					tableMessage.addTr(["ID", "name", "description"]);
+					for (var i in wordSets) {
+						tableMessage.addTr([i, wordSets[i]["name"], wordSets[i]["description"]]);
+					}
+					this.displayMessage(new CmdMessage(tableMessage));
+					this.setNextHandler(this.selectWordSet);
+					resolve("Please enter the id:");
+				}
 			}.bind(this));
-		});
+		}.bind(this));
+	},
+	login: function(inputStr) {
+		return new Promise(function(resolve, reject) {
+			if (!this.userName) {
+				this.userName = inputStr;
+				this.setNextHandler(this.login);
+				resolve(this.infoMessage("Please enter password:"));
+				return;
+			}
+			this.password = inputStr;
+			this.executeServerAction("secretLogin", {
+				userName: this.userName,
+				password: this.password
+			})
+			.then(function(data) {
+				if (data.resultStatus == "success") {
+					this.setNextHandler(this.main);
+					resolve(this.infoMessage("Welcome, " + this.userName));
+				}
+				else {
+					this.setNextHandler(this.login);
+					this.userName = undefined;
+					this.password = undefined;
+					resolve(this.errorMessage("Login failed, please try again, username:"));
+				}
+			}.bind(this));
+		}.bind(this));
 	},
 	selectWordSet: function(inputStr) {
 		var inputIndex = parseInt(inputStr);

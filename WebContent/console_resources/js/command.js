@@ -136,7 +136,7 @@ Command.prototype = {
 	]
 	*/
 	executeImpl: function(data, resolve) {
-		return resolve("default execute");
+		return resolve(new ConsoleMessage("default execute", "green"));
 	},
 	execute: function(data) {
 		return new Promise(function(resolve, reject) {

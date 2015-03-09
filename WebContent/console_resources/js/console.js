@@ -122,10 +122,13 @@
 				this.startNewInput();
 				this._replaceCommand(inputStr);
 			},
-			onExecuteComplete: function(message, exitApplication) {
-				if (message) this.displayMessage(message);
-				if (exitApplication) {
-					this._stopApplication();
+			onExecuteComplete: function(data) {
+				if (data) {
+					var message = data.message ? data.message : data;
+					this.displayMessage(message);
+					if (data.exitApplication) {
+						this._stopApplication();
+					}
 				}
 				this.startNewInput();
 			},
@@ -218,9 +221,9 @@
     		processCommand: function(inputStr) {
 				var commandStr = inputStr;
 				var hasOption = false;
-				//to do application specific history
+				//to do, application specific history
 				this.addCommandHistory(inputStr);
-				if (this.isApplicationRunning() && !this.activeApplication.isInputMode()) {
+				if (this.isApplicationRunning() && this.activeApplication.isInputMode()) {
 					return this.activeApplication.execute(inputStr);
 				}
 				var optionStr = undefined;
