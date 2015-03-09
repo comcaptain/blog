@@ -41,7 +41,7 @@ Application.prototype = {
 	},
 	execute: function(inputStr) {
 		return new Promise(function(resolve, reject) {
-			this.currentHandler(inputStr).then(resolve);
+			this.currentHandler(inputStr).then(resolve, reject);
 		}.bind(this));
 	},
 };

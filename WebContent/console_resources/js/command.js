@@ -17,7 +17,7 @@ Command.prototype = {
 		this.console = console;
 	},
 	toDisplayData: function() {
-		var data = new ConsoleTableMessage(4);
+		var data = new ConsoleTableMessageData(4);
 		data.withBorder = true;
 		data.addTr(["name", "hint", "require value", "can combine"]);
 		data.addTr([this.content, this.hint, this.valueRequired]);

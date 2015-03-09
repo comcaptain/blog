@@ -7,15 +7,15 @@ function ConsoleMessage(data, color) {
 		this.color = color
 	}
 }
-function ConsoleTableMessage(columnCount) {
+function ConsoleTableMessageData(columnCount) {
 	this.columnCount = columnCount;
 	this.withBorder = true;
 	this.trs = [];
 };
-ConsoleTableMessage.prototype = {
+ConsoleTableMessageData.prototype = {
 	addTr: function(tds) {
 		if (!this.columnCount || this.columnCount < tds.length) this.columnCount = tds.length;
 		this.trs.push(tds);
 	}
 };
-ConsoleTableMessage.prototype.constructor = ConsoleTableMessage;
+ConsoleTableMessageData.prototype.constructor = ConsoleTableMessageData;

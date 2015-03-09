@@ -141,7 +141,7 @@ $.extend(JPLearner.prototype, {
 	},
 	generateWordsView: function(words, showAll) {
 		if (!words || words.length == 0) return "0 word";
-		var displayTable = new CmdDisplayTable();
+		var displayTable = new ConsoleTableMessageData();
 		var ths = ["lesson", "type"];
 		if (this.chineseVisible || showAll) {
 			ths.push("chinese");
@@ -196,6 +196,12 @@ $.extend(JPLearner.prototype, {
 		});
 	},
 	main: function(optionStr) {
+		return this.retrieveWordSetList(optionStr);
+	},
+	/**
+	 * [{"wordSetId": "xxx", "name": "xxx", "description": "xxx"}]
+	 */
+	retrieveWordSetList: function(optionStr) {
 		return new Promise(function(resolve, reject) {
 			this.executeServerAction("retrieveWordSetList", {}).then(function(data) {
 				if (data.loginFirst) {
@@ -203,22 +209,19 @@ $.extend(JPLearner.prototype, {
 					resolve(this.infoMessage("Please enter username:"));
 				}
 				else {
-					resolve({message: this.infoMessage("Login complete, exit"), exitApplication: true});
-					return;
-					this.wordSets = data.wordSets;
-					var message = "There're total " + wordSets.length + " wordsets:";
-					this.displayMessage(message);
-					var tableMessage = new CmdDisplayTable(3);
-					tableMessage.withBorder = true;
-					tableMessage.addTr(["ID", "name", "description"]);
+					var wordSets = JSON.parse(data.wordsetsInJSON);
+					var tableMessageData = new ConsoleTableMessageData(3);
+					tableMessageData.withBorder = true;
+					tableMessageData.addTr(["ID", "name", "description"]);
 					for (var i in wordSets) {
-						tableMessage.addTr([i, wordSets[i]["name"], wordSets[i]["description"]]);
+						tableMessageData.addTr([i, wordSets[i]["name"], wordSets[i]["description"]]);
 					}
-					this.displayMessage(new CmdMessage(tableMessage));
+					this.displayMessage(new ConsoleMessage(tableMessageData));
+					this.wordSets = wordSets;
 					this.setNextHandler(this.selectWordSet);
-					resolve("Please enter the id:");
+					resolve(this.infoMessage("Please enter wordset id:"));
 				}
-			}.bind(this));
+			}.bind(this), reject);
 		}.bind(this));
 	},
 	login: function(inputStr) {
@@ -236,8 +239,8 @@ $.extend(JPLearner.prototype, {
 			})
 			.then(function(data) {
 				if (data.resultStatus == "success") {
-					this.setNextHandler(this.main);
-					resolve(this.infoMessage("Welcome, " + this.userName));
+					this.displayMessage(this.infoMessage("Welcome, " + this.userName));
+					this.retrieveWordSetList().then(resolve);
 				}
 				else {
 					this.setNextHandler(this.login);
@@ -245,25 +248,30 @@ $.extend(JPLearner.prototype, {
 					this.password = undefined;
 					resolve(this.errorMessage("Login failed, please try again, username:"));
 				}
-			}.bind(this));
+			}.bind(this), reject);
 		}.bind(this));
 	},
 	selectWordSet: function(inputStr) {
-		var inputIndex = parseInt(inputStr);
-		var wordSet = this.wordSets[inputIndex];
-		this.wordSet = wordSet;
-		if (!wordSet) throw "Invalid word set id, please enter again:";
-		this.executeServerAction("retrieveWordList", {wordSetId: wordSet["wordSetId"]}, function(data) {
-			this.words = data.wordList;
-			this.userHistory = {};
-			for (var i in data.userHistory) {
-				this.userHistory[data.userHistory[i].wordId] = data.userHistory[i];
+		return new Promise(function(resolve, reject) {
+			var inputIndex = parseInt(inputStr);
+			var wordSet = this.wordSets[inputIndex];
+			this.wordSet = wordSet;
+			if (!wordSet) {
+				reject("Invalid word set id, please enter again:");
+				return;
 			}
-			this.organizeWordsByLesson();
-			this.displayMessage(new CmdMessage("WordSet " + this.wordSet["name"] + " has been loaded.\n" + 
-					"There're " + this.words.length + " words in this wordSet.", "green"));
-			this._startSelectLessons();
-		})
+			this.executeServerAction("retrieveWordList", {wordSetId: wordSet["wordSetId"]}, function(data) {
+				this.words = data.wordList;
+				this.userHistory = {};
+				for (var i in data.userHistory) {
+					this.userHistory[data.userHistory[i].wordId] = data.userHistory[i];
+				}
+				this.organizeWordsByLesson();
+				this.displayMessage(new CmdMessage("WordSet " + this.wordSet["name"] + " has been loaded.\n" + 
+						"There're " + this.words.length + " words in this wordSet.", "green"));
+				this._startSelectLessons();
+			}.bind(this))
+		}.bind(this));
 	},
 	_startSelectLessons: function() {
 		this.next("You can choose any lessons in 1-" + (this.words.length - 1) + ", e.g. 1 2 7-8", this.selectLessons);
@@ -340,7 +348,7 @@ $.extend(JPLearner.prototype, {
 				percentStatistics[ratePart]++;
 			}
 		}
-		var displayTable = new CmdDisplayTable();
+		var displayTable = new ConsoleTableMessageData();
 		for (var i in percentStatistics) {
 			if (percentStatistics[i])
 				displayTable.addTr([i * 10 + "%", percentStatistics[i]]);

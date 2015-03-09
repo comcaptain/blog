@@ -65,11 +65,8 @@
 			onEnter: function(ele, event) {
 				var inputStr = $.trim(this.$currentInput.text());
 				var cmdConsole = this;
-				try {
-					this.thinking();
-					this.processCommand(inputStr).then(this.onExecuteComplete.bind(this));
-				}
-				catch (e) {
+				this.thinking();
+				this.processCommand(inputStr).then(this.onExecuteComplete.bind(this), function(e) {
 					var message = null;
 					if (e == "help") {
 						message = new ConsoleMessage(this.currentCommand.toDisplayData());
@@ -78,7 +75,7 @@
 						message = new ConsoleMessage(e.toString(), "red");
 					}
 					this.onExecuteComplete(message);
-				}
+				}.bind(this));
 			},
 			onTab: function(ele, event) {
 				if (this.isApplicationRunning() && !this.isApplicationCommandRegistered()) return;
@@ -150,7 +147,7 @@
     			var colorClass = "cmd_console_text_" + message.color;
     			var data = message.data;
 				if (typeof(data) == "object") {
-					if (data.constructor.name == "ConsoleTableMessage")
+					if (data.constructor.name == "ConsoleTableMessageData")
 						this._generateTableResult($cmdConsoleBlockResult, data, colorClass);
 				}
 				else {
