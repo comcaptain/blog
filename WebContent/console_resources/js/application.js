@@ -23,6 +23,12 @@ Application.prototype = {
 	errorMessage: function(str) {
 		return new ConsoleMessage(str, "red");
 	},
+	info: function(str) {
+		this.displayMessage(this.infoMessage(str));
+	},
+	error: function(str) {
+		this.displayMessage(this.errorMessage(str));
+	},
 	displayMessage: function(message) {
 		if (typeof message == "string") message = this.infoMessage(message);
 		this.console.displayMessage(message);

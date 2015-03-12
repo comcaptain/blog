@@ -33,12 +33,9 @@
 		<property name="packagesToScan" value="sgq.web.pygmalion.bean"></property>
 		<property name="hibernateProperties">
 			<props>
-				<!-- whether to update database schema according to your ORM defination 
-					NEVER USE THIS IN PRODUCTION ENVIRONMENT validate | update | create | create-drop 
-					look at http://stackoverflow.com/questions/438146/hibernate-hbm2ddl-auto-possible-values-and-what-they-do 
-					for detail -->
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="log4j.logger.org.hibernate.SQL">debug</prop>
+				<prop key="log4j.logger.org.hibernate.type">trace</prop>
 			</props>
 		</property>
 	</bean>

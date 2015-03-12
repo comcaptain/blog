@@ -78,6 +78,11 @@
 				<param name="includeProperties">loginFirst, wordsetsInJSON</param>
 			</result>
 		</action>
+		<action name="retrieveWordList" class="consoleAction" method="retrieveWordList">
+			<result name="success" type="json">
+				<param name="includeProperties">reviewWordListInJSON, rawWordListInJSON</param>
+			</result>
+		</action>
 	</package>
 	<package name="component" namespace="/component" extends="struts-pygmalion">	
 		<interceptors>
