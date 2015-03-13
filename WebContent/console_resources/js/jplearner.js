@@ -41,7 +41,7 @@ function JPLearner() {
 	this.listSize = 20;
 	this.name = "JPLearner";
 	this.welcome = "This is a japanese language learning app.\nようこそ！";
-	this.wordSet = null;
+	this.wordset = null;
 	this.chosenLessons = [];
 	this.chosenWords = [];
 	this.words = {};
@@ -182,45 +182,50 @@ $.extend(JPLearner.prototype, {
 			});
 		});
 	},
-	main: function(optionStr) {
-		return this.selectWordSetPrepare(optionStr);
+	main: function() {
+		var learner = this;
+		return this.selectWordSet()
+		.catch(function(error) {
+			if (error == "login") {
+				this.info("先登录才能使用");
+				return learner.login().then(function() {
+					return learner.selectWordSet();
+				});
+			}
+			return error;
+		})
+		.then(function(wordsetId) {
+			return learner.retrieveWordList();
+		});
 	},
 	/**
-	 * [{"wordSetId": "xxx", "name": "xxx", "description": "xxx"}]
+	 * [{"wordsetId": "xxx", "name": "xxx", "description": "xxx"}]
 	 */
-	selectWordSetPrepare: function(optionStr) {
+	selectWordSet: function() {
 		return new Promise(function(resolve, reject) {
 			this.executeServerAction("retrieveWordSetList", {}).then(function(data) {
 				if (data.loginFirst) {
-					this.setNextHandler(this.login);
-					resolve(this.infoMessage("Please enter username:"));
+					reject("login"); return;
 				}
-				else {
-					var wordSets = JSON.parse(data.wordsetsInJSON);
-					var tableMessageData = new ConsoleTableMessageData(3);
-					tableMessageData.withBorder = true;
-					tableMessageData.addTr(["ID", "name", "description"]);
-					for (var i in wordSets) {
-						tableMessageData.addTr([i, wordSets[i]["name"], wordSets[i]["description"]]);
-					}
-					this.displayMessage(new ConsoleMessage(tableMessageData));
-					this.wordSets = wordSets;
-					this.setNextHandler(this.selectWordSet);
-					resolve(this.infoMessage("Please enter wordset id:"));
+				var wordsets = JSON.parse(data.wordsetsInJSON);
+				var tableMessageData = new ConsoleTableMessageData(3);
+				tableMessageData.withBorder = true;
+				tableMessageData.addTr(["ID", "name", "description"]);
+				for (var i in wordsets) {
+					tableMessageData.addTr([i, wordsets[i]["name"], wordsets[i]["description"]]);
 				}
+				this.displayMessage(new ConsoleMessage(tableMessageData));
+				this.wordsets = wordsets;
+				this.getUserInput("输入词库id:", function(inputStr) {
+					var inputIndex = parseInt(inputStr);
+					if (isNaN(inputIndex)) return false;
+					if (inputIndex < 0 || inputIndex >= wordsets.length) return false;
+					return true;
+				}, "词库id输错了").
+				then(function(wordsetId) {
+					resolve(parseInt(wordsetId));
+				}.bind(this))
 			}.bind(this), reject);
-		}.bind(this));
-	},
-	selectWordSet: function(inputStr) {
-		return new Promise(function(resolve, reject) {
-			var inputIndex = parseInt(inputStr);
-			var wordSet = this.wordSets[inputIndex];
-			this.wordSet = wordSet;
-			if (!wordSet) {
-				reject("Invalid word set id, please enter again:");
-				return;
-			}
-			this.retrieveWordList().then(resolve, reject);
 		}.bind(this));
 	},
 //	[{
@@ -228,14 +233,14 @@ $.extend(JPLearner.prototype, {
 //	}]
 	retrieveWordList: function() {
 		return new Promise(function(resolve, reject) {
-			this.executeServerAction("retrieveWordList", {wordSetId: this.wordSet["wordSetId"]}, function(data) {
+			this.executeServerAction("retrieveWordList", {wordsetId: this.wordset["wordsetId"]}, function(data) {
 				this.reviewWordList = JSON.parse(data.reviewWordListInJSON);
 				this.rawWordList = JSON.parse(data.rawWordListInJSON);
-				this.displayMessage(this.infoMessage("没背过的单词共有" + this.rawWordList.length + "个"));
+				this.info("没背过的单词共有" + this.rawWordList.length + "个");
 				if (!this.reviewWordList || this.reviewWordList.length == 0) {
 					this.info("今天没有要复习的内容，下面随机选" + this.listSize + "个没背过的单词");
 				}
-				else if (this.reviewWordList.length < this.listSize){
+				else if (this.reviewWordList.length < this.listSize) {
 					this.info("今天有" + this.reviewWordList.length + "个单词要复习");
 				}
 				else {
@@ -245,34 +250,36 @@ $.extend(JPLearner.prototype, {
 				console.log(this.reviewWordList);
 				resolve(this.infoMessage("abc"), true);
 			}.bind(this));
-		});
+		}.bind(this));
 	},
-	login: function(inputStr) {
-		return new Promise(function(resolve, reject) {
-			if (!this.userName) {
-				this.userName = inputStr;
-				this.setNextHandler(this.login);
-				resolve(this.infoMessage("Please enter password:"));
-				return;
-			}
-			this.password = inputStr;
-			this.executeServerAction("secretLogin", {
-				userName: this.userName,
-				password: this.password
+	login: function() {
+		var learner = this;
+		var pFunc = function(resolve, reject) {
+			var userName;
+			learner.getUserInput("请输入用户名：")
+			.then(function(inputStr) {
+				userName = inputStr;
+				return learner.getUserInput("请输入密码");
+			})
+			.then(function(inputStr) {
+				var password = inputStr;
+				return learner.executeServerAction("secretLogin", {
+					userName: userName,
+					password: password
+				});
 			})
 			.then(function(data) {
 				if (data.resultStatus == "success") {
-					this.displayMessage(this.infoMessage("Welcome, " + this.userName));
-					this.selectWordSetPrepare().then(resolve, reject);
+					learner.displayMessage(this.infoMessage("Welcome, " + this.userName));
+					learner.selectWordSetPrepare().then(resolve, reject);
 				}
 				else {
-					this.setNextHandler(this.login);
-					this.userName = undefined;
-					this.password = undefined;
-					resolve(this.errorMessage("Login failed, please try again, username:"));
+					learner.error("用户名或者密码错误");
+					new Promise(pFunc).then(resolve, reject);
 				}
-			}.bind(this), reject);
-		}.bind(this));
+			});
+		};
+		return new Promise(pFunc);
 	},
 	_startSelectLessons: function() {
 		this.next("You can choose any lessons in 1-" + (this.words.length - 1) + ", e.g. 1 2 7-8", this.selectLessons);
@@ -490,7 +497,7 @@ $.extend(JPLearner.prototype, {
 					testPassCount: counts["y"],
 					timeSpent: app.timeSpentOnCurrentWord,
 					wordId: wordId,
-					wordSetId: app.wordSet.wordSetId
+					wordsetId: app.wordset.wordsetId
 				};
 			}
 			else {
@@ -550,7 +557,7 @@ $.extend(JPLearner.prototype, {
 			app.lastWordCompleteTime = (new Date()).getTime() - app.timeSpentOnCurrentWord;
 			app.updateStatus();
 			this.end("resumed")
-		}
+		};
 		return cmd;
 	},
 	_statusCommand: function() {

@@ -25,7 +25,7 @@ public class WordsetDao extends BaseDao{
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WordModel> selectReviewWordList(int wordSetId) {
+	public List<WordModel> selectReviewWordList(int wordsetId) {
 		Session session = this.getSessionFactory().openSession();
 		List<WordModel> words = null;
 		try {
@@ -33,9 +33,9 @@ public class WordsetDao extends BaseDao{
 					"select new WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
 						+ "wmr.level,wmr.nextReviewDate,wmr.passCount,wmr.failCount,wmr.notSureCount) "
 					+ "from JpWord word left join WordMemoryRecord wmr "
-					+ "where word.wordSet.wordSetId = :wordSetId and wmr.user.userId = :userId and wmr.nextReviewDate < CURRENT_DATE()")
+					+ "where word.wordset.wordsetId = :wordsetId and wmr.user.userId = :userId and wmr.nextReviewDate < CURRENT_DATE()")
 					.setParameter("userId", SessionUtil.getCurrentUserId())
-					.setParameter("wordSetId", wordSetId)
+					.setParameter("wordsetId", wordsetId)
 					.list();
 		}
 		finally {
@@ -45,7 +45,7 @@ public class WordsetDao extends BaseDao{
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<WordModel> selectRawWordList(int wordSetId) {
+	public List<WordModel> selectRawWordList(int wordsetId) {
 		Session session = this.getSessionFactory().openSession();
 		List<WordModel> words = null;
 		try {
@@ -53,9 +53,9 @@ public class WordsetDao extends BaseDao{
 					"select new WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
 						+ "wmr.level,wmr.nextReviewDate,wmr.passCount,wmr.failCount,wmr.notSureCount) "
 					+ "from JpWord word left join WordMemoryRecord wmr "
-					+ "where word.wordSet.wordSetId = :wordSetId and wmr.user.userId = :userId and wmr.nextReviewDate is null and wmr.level = " + WordMemoryLevel.RAW.code)
+					+ "where word.wordset.wordsetId = :wordsetId and wmr.user.userId = :userId and wmr.nextReviewDate is null and wmr.level = " + WordMemoryLevel.RAW.code)
 					.setParameter("userId", SessionUtil.getCurrentUserId())
-					.setParameter("wordSetId", wordSetId)
+					.setParameter("wordsetId", wordsetId)
 					.list();
 		}
 		finally {

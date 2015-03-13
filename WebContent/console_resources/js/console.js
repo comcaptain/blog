@@ -62,9 +62,28 @@
     				this._enterCommand(this.clipboard);
     			}
     		},
+    		processUserInput: function(inputStr) {
+    			if (this.userInputObj.check == undefined || this.userInputObj.check(inputStr)) {
+    				this.userInputObj.resolve(inputStr);
+    				delete this.userInputObj;
+    			}
+    			else {
+    				var errorMessage = this.userInputObj.errorMessage;
+    				if (typeof errorMessage == "function") {
+    					errorMessage = errorMessage(inputStr);
+    				}
+    				this.info(errorMessage);
+    				this.info(this.userInputObj.prompt);
+    				this.startNewInput();
+    			}
+    		},
 			onEnter: function(ele, event) {
 				var inputStr = $.trim(this.$currentInput.text());
 				var cmdConsole = this;
+				if (this.isWaitingForUserInput()) {
+					processUserInput(inputStr);
+					return;
+				}
 				this.thinking();
 				this.processCommand(inputStr).then(this.onExecuteComplete.bind(this), function(e) {
 					var message = null;
@@ -141,6 +160,22 @@
     			this.utils.moveCursorToEnd($cmdConsoleInput[0]);
     			$cmdConsoleInput.focus();
 			},
+			getUserInput: function(prompt, check, errorMessage) {
+				return new Promise(function(resolve, reject) {
+					this.info(prompt);
+					this.userInputObj = {
+						resolve: resolve,
+						reject: reject,
+						prompt: prompt,
+						checker: checker,
+						errorMessage: errorMessage
+					};
+					this.startNewInput();
+				}.bind(this));
+			},
+			isWaitingForUserInput: function() {
+				return this.resolve || this.reject;
+			},
     		displayMessage: function(message) {
     			var $cmdConsoleBlockResult = $('<div class="cmd_console_block cmd_console_block_result"></div>');
     			this.$consoleDiv.append($cmdConsoleBlockResult);
@@ -154,6 +189,9 @@
 					this._generateLineResult($cmdConsoleBlockResult, data, colorClass);
 				}
     			this.utils.scrollToBottom();
+    		},
+    		info: function(str) {
+    			this.displayMessage(new ConsoleMessage(str, "green"));
     		},
     		_enterCommand: function(command) {
 				var currentText = this.$currentInput.text();
@@ -220,9 +258,6 @@
 				var hasOption = false;
 				//to do, application specific history
 				this.addCommandHistory(inputStr);
-				if (this.isApplicationRunning() && this.activeApplication.isInputMode()) {
-					return this.activeApplication.execute(inputStr);
-				}
 				var optionStr = undefined;
 				if (inputStr.indexOf(" ") >= 0) {
 					commandStr = inputStr.substr(0, inputStr.indexOf(" "));

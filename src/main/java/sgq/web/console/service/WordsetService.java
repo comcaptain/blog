@@ -26,7 +26,7 @@ public class WordsetService {
 		List<Object> json = new LinkedList<Object>();
 		for (Wordset wordset: wordsetDao.selectAllWordset()) { 
 			Map<String, Object> wordsetJson = new HashMap<String, Object>();
-			wordsetJson.put("wordSetId", wordset.getWordsetId());
+			wordsetJson.put("wordsetId", wordset.getWordsetId());
 			wordsetJson.put("name", wordset.getName());
 			wordsetJson.put("description", wordset.getDescription());
 			json.add(wordsetJson);
@@ -34,12 +34,12 @@ public class WordsetService {
 		return new Gson().toJson(json);
 	}
 
-	public String retrieveReviewWordListInJSON(int wordSetId) {
-		return this.convertWordModelListToJSON(wordsetDao.selectReviewWordList(wordSetId));
+	public String retrieveReviewWordListInJSON(int wordsetId) {
+		return this.convertWordModelListToJSON(wordsetDao.selectReviewWordList(wordsetId));
 	}
 
-	public String retrieveRawWordListInJSON(int wordSetId) {
-		return this.convertWordModelListToJSON(wordsetDao.selectRawWordList(wordSetId));
+	public String retrieveRawWordListInJSON(int wordsetId) {
+		return this.convertWordModelListToJSON(wordsetDao.selectRawWordList(wordsetId));
 	}
 	
 	private String convertWordModelListToJSON(List<WordModel> words) {

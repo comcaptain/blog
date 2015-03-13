@@ -26,7 +26,7 @@ public class WordMemoryRecord {
 	private JpWord word;
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="wordset_id")
-	private Wordset wordSet;
+	private Wordset wordset;
 	@Column(name="level")
 	private int level;
 	@Column(name="next_review_date")
@@ -56,10 +56,10 @@ public class WordMemoryRecord {
 		this.word = word;
 	}
 	public Wordset getWordSet() {
-		return wordSet;
+		return wordset;
 	}
-	public void setWordSet(Wordset wordSet) {
-		this.wordSet = wordSet;
+	public void setWordSet(Wordset wordset) {
+		this.wordset = wordset;
 	}
 	public int getLevel() {
 		return level;

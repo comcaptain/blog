@@ -33,14 +33,8 @@ Application.prototype = {
 		if (typeof message == "string") message = this.infoMessage(message);
 		this.console.displayMessage(message);
 	},
-	setNextHandler: function(newHandler) {
-		this.currentHandler = newHandler;
-	},
 	setApplicationCommands: function(cmds) {
 		this.console.setApplicationCommands(cmds);
-	},
-	isInputMode: function() {
-		return this.currentHandler ? true : false;
 	},
 	clearRegisteredApplicationCommands: function() {
 		this.console.clearRegisteredApplicationCommands();
@@ -50,5 +44,8 @@ Application.prototype = {
 			this.currentHandler(inputStr).then(resolve, reject);
 		}.bind(this));
 	},
+	getUserInput: function() {
+		return this.console.getUserInput.apply(this.console, arguments);
+	}
 };
 Application.prototype.constructor = Application;

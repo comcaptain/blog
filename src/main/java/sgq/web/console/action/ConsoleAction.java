@@ -10,7 +10,7 @@ public class ConsoleAction extends BaseAction {
 	
 	private boolean loginFirst;
 	
-	private int wordSetId;
+	private int wordsetId;
 	
 	private String reviewWordListInJSON;
 	
@@ -35,8 +35,8 @@ public class ConsoleAction extends BaseAction {
 	}
 	
 	public String retrieveWordList() {
-		this.reviewWordListInJSON = wordsetService.retrieveReviewWordListInJSON(this.wordSetId);
-		this.rawWordListInJSON = wordsetService.retrieveRawWordListInJSON(wordSetId);
+		this.reviewWordListInJSON = wordsetService.retrieveReviewWordListInJSON(this.wordsetId);
+		this.rawWordListInJSON = wordsetService.retrieveRawWordListInJSON(wordsetId);
 		return SUCCESS;
 	}
 
@@ -65,11 +65,11 @@ public class ConsoleAction extends BaseAction {
 	}
 
 	public int getWordSetId() {
-		return wordSetId;
+		return wordsetId;
 	}
 
-	public void setWordSetId(int wordSetId) {
-		this.wordSetId = wordSetId;
+	public void setWordSetId(int wordsetId) {
+		this.wordsetId = wordsetId;
 	}
 
 	public String getReviewWordListInJSON() {
