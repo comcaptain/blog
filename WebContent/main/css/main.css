@@ -1,5 +1,6 @@
 #headImage {
 	width: 100%;
+	height: 20vh;
 }
 #titleArea {
 	margin: 0;
@@ -8,4 +9,7 @@
 }
 #container {
 	padding: 0;
+}
+.timeline {
+	min-height: 78vh;
 }
