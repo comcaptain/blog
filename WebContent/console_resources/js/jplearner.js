@@ -170,6 +170,7 @@ $.extend(JPLearner.prototype, {
 		return new CmdMessage(displayTable);
 	},
 	executeServerAction: function(action, params) {
+		this.thinking();
 		return new Promise(function(resolve) {
 			$.ajax({
 				cache: false,
@@ -187,7 +188,7 @@ $.extend(JPLearner.prototype, {
 		return this.selectWordSet()
 		.catch(function(error) {
 			if (error == "login") {
-				this.info("先登录才能使用");
+				learner.info("先登录才能使用");
 				return learner.login().then(function() {
 					return learner.selectWordSet();
 				});
@@ -195,7 +196,7 @@ $.extend(JPLearner.prototype, {
 			return error;
 		})
 		.then(function(wordsetId) {
-			return learner.retrieveWordList();
+			return learner.retrieveWordList(wordsetId);
 		});
 	},
 	/**
@@ -231,9 +232,11 @@ $.extend(JPLearner.prototype, {
 //	[{
 //		jpwordId: 1, hiragana: 'xxx', kanji: 'xxx', chinese: 'xxx', level: 0, nextReviewDate: null, passCount: 1, failCount: 0, notSureCount: 2
 //	}]
-	retrieveWordList: function() {
+	retrieveWordList: function(wordsetId) {
 		return new Promise(function(resolve, reject) {
-			this.executeServerAction("retrieveWordList", {wordsetId: this.wordset["wordsetId"]}, function(data) {
+			this.wordset = this.wordsets[wordsetId];
+			this.executeServerAction("retrieveWordList", {wordsetId: this.wordset["wordsetId"]})
+			.then(function(data) {
 				this.reviewWordList = JSON.parse(data.reviewWordListInJSON);
 				this.rawWordList = JSON.parse(data.rawWordListInJSON);
 				this.info("没背过的单词共有" + this.rawWordList.length + "个");
@@ -248,30 +251,29 @@ $.extend(JPLearner.prototype, {
 				}
 				console.log(this.rawWordList);
 				console.log(this.reviewWordList);
-				resolve(this.infoMessage("abc"), true);
+				resolve({message: this.infoMessage("abc"), exitApplication: true});
 			}.bind(this));
 		}.bind(this));
 	},
 	login: function() {
 		var learner = this;
 		var pFunc = function(resolve, reject) {
-			var userName;
 			learner.getUserInput("请输入用户名：")
 			.then(function(inputStr) {
-				userName = inputStr;
+				learner.userName = inputStr;
 				return learner.getUserInput("请输入密码");
 			})
 			.then(function(inputStr) {
-				var password = inputStr;
+				learner.password = inputStr;
 				return learner.executeServerAction("secretLogin", {
-					userName: userName,
-					password: password
+					userName: learner.userName,
+					password: learner.password
 				});
 			})
 			.then(function(data) {
 				if (data.resultStatus == "success") {
-					learner.displayMessage(this.infoMessage("Welcome, " + this.userName));
-					learner.selectWordSetPrepare().then(resolve, reject);
+					learner.info("Welcome, " + learner.userName);
+					resolve();
 				}
 				else {
 					learner.error("用户名或者密码错误");

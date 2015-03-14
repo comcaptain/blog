@@ -39,13 +39,11 @@ Application.prototype = {
 	clearRegisteredApplicationCommands: function() {
 		this.console.clearRegisteredApplicationCommands();
 	},
-	execute: function(inputStr) {
-		return new Promise(function(resolve, reject) {
-			this.currentHandler(inputStr).then(resolve, reject);
-		}.bind(this));
-	},
 	getUserInput: function() {
 		return this.console.getUserInput.apply(this.console, arguments);
+	},
+	thinking: function() {
+		this.console.thinking();
 	}
 };
 Application.prototype.constructor = Application;

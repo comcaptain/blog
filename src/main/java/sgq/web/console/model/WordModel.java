@@ -12,6 +12,7 @@ public class WordModel {
 	private int passCount;
 	private int failCount;
 	private int notSureCount;
+	public WordModel() {}
 	public WordModel(int jpWordId, String hiragana, String kanji,
 			String chinese, int level, Date nextReviewDate, int passCount,
 			int failCount, int notSureCount) {

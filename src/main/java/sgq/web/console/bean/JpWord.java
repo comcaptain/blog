@@ -1,4 +1,4 @@
-package sgq.web.pygmalion.bean;
+package sgq.web.console.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +14,7 @@ import javax.persistence.Table;
 public class JpWord {
 	@Id @GeneratedValue
 	@Column(name="jpword_id")
-	private int jpwordId;
+	private int jpWordId;
 	@Column(name="hiragana")
 	private String hiragana;
 	@Column(name="kanji")
@@ -24,11 +24,11 @@ public class JpWord {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="wordset_id")
 	private Wordset wordset;
-	public int getJpwordId() {
-		return jpwordId;
+	public int getJpWordId() {
+		return jpWordId;
 	}
-	public void setJpwordId(int jpwordId) {
-		this.jpwordId = jpwordId;
+	public void setJpWordId(int jpwordId) {
+		this.jpWordId = jpwordId;
 	}
 	public String getHiragana() {
 		return hiragana;

@@ -81,10 +81,9 @@
 				var inputStr = $.trim(this.$currentInput.text());
 				var cmdConsole = this;
 				if (this.isWaitingForUserInput()) {
-					processUserInput(inputStr);
+					this.processUserInput(inputStr);
 					return;
 				}
-				this.thinking();
 				this.processCommand(inputStr).then(this.onExecuteComplete.bind(this), function(e) {
 					var message = null;
 					if (e == "help") {
@@ -167,14 +166,14 @@
 						resolve: resolve,
 						reject: reject,
 						prompt: prompt,
-						checker: checker,
+						check: check,
 						errorMessage: errorMessage
 					};
 					this.startNewInput();
 				}.bind(this));
 			},
 			isWaitingForUserInput: function() {
-				return this.resolve || this.reject;
+				return this.userInputObj;
 			},
     		displayMessage: function(message) {
     			var $cmdConsoleBlockResult = $('<div class="cmd_console_block cmd_console_block_result"></div>');
@@ -249,7 +248,7 @@
     			return false;
     		},
     		thinking: function() {
-    			this.$currentInput.removeAttr("contenteditable");
+    			if (this.$currentInput) this.$currentInput.removeAttr("contenteditable");
     			this.$currentInput = undefined;
     			this.displayMessage(new ConsoleMessage("Thinking, please wait...", "gray"));
     		},

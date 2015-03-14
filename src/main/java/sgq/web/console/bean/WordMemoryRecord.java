@@ -1,4 +1,4 @@
-package sgq.web.pygmalion.bean;
+package sgq.web.console.bean;
 
 import java.util.Date;
 
@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import sgq.web.pygmalion.bean.User;
 
 @Entity
 @Table(name="word_memory_record")

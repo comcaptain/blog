@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.hibernate.Session;
 
+import sgq.web.console.bean.Wordset;
 import sgq.web.console.enums.WordMemoryLevel;
 import sgq.web.console.model.WordModel;
-import sgq.web.pygmalion.bean.Wordset;
 import sgq.web.pygmalion.dao.BaseDao;
 import sgq.web.pygmalion.util.SessionUtil;
 
@@ -30,13 +30,16 @@ public class WordsetDao extends BaseDao{
 		List<WordModel> words = null;
 		try {
 			words = session.createQuery(
-					"select new WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
-						+ "wmr.level,wmr.nextReviewDate,wmr.passCount,wmr.failCount,wmr.notSureCount) "
-					+ "from JpWord word left join WordMemoryRecord wmr "
+					"select new sgq.web.console.model.WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
+						+ "coalesce(wmr.level, 0),wmr.nextReviewDate,coalesce(wmr.passCount, 0),coalesce(wmr.failCount, 0),coalesce(wmr.notSureCount, 0)) "
+					+ "from WordMemoryRecord wmr inner join wmr.word word "
 					+ "where word.wordset.wordsetId = :wordsetId and wmr.user.userId = :userId and wmr.nextReviewDate < CURRENT_DATE()")
 					.setParameter("userId", SessionUtil.getCurrentUserId())
 					.setParameter("wordsetId", wordsetId)
 					.list();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 		finally {
 			session.close();
@@ -50,10 +53,10 @@ public class WordsetDao extends BaseDao{
 		List<WordModel> words = null;
 		try {
 			words = session.createQuery(
-					"select new WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
-						+ "wmr.level,wmr.nextReviewDate,wmr.passCount,wmr.failCount,wmr.notSureCount) "
-					+ "from JpWord word left join WordMemoryRecord wmr "
-					+ "where word.wordset.wordsetId = :wordsetId and wmr.user.userId = :userId and wmr.nextReviewDate is null and wmr.level = " + WordMemoryLevel.RAW.code)
+					"select new sgq.web.console.model.WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
+							+ "coalesce(wmr.level, 0),wmr.nextReviewDate,coalesce(wmr.passCount, 0),coalesce(wmr.failCount, 0),coalesce(wmr.notSureCount, 0)) "
+					+ "from WordMemoryRecord wmr right join wmr.word word "
+					+ "where word.wordset.wordsetId = :wordsetId and ((wmr.user.userId = :userId and wmr.nextReviewDate is null and wmr.level = " + WordMemoryLevel.RAW.code + ") or wmr.user.userId is null)")
 					.setParameter("userId", SessionUtil.getCurrentUserId())
 					.setParameter("wordsetId", wordsetId)
 					.list();

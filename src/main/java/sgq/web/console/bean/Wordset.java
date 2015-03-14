@@ -1,4 +1,4 @@
-package sgq.web.pygmalion.bean;
+package sgq.web.console.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

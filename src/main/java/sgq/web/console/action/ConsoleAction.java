@@ -20,6 +20,14 @@ public class ConsoleAction extends BaseAction {
 	
 	private WordsetService wordsetService;
 
+	public int getWordsetId() {
+		return wordsetId;
+	}
+
+	public void setWordsetId(int wordsetId) {
+		this.wordsetId = wordsetId;
+	}
+
 	public String display() {
 		return SUCCESS;
 	}
@@ -62,14 +70,6 @@ public class ConsoleAction extends BaseAction {
 
 	public void setWordsetService(WordsetService wordsetService) {
 		this.wordsetService = wordsetService;
-	}
-
-	public int getWordSetId() {
-		return wordsetId;
-	}
-
-	public void setWordSetId(int wordsetId) {
-		this.wordsetId = wordsetId;
 	}
 
 	public String getReviewWordListInJSON() {

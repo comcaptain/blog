@@ -7,7 +7,7 @@
 	<!-- This is the configuration of connection pool hikari -->
 	<!-- http://brettwooldridge.github.io/HikariCP/ -->
 	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-		<property name="maximumPoolSize" value="100" />
+		<property name="maximumPoolSize" value="5" />
 		<property name="dataSourceClassName"
 			value="com.mysql.jdbc.jdbc2.optional.MysqlDataSource" />
 		<property name="dataSourceProperties">
@@ -30,7 +30,12 @@
 		<!-- if you use annotation to define the ORM, then you have to list every 
 			class in hibernate.cfg.xml Now with spring's help, you can specify the package 
 			that contains ORM beans and remove all those classes in hibernate.cfg.xml -->
-		<property name="packagesToScan" value="sgq.web.pygmalion.bean"></property>
+		<property name="packagesToScan">
+			<array>
+				<value>sgq.web.pygmalion.bean</value>
+				<value>sgq.web.console.bean</value>
+			</array>
+		</property>
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>

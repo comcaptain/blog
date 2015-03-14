@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import sgq.web.console.bean.Wordset;
 import sgq.web.console.dao.WordsetDao;
 import sgq.web.console.model.WordModel;
-import sgq.web.pygmalion.bean.Wordset;
 
 import com.google.gson.Gson;
 
