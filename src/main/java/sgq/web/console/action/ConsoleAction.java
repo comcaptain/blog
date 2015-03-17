@@ -1,5 +1,7 @@
 package sgq.web.console.action;
 
+import sgq.web.console.bean.WordMemoryDailyStatistics;
+import sgq.web.console.service.WordMemoryDailyStatisticsService;
 import sgq.web.console.service.WordsetService;
 import sgq.web.pygmalion.action.BaseAction;
 import sgq.web.pygmalion.util.SessionUtil;
@@ -19,6 +21,10 @@ public class ConsoleAction extends BaseAction {
 	private String wordsetsInJSON;
 	
 	private WordsetService wordsetService;
+	
+	private WordMemoryDailyStatistics statisticsToday;
+	
+	private WordMemoryDailyStatisticsService wmdsService;
 
 	public int getWordsetId() {
 		return wordsetId;
@@ -45,6 +51,7 @@ public class ConsoleAction extends BaseAction {
 	public String retrieveWordList() {
 		this.reviewWordListInJSON = wordsetService.retrieveReviewWordListInJSON(this.wordsetId);
 		this.rawWordListInJSON = wordsetService.retrieveRawWordListInJSON(wordsetId);
+		this.statisticsToday = wmdsService.getStatisticsToday();
 		return SUCCESS;
 	}
 
@@ -86,5 +93,21 @@ public class ConsoleAction extends BaseAction {
 
 	public void setRawWordListInJSON(String rawWordListInJSON) {
 		this.rawWordListInJSON = rawWordListInJSON;
+	}
+
+	public WordMemoryDailyStatisticsService getWmdsService() {
+		return wmdsService;
+	}
+
+	public void setWmdsService(WordMemoryDailyStatisticsService wmdsService) {
+		this.wmdsService = wmdsService;
+	}
+
+	public WordMemoryDailyStatistics getStatisticsToday() {
+		return statisticsToday;
+	}
+
+	public void setStatisticsToday(WordMemoryDailyStatistics statisticsToday) {
+		this.statisticsToday = statisticsToday;
 	}
 }

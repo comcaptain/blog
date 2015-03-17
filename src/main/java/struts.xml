@@ -80,7 +80,7 @@
 		</action>
 		<action name="retrieveWordList" class="consoleAction" method="retrieveWordList">
 			<result name="success" type="json">
-				<param name="includeProperties">reviewWordListInJSON, rawWordListInJSON</param>
+				<param name="includeProperties">reviewWordListInJSON, rawWordListInJSON, statisticsToday</param>
 			</result>
 		</action>
 	</package>

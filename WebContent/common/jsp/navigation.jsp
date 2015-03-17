@@ -5,7 +5,7 @@
 <s:set name="showDelete">hidden${param.showDelete}</s:set>
 <s:set name="showArticle">hidden${param.showArticle}</s:set>
 <ul id="navigation" class="${param.extraClass}">
-	<li>
+	<li style="position: relative; left: -2px;">
 		<s:a value="home" title="首页"><span class="glyphicon glyphicon-home navigation-item"></span></s:a>
 	</li>
 	<s:if test="%{createArticleEnabled}">

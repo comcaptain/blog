@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import sgq.web.pygmalion.bean.User;
 
 @Entity
-@Table(name= "wm_statistics_id")
+@Table(name= "word_memory_daily_statistics")
 public class WordMemoryDailyStatistics {
 	@Id
 	@GeneratedValue

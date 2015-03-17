@@ -31,7 +31,7 @@ public class WordsetDao extends BaseDao{
 		try {
 			words = session.createQuery(
 					"select new sgq.web.console.model.WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
-						+ "coalesce(wmr.level, 0),wmr.nextReviewDate,coalesce(wmr.passCount, 0),coalesce(wmr.failCount, 0),coalesce(wmr.notSureCount, 0)) "
+						+ "wmr.level,wmr.nextReviewDate,wmr.passCount,wmr.failCount,wmr.notSureCount) "
 					+ "from WordMemoryRecord wmr inner join wmr.word word "
 					+ "where word.wordset.wordsetId = :wordsetId and wmr.user.userId = :userId and wmr.nextReviewDate < CURRENT_DATE()")
 					.setParameter("userId", SessionUtil.getCurrentUserId())

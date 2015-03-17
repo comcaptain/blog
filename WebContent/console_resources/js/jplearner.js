@@ -251,6 +251,7 @@ $.extend(JPLearner.prototype, {
 				}
 				console.log(this.rawWordList);
 				console.log(this.reviewWordList);
+				console.log(data);
 				resolve({message: this.infoMessage("abc"), exitApplication: true});
 			}.bind(this));
 		}.bind(this));

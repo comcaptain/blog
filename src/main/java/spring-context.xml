@@ -53,6 +53,8 @@
 	</bean>
 	<bean id="wordsetDao" class="sgq.web.console.dao.WordsetDao" parent="daoCommonInjection">
 	</bean>
+	<bean id="wmdsDao" class="sgq.web.console.dao.WordMemoryDailyStatisticsDao" parent="daoCommonInjection">
+	</bean>
 	<bean id="articleService" class="sgq.web.pygmalion.service.ArticleService">
 		<property name="articleDao" ref="articleDao"></property>
 	</bean>
@@ -61,6 +63,9 @@
 	</bean>
 	<bean id="wordsetService" class="sgq.web.console.service.WordsetService">
 		<property name="wordsetDao" ref="wordsetDao"></property>
+	</bean>
+	<bean id="wmdsService" class="sgq.web.console.service.WordMemoryDailyStatisticsService">
+		<property name="wmdsDao" ref="wmdsDao"></property>
 	</bean>
 	<bean id="homeAction" class="sgq.web.pygmalion.action.HomeAction" scope="prototype">
 		<property name="articleService" ref="articleService"></property>
@@ -73,5 +78,6 @@
 	</bean>
 	<bean id="consoleAction" class="sgq.web.console.action.ConsoleAction" scope="prototype">
 		<property name="wordsetService" ref="wordsetService"></property>
+		<property name="wmdsService" ref="wmdsService"></property>
 	</bean>
 </beans>
