@@ -1,5 +1,8 @@
 package sgq.web.pygmalion.action;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import sgq.web.pygmalion.annotation.LoginProtected;
 import sgq.web.pygmalion.exception.PrivilegeException;
 import sgq.web.pygmalion.model.ArticleModel;
@@ -10,6 +13,8 @@ import com.opensymphony.xwork2.ModelDriven;
 public class ArticleAction extends BaseAction implements ModelDriven<ArticleModel> {
 
 	private static final long serialVersionUID = 6803354488640376096L;
+	
+	private static final Logger logger = LogManager.getLogger(ArticleAction.class);
 
 	private ArticleService articleService;
 	
@@ -18,6 +23,8 @@ public class ArticleAction extends BaseAction implements ModelDriven<ArticleMode
 	private int id;
 	
 	public String display() {
+		logger.info("test info message孫孙");
+		logger.error("exception message", new Exception("testException"));
 		this.setModel(new ArticleModel(this.articleService.getArticleById(this.id)));
 		return SUCCESS;
 	}

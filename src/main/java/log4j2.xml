@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<properties>
+		<property name="logRootDir">/pygmalion/log</property>
+	</properties>
+	<appenders>
+		<RollingFile name="rollingFile" fileName="${logRootDir}/pygmalion.log" filePattern="${logRootDir}/pygmalion-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<charset>UTF-8</charset>
+				<Pattern>[%-5p]%d{yyyy-MM-dd HH:mm:ss.SSS} %c{1} %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+		</RollingFile>
+	</appenders>
+	<loggers>
+		<root level="error">
+			<AppenderRef ref="rollingFile" />
+		</root>
+        <Logger name="org.hibernate.type" level="debug">
+        </Logger>
+        <Logger name="org.hibernate.SQL" level="debug"/>
+	</loggers>
+</configuration>

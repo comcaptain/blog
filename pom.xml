@@ -60,6 +60,12 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>4.2.7.Final</version>
 		</dependency>
+		<!-- because the joss logging library that hibernate4 depends on does not support log4j2 -->
+		<dependency>
+		    <groupId>org.jboss.logging</groupId>
+		    <artifactId>jboss-logging</artifactId>
+		    <version>3.2.0.Final</version>
+		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -83,6 +89,16 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.2</version>
 		</dependency>
 	</dependencies>
 	<build>

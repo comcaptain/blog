@@ -1,6 +1,6 @@
 package sgq.web.console.bean;
 
-import java.util.Date;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +22,7 @@ public class WordMemoryDailyStatistics {
 	private int wmStatisticsId;
 	@Column(name="date")
 	private Date date;
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private User user;
 	@Column(name="count")

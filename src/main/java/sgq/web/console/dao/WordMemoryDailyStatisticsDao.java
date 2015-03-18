@@ -1,6 +1,6 @@
 package sgq.web.console.dao;
 
-import java.util.Date;
+import java.sql.Date;
 
 import org.hibernate.Session;
 
