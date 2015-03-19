@@ -31,7 +31,7 @@ public class WordsetDao extends BaseDao{
 		try {
 			words = session.createQuery(
 					"select new sgq.web.console.model.WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
-						+ "wmr.level,wmr.nextReviewDate,wmr.passCount,wmr.failCount,wmr.notSureCount) "
+						+ "wmr.level,wmr.nextReviewDate,wmr.passCount,wmr.failCount,wmr.notSureCount,wmr.accumulatedTime) "
 					+ "from WordMemoryRecord wmr inner join wmr.word word "
 					+ "where word.wordset.wordsetId = :wordsetId and wmr.user.userId = :userId and wmr.nextReviewDate < CURRENT_DATE()")
 					.setParameter("userId", SessionUtil.getCurrentUserId())
@@ -54,7 +54,7 @@ public class WordsetDao extends BaseDao{
 		try {
 			words = session.createQuery(
 					"select new sgq.web.console.model.WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
-							+ "coalesce(wmr.level, 0),wmr.nextReviewDate,coalesce(wmr.passCount, 0),coalesce(wmr.failCount, 0),coalesce(wmr.notSureCount, 0)) "
+							+ "coalesce(wmr.level, 0),wmr.nextReviewDate,coalesce(wmr.passCount, 0),coalesce(wmr.failCount, 0),coalesce(wmr.notSureCount, 0),coalesce(wmr.accumulatedTime, 0)) "
 					+ "from WordMemoryRecord wmr right join wmr.word word "
 					+ "where word.wordset.wordsetId = :wordsetId and ((wmr.user.userId = :userId and wmr.nextReviewDate is null and wmr.level = " + WordMemoryLevel.RAW.code + ") or wmr.user.userId is null)")
 					.setParameter("userId", SessionUtil.getCurrentUserId())

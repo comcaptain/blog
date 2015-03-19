@@ -12,10 +12,11 @@ public class WordModel {
 	private int passCount;
 	private int failCount;
 	private int notSureCount;
+	private int accumulatedTime;
 	public WordModel() {}
 	public WordModel(int jpWordId, String hiragana, String kanji,
 			String chinese, int level, Date nextReviewDate, int passCount,
-			int failCount, int notSureCount) {
+			int failCount, int notSureCount, int accumulatedTime) {
 		this.jpWordId = jpWordId;
 		this.hiragana = hiragana;
 		this.kanji = kanji;
@@ -25,6 +26,7 @@ public class WordModel {
 		this.passCount = passCount;
 		this.failCount = failCount;
 		this.notSureCount = notSureCount;
+		this.accumulatedTime = accumulatedTime;
 	}
 	public int getJpWordId() {
 		return jpWordId;
@@ -79,5 +81,11 @@ public class WordModel {
 	}
 	public void setNotSureCount(int notSureCount) {
 		this.notSureCount = notSureCount;
+	}
+	public int getAccumulatedTime() {
+		return accumulatedTime;
+	}
+	public void setAccumulatedTime(int accumulatedTime) {
+		this.accumulatedTime = accumulatedTime;
 	}
 }

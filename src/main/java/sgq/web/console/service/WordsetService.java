@@ -55,6 +55,7 @@ public class WordsetService {
 			wordJson.put("passCount", word.getPassCount());
 			wordJson.put("failCount", word.getFailCount());
 			wordJson.put("notSureCount", word.getNotSureCount());
+			wordJson.put("accumulatedTime", word.getAccumulatedTime());
 			json.add(wordJson);
 		}
 		return new Gson().toJson(json);

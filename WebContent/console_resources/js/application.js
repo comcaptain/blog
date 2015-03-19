@@ -23,11 +23,17 @@ Application.prototype = {
 	errorMessage: function(str) {
 		return new ConsoleMessage(str, "red");
 	},
-	info: function(str) {
-		this.displayMessage(this.infoMessage(str));
+	info: function(msg) {
+		if (typeof msg == "string")
+			this.displayMessage(this.infoMessage(msg));
+		else
+			this.displayMessage(msg);
 	},
-	error: function(str) {
-		this.displayMessage(this.errorMessage(str));
+	error: function(msg) {
+		if (typeof msg == "string")
+			this.displayMessage(this.errorMessage(msg));
+		else
+			this.displayMessage(msg);
 	},
 	displayMessage: function(message) {
 		if (typeof message == "string") message = this.infoMessage(message);
@@ -44,6 +50,9 @@ Application.prototype = {
 	},
 	thinking: function() {
 		this.console.thinking();
+	},
+	registerApplicationCommand: function(command) {
+		this.console.registerApplicationCommand(command);
 	}
 };
 Application.prototype.constructor = Application;

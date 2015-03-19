@@ -39,6 +39,8 @@ public class WordMemoryRecord {
 	private int failCount;
 	@Column(name="not_sure_count")
 	private int notSureCount;
+	@Column(name="accumulated_time")
+	private int accumulatedTime;
 	public int getRecordId() {
 		return recordId;
 	}
@@ -92,5 +94,11 @@ public class WordMemoryRecord {
 	}
 	public void setNotSureCount(int notSureCount) {
 		this.notSureCount = notSureCount;
+	}
+	public int getAccumulatedTime() {
+		return accumulatedTime;
+	}
+	public void setAccumulatedTime(int accumulatedTime) {
+		this.accumulatedTime = accumulatedTime;
 	}
 }

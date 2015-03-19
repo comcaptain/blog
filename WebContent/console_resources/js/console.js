@@ -1,3 +1,15 @@
+$(document).ready(function() {
+	$('[contenteditable]').on("focus", function(e) {
+	    window.setTimeout(function() {
+	        $(e.target).text("")
+	    }, 100);
+	});
+
+	// Code below this line is to simply reset the element with some text after clicking/tabbing away.
+	$('[contenteditable]').on("blur", function(e) {
+	    $(e.target).text("Hello")
+	});
+});
 (function( $ ) { 
     $.cmdConsole = function(options, $consoleDiv) {
     	this.settings = $.extend({
@@ -84,7 +96,14 @@
 					this.processUserInput(inputStr);
 					return;
 				}
-				this.processCommand(inputStr).then(this.onExecuteComplete.bind(this), function(e) {
+				var p;
+				try {
+					p = this.processCommand(inputStr);
+				}
+				catch(e) {
+					p = Promise.reject(e);
+				}
+				p.then(this.onExecuteComplete.bind(this), function(e) {
 					var message = null;
 					if (e == "help") {
 						message = new ConsoleMessage(this.currentCommand.toDisplayData());
@@ -140,7 +159,7 @@
 			onExecuteComplete: function(data) {
 				if (data) {
 					var message = data.message ? data.message : data;
-					this.displayMessage(message);
+					if (message) this.displayMessage(message);
 					if (data.exitApplication) {
 						this._stopApplication();
 					}
@@ -211,7 +230,7 @@
     				var tds = tableData.trs[i];
     				var $tr = $('<tr></tr>');
     				for (var j = 0; j < tableData.columnCount; j++) {
-    					if (tds[j])
+    					if (tds[j] || tds[j] == 0)
     						$tr.append('<td>' + tds[j] + '</td>');
     					else 
     						$tr.append('<td></td>');
@@ -279,7 +298,7 @@
 					return this._startApplication(this.registeredApplications[commandStr]);
 				}
 				else {
-					throw "Command " + commandStr + " is not supported. Press Tab to get supported commands list.";
+					return Promise.reject("Command " + commandStr + " is not supported. Press Tab to get supported commands list.");
 				}
     		},
     		addCommandHistory: function(command) {

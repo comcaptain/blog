@@ -25,8 +25,38 @@ public class WordMemoryDailyStatistics {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private User user;
-	@Column(name="count")
-	private int count;
+	@Column(name="pass_count")
+	private int passCount;
+	@Column(name="fail_count")
+	private int failCount;
+	@Column(name="not_sure_count")
+	private int notSureCount;
+	@Column(name="accumulated_time")
+	private int accumulatedTime;
+	public int getPassCount() {
+		return passCount;
+	}
+	public void setPassCount(int passCount) {
+		this.passCount = passCount;
+	}
+	public int getFailCount() {
+		return failCount;
+	}
+	public void setFailCount(int failCount) {
+		this.failCount = failCount;
+	}
+	public int getNotSureCount() {
+		return notSureCount;
+	}
+	public void setNotSureCount(int notSureCount) {
+		this.notSureCount = notSureCount;
+	}
+	public int getAccumulatedTime() {
+		return accumulatedTime;
+	}
+	public void setAccumulatedTime(int accumulatedTime) {
+		this.accumulatedTime = accumulatedTime;
+	}
 	public int getWmStatisticsId() {
 		return wmStatisticsId;
 	}
@@ -44,11 +74,5 @@ public class WordMemoryDailyStatistics {
 	}
 	public void setUser(User user) {
 		this.user = user;
-	}
-	public int getCount() {
-		return count;
-	}
-	public void setCount(int count) {
-		this.count = count;
 	}
 }

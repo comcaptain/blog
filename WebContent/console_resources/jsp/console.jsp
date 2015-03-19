@@ -13,6 +13,7 @@
 <script type="text/javascript" src="<s:url value="./console_resources/js/console.js"/>"></script>
 <script type="text/javascript" src="<s:url value="./console_resources/js/jplearner.js"/>"></script>
 <link rel="stylesheet" type="text/css" href="<s:url value="./console_resources/css/console.css"/>">
+<link rel="stylesheet" type="text/css" href="<s:url value="./console_resources/css/jplearner.css"/>">
 <script type="text/javascript">
 var cmdObj;
 $(document).ready(function() {
