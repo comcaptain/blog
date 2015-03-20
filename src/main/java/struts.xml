@@ -91,6 +91,13 @@
 				</param>
 			</result>
 		</action>
+		<action name="synchronizeJpLearnerUserData" class="consoleAction" method="synchronize">
+			<result name="success" type="json">
+				<param name="includeProperties">
+					jsonStatus
+				</param>
+			</result>
+		</action>
 	</package>
 	<package name="component" namespace="/component" extends="struts-pygmalion">	
 		<interceptors>

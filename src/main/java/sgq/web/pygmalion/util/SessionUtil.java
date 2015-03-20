@@ -19,7 +19,7 @@ public class SessionUtil {
 		return getUser().getRole();
 	}
 	
-	private static User getUser() {
+	public static User getUser() {
 		return (User) ActionContext.getContext().getSession().get("user");
 	}
 }

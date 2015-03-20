@@ -1,6 +1,6 @@
 package sgq.web.console.bean;
 
-import java.util.Date;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
+import sgq.web.console.enums.WordMemoryLevel;
 import sgq.web.pygmalion.bean.User;
 
 @Entity
@@ -29,8 +33,13 @@ public class WordMemoryRecord {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="wordset_id")
 	private Wordset wordset;
+	@Type(type="sgq.web.pygmalion.enums.EnumUserType",
+			parameters={
+				@Parameter(name="enumClass",value="sgq.web.console.enums.WordMemoryLevel"),
+		    }
+		)
 	@Column(name="level")
-	private int level;
+	private WordMemoryLevel level;
 	@Column(name="next_review_date")
 	private Date nextReviewDate;
 	@Column(name="pass_count")
@@ -41,6 +50,12 @@ public class WordMemoryRecord {
 	private int notSureCount;
 	@Column(name="accumulated_time")
 	private int accumulatedTime;
+	public WordMemoryLevel getLevel() {
+		return level;
+	}
+	public void setLevel(WordMemoryLevel level) {
+		this.level = level;
+	}
 	public int getRecordId() {
 		return recordId;
 	}
@@ -64,12 +79,6 @@ public class WordMemoryRecord {
 	}
 	public void setWordSet(Wordset wordset) {
 		this.wordset = wordset;
-	}
-	public int getLevel() {
-		return level;
-	}
-	public void setLevel(int level) {
-		this.level = level;
 	}
 	public Date getNextReviewDate() {
 		return nextReviewDate;

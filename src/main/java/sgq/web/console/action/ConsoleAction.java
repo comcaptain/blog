@@ -1,6 +1,12 @@
 package sgq.web.console.action;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import sgq.web.console.bean.WordMemoryDailyStatistics;
+import sgq.web.console.bean.WordMemoryRecord;
 import sgq.web.console.service.WordMemoryDailyStatisticsService;
 import sgq.web.console.service.WordsetService;
 import sgq.web.pygmalion.action.BaseAction;
@@ -25,6 +31,12 @@ public class ConsoleAction extends BaseAction {
 	private WordMemoryDailyStatistics statisticsToday;
 	
 	private WordMemoryDailyStatisticsService wmdsService;
+	
+	private String notSynchronizedWordsInJson;
+	
+	private String dailyStatisticsInJson;
+	
+	private String jsonStatus;
 
 	public int getWordsetId() {
 		return wordsetId;
@@ -35,6 +47,21 @@ public class ConsoleAction extends BaseAction {
 	}
 
 	public String display() {
+		return SUCCESS;
+	}
+	
+	public String synchronize() {
+		Map<Integer, WordMemoryRecord> modifiedRecords = new HashMap<Integer,WordMemoryRecord>();
+		List<WordMemoryRecord> newRecords = new LinkedList<WordMemoryRecord>();
+		wordsetService.extractWmrsFromWordModelListInJson(this.notSynchronizedWordsInJson, newRecords, modifiedRecords);
+		WordMemoryDailyStatistics dailyStatistics = 
+				wordsetService.convertJsonToWordMemoryDailyStatistics(this.dailyStatisticsInJson);
+		if (wordsetService.synchronize(this.wordsetId, newRecords, modifiedRecords, dailyStatistics)) {
+			this.jsonStatus = SUCCESS;
+		}
+		else {
+			this.jsonStatus = ERROR;
+		}
 		return SUCCESS;
 	}
 	
@@ -109,5 +136,29 @@ public class ConsoleAction extends BaseAction {
 
 	public void setStatisticsToday(WordMemoryDailyStatistics statisticsToday) {
 		this.statisticsToday = statisticsToday;
+	}
+
+	public String getJsonStatus() {
+		return jsonStatus;
+	}
+
+	public void setJsonStatus(String jsonStatus) {
+		this.jsonStatus = jsonStatus;
+	}
+
+	public String getDailyStatisticsInJson() {
+		return dailyStatisticsInJson;
+	}
+
+	public void setDailyStatisticsInJson(String dailyStatisticsInJson) {
+		this.dailyStatisticsInJson = dailyStatisticsInJson;
+	}
+
+	public String getNotSynchronizedWordsInJson() {
+		return notSynchronizedWordsInJson;
+	}
+
+	public void setNotSynchronizedWordsInJson(String notSynchronizedWordsInJson) {
+		this.notSynchronizedWordsInJson = notSynchronizedWordsInJson;
 	}
 }

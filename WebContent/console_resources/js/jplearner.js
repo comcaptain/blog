@@ -1,3 +1,4 @@
+var COOKED = -1;
 var isDragging = false;
 var dragMouseInitialX = 0;
 var dragMouseInitialY = 0;
@@ -29,17 +30,15 @@ $(document).ready(function() {
 }) 
 function JPLearner() {
 	this.listSize = 20;
+	this.repeatTimes = 2;
+	this.repeatCount = 0;
 	this.name = "JPLearner";
 	this.welcome = "This is a japanese language learning app.\nようこそ！";
 	this.wordset = null;
-	this.chosenLessons = [];
 	this.pickedWordList = [];
 	this.words = {};
 	this.statistics = {};
 	this.notSynchronizedWords = {};
-	this.chineseVisible = false;
-	this.hiraganaVisible = false;
-	this.kanjiVisible = false;
 	this.currentWord = null;
 	this.currentIndex = -1;
 	this.startTime = -1;
@@ -164,7 +163,7 @@ $.extend(JPLearner.prototype, {
 			return learner.retrieveWordList(wordsetId);
 		})
 		.then(function() {
-			learner.startLearningCycle();
+			return learner.startLearningCycle();
 		});
 	},
 	/**
@@ -279,54 +278,68 @@ $.extend(JPLearner.prototype, {
 	nextWord: function(optionStr) {
 		this.currentIndex++;
 		this.currentWord = this.pickedWordList[this.currentIndex];
-		if (!this.currentWord) {
-			this.finishLearningCycle();
-		}
-		else {
-			this.info(this.generateWordsView([this.currentWord]));
-			this.updateStatus();
-		}
+		return new Promise(function(resolve, reject) {
+			if (!this.currentWord) {
+				this.finishLearningCycle().then(resolve, reject);
+			}
+			else {
+				this.info(this.generateWordsView([this.currentWord]));
+				this.updateStatus();
+				resolve();
+			}
+		}.bind(this));
 	},
 	finishLearningCycle: function() {
-		this.synchronize(function(msg) {
-			this.displayMessage(msg);
+		return this.synchronize().then(function() {
 			this.resetLearningCycleData();
-			this._startSelectLessons();
-		})
+			this.repeatCount++;
+			if (this.repeatCount >= this.repeatTimes) {
+				return this.startLearningCycle();
+			}
+			else {
+				return this.startLearningCycle(true);
+			}
+		}.bind(this));
 	},
 	synchronize: function(callback) {
-		var app = this;
-		if (Object.keys(app.notSynchronizedWords).length > 0) {
-			this.displayMessage(new ConsoleMessage("Synchronizing, please wait...", "gray"));
-			this.executeServerAction("jpWordSynchronize",{
-				notSynchronizedWords: JSON.stringify(this.notSynchronizedWords),
-				dailyStatistics: JSON.stringify(this.statistics),
-				wordsetId: this.wordset.wordsetId
-			}, function(data) {
-				app.notSynchronizedWords = {};
-				callback.call(app, count + " record(s) have been synchronized.");
-			});
-		}
-		else {
-			callback.call(app, "0 record is synchronized.");
-		}
+		return new Promise(function(resolve, reject) {
+			if (Object.keys(this.notSynchronizedWords).length > 0) {
+				this.displayMessage(new ConsoleMessage("Synchronizing, please wait...", "gray"));
+				this.executeServerAction("jpWordSynchronize",{
+					notSynchronizedWords: JSON.stringify(this.notSynchronizedWords),
+					dailyStatistics: JSON.stringify(this.statistics),
+					wordsetId: this.wordset.wordsetId
+				}, function(data) {
+					this.notSynchronizedWords = {};
+					this.info("synchronized");
+					resolve();
+				});
+			}
+			else {
+				this.info("nothing to synchronize");
+				resolve();
+			}
+		}.bind(this));
 	},
-	startLearningCycle: function() {
-		this.info("没背过的单词共有" + this.rawWordList.length + "个");
-		if (!this.reviewWordList || this.reviewWordList.length == 0) {
-			this.info("今天没有要复习的内容，下面随机选" + this.listSize + "个没背过的单词");
-			this.pickedWordList = this.pickWordListFromRawList();
-			this.isReviewMode = false;
-		}
-		else if (this.reviewWordList.length < this.listSize) {
-			this.info("今天有" + this.reviewWordList.length + "个单词要复习");
-			this.pickedWordList = this.pickWordListFromReviewList();
-			this.isReviewMode = true;
-		}
-		else {
-			this.info("今天有" + this.reviewWordList.length + "个单词要复习，下面从中随机挑" + this.listSize + "个");
-			this.pickedWordList = this.pickWordListFromReviewList();
-			this.isReviewMode = true;
+	startLearningCycle: function(isRepeatedCycle) {
+		if (!isRepeatedCycle) {
+			this.repeatCount = 0;
+			this.info("没背过的单词共有" + this.rawWordList.length + "个");
+			if (!this.reviewWordList || this.reviewWordList.length == 0) {
+				this.info("今天没有要复习的内容，下面随机选" + this.listSize + "个没背过的单词");
+				this.pickedWordList = this.pickWordListFromRawList();
+				this.isReviewMode = false;
+			}
+			else if (this.reviewWordList.length < this.listSize) {
+				this.info("今天有" + this.reviewWordList.length + "个单词要复习");
+				this.pickedWordList = this.pickWordListFromReviewList();
+				this.isReviewMode = true;
+			}
+			else {
+				this.info("今天有" + this.reviewWordList.length + "个单词要复习，下面从中随机挑" + this.listSize + "个");
+				this.pickedWordList = this.pickWordListFromReviewList();
+				this.isReviewMode = true;
+			}
 		}
 		this.currentIndex = -1;
 		this.startTime = (new Date()).getTime();
@@ -336,7 +349,7 @@ $.extend(JPLearner.prototype, {
 			app.updateStatus();
 		}, 1000);
 		this.registerLearningCycleCommands();
-		this.nextWord();
+		return this.nextWord();
 	},
 	registerLearningCycleCommands: function() {
 		this.registerApplicationCommand(this.console._clearCommand());
@@ -366,10 +379,12 @@ $.extend(JPLearner.prototype, {
 		}
 	},
 	_tickCommand: function(tick) {
+		if (this._tickCommandCache != undefined && this._tickCommandCache[tick] != undefined) return this._tickCommandCache[tick];
 		var hints = {
 			"u": "不确定",
 			"y": "记得",
-			"n": "不记得"
+			"n": "不记得",
+			"x": "不要再出现了"
 		};
 		var app = this;
 		var cmd = new Command(tick, hints[tick]);
@@ -390,6 +405,12 @@ $.extend(JPLearner.prototype, {
 				if (!app.currentWord.failCount) app.currentWord.failCount = 1;
 				else app.currentWord.failCount++;
 			}
+			else if (this.content == 'x') {
+				app.statistics.passCount++;
+				if (!app.currentWord.passCount) app.currentWord.passCount = 1;
+				else app.currentWord.passCount++;
+				app.currentWord = COOKED;
+			}
 			app.updateStatus();
 			if (!app.notSynchronizedWords[wordId])
 				app.notSynchronizedWords[wordId] = app.currentWord;
@@ -405,21 +426,25 @@ $.extend(JPLearner.prototype, {
 			app.timeSpentOnCurrentWord = 0;
 			app.updateStatus();
 			app.info(this.hint);
-			app.nextWord();
-			resolve();
+			app.nextWord().then(resolve);
 		}
+		if (this._tickCommandCache == undefined) this._tickCommandCache = {};
+		this._tickCommandCache[tick] = cmd;
 		return cmd;
 	},
 	_allCommand: function() {
+		if (this._allCommandCache != undefined) return this._allCommandCache;
 		var app = this;
 		var cmd = new Command("a", "show all parts of current word");
 		cmd.executeImpl = function(data, resolve) {
 			app.info(app.generateWordsView([app.currentWord], true));
 			resolve();
 		}
+		this._allCommandCache = cmd;
 		return cmd;
 	},
 	_exitCommand: function() {
+		if (this._exitCommandCache != undefined) return this._exitCommandCache;
 		var app = this;
 		var cmd = new Command("exit", "exit the application");
 		cmd.executeImpl = function(data, resolve) {
@@ -431,9 +456,11 @@ $.extend(JPLearner.prototype, {
 //			})
 			resolve({exitApplication: true});
 		};
+		this._exitCommandCache = cmd;
 		return cmd;
 	},
 	_pauseCommand: function() {
+		if (this._pauseCommandCache != undefined) return this._pauseCommandCache;
 		var app = this;
 		var cmd = new Command("pause", "pause");
 		cmd.executeImpl = function(data, resolve) {
@@ -443,9 +470,11 @@ $.extend(JPLearner.prototype, {
 			app.info("paused");
 			resolve();
 		} 
+		this._pauseCommandCache = cmd;
 		return cmd;
 	},
 	_resumeCommand: function() {
+		if (this._resumeCommandCache != undefined) return this._resumeCommandCache;
 		var app = this;
 		var cmd = new Command("resume", "resume from pause");
 		cmd.executeImpl = function(data, resolve) {
@@ -455,9 +484,11 @@ $.extend(JPLearner.prototype, {
 			app.info("resumed");
 			resolve();
 		};
+		this._resumeCommandCache = cmd;
 		return cmd;
 	},
 	_statusCommand: function() {
+		if (this._statusCommandCache != undefined) return this._statusCommandCache;
 		var app = this;
 		var cmd = new Command("status", "toggle status box");
 		cmd.executeImpl = function(data, resolve) {
@@ -470,9 +501,11 @@ $.extend(JPLearner.prototype, {
 			}
 			resolve();
 		}
+		this._statusCommandCache = cmd;
 		return cmd;
 	},
 	_findCommand: function() {
+		if (this._findCommandCache != undefined) return this._findCommandCache;
 		var app = this;
 		var cmd = new Command("f", "find by kanji");
 		cmd.valueRequired = true;
@@ -482,27 +515,29 @@ $.extend(JPLearner.prototype, {
 			app.info(app.generateWordsView(result, true));
 			resolve();
 		}
+		this._findCommandCache = cmd;
 		return cmd;
 	},
-	//todo
 	_syncCommand: function() {
+		if (this._syncCommandCache != undefined) return this._syncCommandCache;
 		var app = this;
 		var cmd = new Command("sync", "synchronize user data with server");
 		cmd.executeImpl = function(data, resolve) {
 			var thisCmd = this;
-			app.synchronize(function(msg) {
-				thisCmd.end(msg)
-			});
+			app.synchronize().then(resolve);
 		};
+		this._syncCommandCache = cmd;
 		return cmd;
 	},
 	//todo
 	_endCommand: function() {
+		if (this._endCommandCache != undefined) return this._endCommandCache;
 		var app = this;
 		var cmd = new Command("end", "end this learning cycle");
 		cmd.executeImpl = function(data, resolve) {
-			app.finishLearningCycle();
+			app.finishLearningCycle().then(resolve);
 		}
+		this._endCommandCache = cmd;
 		return cmd;
 	}
 });

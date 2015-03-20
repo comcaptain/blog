@@ -22,11 +22,10 @@ public enum RoleEnum {
 	public int identifier() {
 		return this.code;
 	}
-	public static RoleEnum valueOf(int code) {
-		switch(code) {
-		case 1: return RoleEnum.ADMIN;
-		case 2: return RoleEnum.MANAGER;
-		default: return RoleEnum.USER;
+	public static RoleEnum getEnum(int code) {
+		for (RoleEnum en: RoleEnum.values()) {
+			if (en.code == code) return en;
 		}
+		return null;
 	}
 }

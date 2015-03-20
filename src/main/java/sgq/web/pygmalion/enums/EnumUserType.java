@@ -22,7 +22,7 @@ public class EnumUserType implements UserType, ParameterizedType {
 	private Method identifierMethod;
 	private Method valueOfMethod;
 	private static final String defaultIdentifierMethodName = "identifier";
-	private static final String defaultValueOfMethodName = "valueOf";
+	private static final String defaultValueOfMethodName = "getEnum";
 	@SuppressWarnings("rawtypes")
 	private AbstractSingleColumnStandardBasicType type;
 	private int[] sqlTypes;

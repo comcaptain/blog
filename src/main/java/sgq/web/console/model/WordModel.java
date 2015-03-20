@@ -2,25 +2,29 @@ package sgq.web.console.model;
 
 import java.util.Date;
 
+import sgq.web.console.enums.WordMemoryLevel;
+
 public class WordModel {
 	private int jpWordId;
 	private String hiragana;
 	private String kanji;
 	private String chinese;
-	private int level;
+	private WordMemoryLevel level;
 	private Date nextReviewDate;
 	private int passCount;
 	private int failCount;
 	private int notSureCount;
 	private int accumulatedTime;
+	private int recordId;
 	public WordModel() {}
 	public WordModel(int jpWordId, String hiragana, String kanji,
-			String chinese, int level, Date nextReviewDate, int passCount,
+			String chinese, int recordId, WordMemoryLevel level, Date nextReviewDate, int passCount,
 			int failCount, int notSureCount, int accumulatedTime) {
 		this.jpWordId = jpWordId;
 		this.hiragana = hiragana;
 		this.kanji = kanji;
 		this.chinese = chinese;
+		this.recordId = recordId;
 		this.level = level;
 		this.nextReviewDate = nextReviewDate;
 		this.passCount = passCount;
@@ -52,12 +56,6 @@ public class WordModel {
 	public void setChinese(String chinese) {
 		this.chinese = chinese;
 	}
-	public int getLevel() {
-		return level;
-	}
-	public void setLevel(int level) {
-		this.level = level;
-	}
 	public Date getNextReviewDate() {
 		return nextReviewDate;
 	}
@@ -87,5 +85,17 @@ public class WordModel {
 	}
 	public void setAccumulatedTime(int accumulatedTime) {
 		this.accumulatedTime = accumulatedTime;
+	}
+	public int getRecordId() {
+		return recordId;
+	}
+	public void setRecordId(int recordId) {
+		this.recordId = recordId;
+	}
+	public WordMemoryLevel getLevel() {
+		return level;
+	}
+	public void setLevel(WordMemoryLevel level) {
+		this.level = level;
 	}
 }

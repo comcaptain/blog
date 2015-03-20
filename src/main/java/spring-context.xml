@@ -41,6 +41,7 @@
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="log4j.logger.org.hibernate.SQL">debug</prop>
 				<prop key="log4j.logger.org.hibernate.type">trace</prop>
+				<prop key="hibernate.jdbc.batch_size">45</prop>
 			</props>
 		</property>
 	</bean>
@@ -63,6 +64,7 @@
 	</bean>
 	<bean id="wordsetService" class="sgq.web.console.service.WordsetService">
 		<property name="wordsetDao" ref="wordsetDao"></property>
+		<property name="wmdsDao" ref="wmdsDao"></property>
 	</bean>
 	<bean id="wmdsService" class="sgq.web.console.service.WordMemoryDailyStatisticsService">
 		<property name="wmdsDao" ref="wmdsDao"></property>
