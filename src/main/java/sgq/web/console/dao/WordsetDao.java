@@ -1,5 +1,7 @@
 package sgq.web.console.dao;
 
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +12,7 @@ import org.hibernate.Session;
 
 import sgq.web.console.bean.WordMemoryRecord;
 import sgq.web.console.bean.Wordset;
-import sgq.web.console.enums.WordMemoryLevel;
+import sgq.web.console.enums.WordMemoryLevelEnum;
 import sgq.web.console.logic.WordMemoryLogic;
 import sgq.web.console.model.WordModel;
 import sgq.web.pygmalion.dao.BaseDao;
@@ -54,7 +56,7 @@ public class WordsetDao extends BaseDao{
 					+ "where word.wordset.wordsetId = :wordsetId "
 						+ "and wmr.user.userId = :userId "
 						+ "and wmr.nextReviewDate < CURRENT_DATE() "
-						+ "and wmr.level != " + WordMemoryLevel.COOKED.code)
+						+ "and wmr.level != " + WordMemoryLevelEnum.COOKED.code)
 					.setParameter("userId", SessionUtil.getCurrentUserId())
 					.setParameter("wordsetId", wordsetId)
 					.list();
@@ -77,7 +79,7 @@ public class WordsetDao extends BaseDao{
 					"select new sgq.web.console.model.WordModel(word.jpWordId,word.hiragana,word.kanji,word.chinese,"
 							+ "coalesce(wmr.recordId, 0), coalesce(wmr.level, 0),wmr.nextReviewDate,coalesce(wmr.passCount, 0),coalesce(wmr.failCount, 0),coalesce(wmr.notSureCount, 0),coalesce(wmr.accumulatedTime, 0)) "
 					+ "from WordMemoryRecord wmr right join wmr.word word "
-					+ "where word.wordset.wordsetId = :wordsetId and ((wmr.user.userId = :userId and wmr.nextReviewDate is null and wmr.level = " + WordMemoryLevel.RAW.code + ") or wmr.recordId is null)")
+					+ "where word.wordset.wordsetId = :wordsetId and ((wmr.user.userId = :userId and wmr.nextReviewDate is null and wmr.level = " + WordMemoryLevelEnum.RAW.code + ") or wmr.recordId is null)")
 					.setParameter("userId", SessionUtil.getCurrentUserId())
 					.setParameter("wordsetId", wordsetId)
 					.list();
@@ -91,7 +93,7 @@ public class WordsetDao extends BaseDao{
 	public ScrollableResults getWmrInDBStream(Map<Integer, WordMemoryRecord> records, Session session) {
 		return session.createQuery("from WordMemoryRecord where user.userId = :userId and recordId in :recordIds")
 			.setParameter("userId", SessionUtil.getCurrentUserId())
-			.setParameter("recordIds", records.entrySet())
+			.setParameterList("recordIds", new ArrayList<Integer>(records.keySet()))
 			.setCacheMode(CacheMode.IGNORE)
 			.scroll(ScrollMode.FORWARD_ONLY);
 	}
@@ -118,15 +120,15 @@ public class WordsetDao extends BaseDao{
 		for (WordMemoryRecord record: records) {
 			record.setUser(SessionUtil.getUser());
 			record.setWordSet(wordset);
-			if (record.getLevel() == WordMemoryLevel.COOKED) {
+			if (record.getLevel() == WordMemoryLevelEnum.COOKED) {
 				record.setNextReviewDate(null);
 			}
-			else if (record.getPassCount() > 1) {
-				record.setLevel(WordMemoryLevel.FIRST_BLOOD);
+			else if (record.getPassCount() > 0) {
+				record.setLevel(WordMemoryLevelEnum.FIRST_BLOOD);
 				record.setNextReviewDate(WordMemoryLogic.getNextReviewDate(record.getLevel()));
 			}
-			else record.setLevel(WordMemoryLevel.RAW);
-			session.save(session);
+			else record.setLevel(WordMemoryLevelEnum.RAW);
+			session.save(record);
 			count++;
 			if ( count % 45 == 0 ) {
 		        session.flush();
@@ -136,13 +138,18 @@ public class WordsetDao extends BaseDao{
 	}
 	
 	private void mergeWordMemoryRecord(WordMemoryRecord target, WordMemoryRecord updateData) {
+		java.sql.Date today = new java.sql.Date(GregorianCalendar.getInstance().getTimeInMillis());
+		if (target.getNextReviewDate() == null && updateData.getPassCount() > 0) {
+			target.setLevel(WordMemoryLevelEnum.FIRST_BLOOD);
+			target.setNextReviewDate(WordMemoryLogic.getNextReviewDate(target.getLevel()));
+		}
+		else if (target.getNextReviewDate() != null && target.getNextReviewDate().compareTo(today) <= 0 && updateData.getPassCount() > target.getPassCount()) {
+			target.setLevel(WordMemoryLogic.getNextLevel(target.getLevel()));
+			target.setNextReviewDate(WordMemoryLogic.getNextReviewDate(target.getLevel()));
+		}
 		target.setFailCount(updateData.getFailCount());
 		target.setNotSureCount(updateData.getNotSureCount());
 		target.setPassCount(updateData.getPassCount());
 		target.setAccumulatedTime(updateData.getAccumulatedTime());
-		if (updateData.getPassCount() > target.getPassCount()) {
-			target.setLevel(WordMemoryLogic.getNextLevel(target.getLevel()));
-			target.setNextReviewDate(WordMemoryLogic.getNextReviewDate(target.getLevel()));
-		}
 	}
 }

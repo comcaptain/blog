@@ -79,6 +79,9 @@ public class ConsoleAction extends BaseAction {
 		this.reviewWordListInJSON = wordsetService.retrieveReviewWordListInJSON(this.wordsetId);
 		this.rawWordListInJSON = wordsetService.retrieveRawWordListInJSON(wordsetId);
 		this.statisticsToday = wmdsService.getStatisticsToday();
+		if (this.statisticsToday == null) {
+			this.statisticsToday = new WordMemoryDailyStatistics();
+		}
 		return SUCCESS;
 	}
 

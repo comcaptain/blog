@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import sgq.web.console.enums.WordMemoryLevel;
+import sgq.web.console.enums.WordMemoryLevelEnum;
 import sgq.web.pygmalion.bean.User;
 
 @Entity
@@ -35,11 +35,11 @@ public class WordMemoryRecord {
 	private Wordset wordset;
 	@Type(type="sgq.web.pygmalion.enums.EnumUserType",
 			parameters={
-				@Parameter(name="enumClass",value="sgq.web.console.enums.WordMemoryLevel"),
+				@Parameter(name="enumClass",value="sgq.web.console.enums.WordMemoryLevelEnum"),
 		    }
 		)
 	@Column(name="level")
-	private WordMemoryLevel level;
+	private WordMemoryLevelEnum level;
 	@Column(name="next_review_date")
 	private Date nextReviewDate;
 	@Column(name="pass_count")
@@ -50,10 +50,10 @@ public class WordMemoryRecord {
 	private int notSureCount;
 	@Column(name="accumulated_time")
 	private int accumulatedTime;
-	public WordMemoryLevel getLevel() {
+	public WordMemoryLevelEnum getLevel() {
 		return level;
 	}
-	public void setLevel(WordMemoryLevel level) {
+	public void setLevel(WordMemoryLevelEnum level) {
 		this.level = level;
 	}
 	public int getRecordId() {

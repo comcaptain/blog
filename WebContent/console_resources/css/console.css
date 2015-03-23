@@ -7,6 +7,9 @@
 	margin: 0;
 	overflow-y: auto;
 }
+.non-ascii {
+	font-family: "Microsoft YaHei";
+}
 .cmd_console {
 	padding-bottom: 300px;
 }

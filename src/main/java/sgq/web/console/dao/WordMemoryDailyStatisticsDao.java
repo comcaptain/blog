@@ -1,6 +1,7 @@
 package sgq.web.console.dao;
 
 import java.sql.Date;
+import java.util.GregorianCalendar;
 
 import org.hibernate.Session;
 
@@ -18,9 +19,6 @@ public class WordMemoryDailyStatisticsDao extends BaseDao {
 				.setParameter("userId", SessionUtil.getCurrentUserId())
 				.uniqueResult();
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
 		finally {
 			session.close();
 		}
@@ -28,29 +26,32 @@ public class WordMemoryDailyStatisticsDao extends BaseDao {
 	}
 	public WordMemoryDailyStatistics getStatisticsById(int wmStatisticsId) {
 		Session session = this.getSessionFactory().openSession();
-		return getStatisticsById(wmStatisticsId, session);
-	}
-	public WordMemoryDailyStatistics getStatisticsById(int wmStatisticsId, Session session) {
-		WordMemoryDailyStatistics result = null;
 		try {
-			result = (WordMemoryDailyStatistics) session.createQuery("from WordMemoryDailyStatistics where wmStatisticsId = :wmStatisticsId and user.userId = :userId")
-				.setParameter("wmStatisticsId", wmStatisticsId)
-				.setParameter("userId", SessionUtil.getCurrentUserId())
-				.uniqueResult();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
+			return getStatisticsById(wmStatisticsId, session);
 		}
 		finally {
 			session.close();
 		}
+	}
+	public WordMemoryDailyStatistics getStatisticsById(int wmStatisticsId, Session session) {
+		WordMemoryDailyStatistics result = null;
+			result = (WordMemoryDailyStatistics) session.createQuery("from WordMemoryDailyStatistics where wmStatisticsId = :wmStatisticsId and user.userId = :userId")
+				.setParameter("wmStatisticsId", wmStatisticsId)
+				.setParameter("userId", SessionUtil.getCurrentUserId())
+				.uniqueResult();
 		return result;
 	}
-	public void update(WordMemoryDailyStatistics dailyStatisticsInDb, WordMemoryDailyStatistics dailyStatistics, Session session) {
+	public void saveOrUpdate(WordMemoryDailyStatistics dailyStatistics, Session session) {
+		WordMemoryDailyStatistics dailyStatisticsInDb = this.getStatisticsById(dailyStatistics.getWmStatisticsId(), session);
+		if (dailyStatisticsInDb == null) {
+			dailyStatisticsInDb = new WordMemoryDailyStatistics();
+			dailyStatisticsInDb.setUser(SessionUtil.getUser());
+			dailyStatisticsInDb.setDate(new java.sql.Date(GregorianCalendar.getInstance().getTimeInMillis()));
+		}
 		dailyStatisticsInDb.setAccumulatedTime(dailyStatistics.getAccumulatedTime());
 		dailyStatisticsInDb.setFailCount(dailyStatistics.getFailCount());
 		dailyStatisticsInDb.setNotSureCount(dailyStatistics.getNotSureCount());
 		dailyStatisticsInDb.setPassCount(dailyStatistics.getPassCount());
-		session.save(dailyStatisticsInDb);
+		session.saveOrUpdate(dailyStatisticsInDb);
 	}
 }

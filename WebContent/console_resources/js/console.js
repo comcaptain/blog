@@ -158,7 +158,7 @@ $(document).ready(function() {
 			},
 			onExecuteComplete: function(data) {
 				if (data) {
-					var message = data.message ? data.message : data;
+					var message = typeof data.exitApplication != "undefined" ? data.message : data;
 					if (message) this.displayMessage(message);
 					if (data.exitApplication) {
 						this._stopApplication();
@@ -197,14 +197,14 @@ $(document).ready(function() {
     		displayMessage: function(message) {
     			var $cmdConsoleBlockResult = $('<div class="cmd_console_block cmd_console_block_result"></div>');
     			this.$consoleDiv.append($cmdConsoleBlockResult);
-    			var colorClass = "cmd_console_text_" + message.color;
+    			var cssClass = "cmd_console_text_" + message.color;
     			var data = message.data;
 				if (typeof(data) == "object") {
 					if (data.constructor.name == "ConsoleTableMessageData")
-						this._generateTableResult($cmdConsoleBlockResult, data, colorClass);
+						this._generateTableResult($cmdConsoleBlockResult, data, cssClass);
 				}
 				else {
-					this._generateLineResult($cmdConsoleBlockResult, data, colorClass);
+					this._generateLineResult($cmdConsoleBlockResult, data, cssClass);
 				}
     			this.utils.scrollToBottom();
     		},
@@ -220,8 +220,8 @@ $(document).ready(function() {
     			this.$currentInput.text(command);
     			this.utils.moveCursorToEnd(this.$currentInput[0]);
     		},
-    		_generateTableResult: function($container, tableData, colorClass) {
-    			var tableClass = 'cmd_console_table ' + colorClass;
+    		_generateTableResult: function($container, tableData, cssClass) {
+    			var tableClass = 'cmd_console_table ' + cssClass;
     			if (tableData.withBorder) {
     				tableClass += " cmd_console_with_border";
     			}
@@ -230,8 +230,15 @@ $(document).ready(function() {
     				var tds = tableData.trs[i];
     				var $tr = $('<tr></tr>');
     				for (var j = 0; j < tableData.columnCount; j++) {
-    					if (tds[j] || tds[j] == 0)
-    						$tr.append('<td>' + tds[j] + '</td>');
+    					if (tds[j] || tds[j] == 0) {
+    						var str = tds[j];
+    	    				if (!this._containsAllAscii(str)) {
+        						$tr.append('<td class="non-ascii">' + str + '</td>');
+    	    				}
+    	    				else {
+        						$tr.append('<td>' + str + '</td>');
+    	    				}
+    					}
     					else 
     						$tr.append('<td></td>');
     				}
@@ -239,12 +246,17 @@ $(document).ready(function() {
     			}
     			$container.append($table);
     		},
-    		_generateLineResult: function($container, data, colorClass) {
+    		_generateLineResult: function($container, data, cssClass) {
     			data = data + "";
     			var resultLines = data.split("\n");
     			for (var i in resultLines) {
-    				$container.append('<span class="cmd_console_line ' + colorClass + '">' + resultLines[i] + '</span>');
+    				var line = resultLines[i];
+    				if (!this._containsAllAscii(line)) cssClass += " non-ascii";
+    				$container.append('<span class="cmd_console_line ' + cssClass + '">' + resultLines[i] + '</span>');
     			}
+    		},
+    		_containsAllAscii: function(str) {
+    			return  /^[\000-\177]*$/.test(str) ;
     		},
     		_startApplication: function(application, optionStr) {
     			this.activeApplication = application;

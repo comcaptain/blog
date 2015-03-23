@@ -2,14 +2,14 @@ package sgq.web.console.model;
 
 import java.util.Date;
 
-import sgq.web.console.enums.WordMemoryLevel;
+import sgq.web.console.enums.WordMemoryLevelEnum;
 
 public class WordModel {
 	private int jpWordId;
 	private String hiragana;
 	private String kanji;
 	private String chinese;
-	private WordMemoryLevel level;
+	private WordMemoryLevelEnum level;
 	private Date nextReviewDate;
 	private int passCount;
 	private int failCount;
@@ -18,7 +18,7 @@ public class WordModel {
 	private int recordId;
 	public WordModel() {}
 	public WordModel(int jpWordId, String hiragana, String kanji,
-			String chinese, int recordId, WordMemoryLevel level, Date nextReviewDate, int passCount,
+			String chinese, int recordId, WordMemoryLevelEnum level, Date nextReviewDate, int passCount,
 			int failCount, int notSureCount, int accumulatedTime) {
 		this.jpWordId = jpWordId;
 		this.hiragana = hiragana;
@@ -92,10 +92,10 @@ public class WordModel {
 	public void setRecordId(int recordId) {
 		this.recordId = recordId;
 	}
-	public WordMemoryLevel getLevel() {
+	public WordMemoryLevelEnum getLevel() {
 		return level;
 	}
-	public void setLevel(WordMemoryLevel level) {
+	public void setLevel(WordMemoryLevelEnum level) {
 		this.level = level;
 	}
 }

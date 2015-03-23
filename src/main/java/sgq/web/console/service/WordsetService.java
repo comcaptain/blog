@@ -17,8 +17,10 @@ import sgq.web.console.bean.WordMemoryRecord;
 import sgq.web.console.bean.Wordset;
 import sgq.web.console.dao.WordMemoryDailyStatisticsDao;
 import sgq.web.console.dao.WordsetDao;
-import sgq.web.console.enums.WordMemoryLevel;
+import sgq.web.console.enums.WordMemoryLevelEnum;
 import sgq.web.console.model.WordModel;
+
+import sgq.web.console.bean.JpWord;
 
 import com.google.gson.Gson;
 
@@ -85,13 +87,16 @@ public class WordsetService {
 		for (Entry<String, Map<String, Object>> entry : data.entrySet()) {
 			Map<String, Object> word = entry.getValue();
 			WordMemoryRecord wmr = new WordMemoryRecord();
-			wmr.setAccumulatedTime((Integer)word.get("accumulatedTime"));
-			wmr.setFailCount((Integer)word.get("failCount"));
-			wmr.setPassCount((Integer)word.get("passCount"));
-			wmr.setNotSureCount((Integer)word.get("notSureCount"));
-			wmr.setLevel(WordMemoryLevel.getEnum((Integer)word.get("level")));
-			Integer recordId = (Integer)word.get("recordId");
+			wmr.setAccumulatedTime(((Double)word.get("accumulatedTime")).intValue());
+			wmr.setFailCount(((Double)word.get("failCount")).intValue());
+			wmr.setPassCount(((Double)word.get("passCount")).intValue());
+			wmr.setNotSureCount(((Double)word.get("notSureCount")).intValue());
+			wmr.setLevel(WordMemoryLevelEnum.getEnum(((Double)word.get("level")).intValue()));
+			Integer recordId = ((Double)word.get("recordId")).intValue();
 			if (recordId == null || recordId <= 0) {
+				JpWord temp = new JpWord();
+				temp.setJpWordId(((Double)word.get("jpWordId")).intValue());
+				wmr.setWord(temp);
 				newRecords.add(wmr);
 			}
 			else {
@@ -105,11 +110,11 @@ public class WordsetService {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> data = (new Gson()).fromJson(dailyStatisticsInJson, Map.class);
 		WordMemoryDailyStatistics model = new WordMemoryDailyStatistics();
-		model.setWmStatisticsId((Integer)data.get("wmStatisticsId"));
-		model.setAccumulatedTime((Integer)data.get("accumulatedTime"));
-		model.setPassCount((Integer)data.get("passCount"));
-		model.setFailCount((Integer)data.get("failCount"));
-		model.setNotSureCount((Integer)data.get("notSureCount"));
+		model.setWmStatisticsId(((Double)data.get("wmStatisticsId")).intValue());
+		model.setAccumulatedTime(((Double)data.get("accumulatedTime")).intValue());
+		model.setPassCount(((Double)data.get("passCount")).intValue());
+		model.setFailCount(((Double)data.get("failCount")).intValue());
+		model.setNotSureCount(((Double)data.get("notSureCount")).intValue());
 		return model;
 	}
 
@@ -117,18 +122,21 @@ public class WordsetService {
 		Session session = this.wordsetDao.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
 		try {
-			ScrollableResults recordsInDb = wordsetDao.getWmrInDBStream(modifiedRecords, session);
-			Wordset wordset = wordsetDao.getWordsetById(wordsetId);
-			wordsetDao.updateWmrs(recordsInDb, modifiedRecords, session);
-			wordsetDao.addWmrs(newRecords, wordset, session);
-			WordMemoryDailyStatistics dailyStatisticsInDb = this.wmdsDao.getStatisticsById(dailyStatistics.getWmStatisticsId(), session);
-			this.wmdsDao.update(dailyStatisticsInDb, dailyStatistics, session);
+			if (modifiedRecords.size() > 0) {
+				ScrollableResults recordsInDb = wordsetDao.getWmrInDBStream(modifiedRecords, session);
+				wordsetDao.updateWmrs(recordsInDb, modifiedRecords, session);
+			}
+			if (newRecords.size() > 0) {
+				Wordset wordset = wordsetDao.getWordsetById(wordsetId);
+				wordsetDao.addWmrs(newRecords, wordset, session);
+			}
+			this.wmdsDao.saveOrUpdate(dailyStatistics, session);
 			tx.commit();
 			return true;
 		}
 		catch(Exception e) {
 			tx.rollback();
-			logger.error(e);
+			logger.error("Synchonization Failed!", e);
 			return false;
 		}
 		finally {

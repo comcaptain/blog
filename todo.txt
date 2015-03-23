@@ -1,0 +1,4 @@
+1. are you sure you want to leave?
+2. hide password
+3. exception interceptor and log4j2
+4. find the nth kanji

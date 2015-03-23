@@ -144,7 +144,7 @@ Command.prototype = {
 				resolve(new ConsoleMessage("Value is required", "red"));
 				return;
 			}
-			this.executeImpl(data, resolve)
+			this.executeImpl(data, resolve, reject)
 		}.bind(this));
 	},
 	displayMessage: function(message) {
