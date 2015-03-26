@@ -12,6 +12,9 @@ body {
 	background: radial-gradient(ellipse at center, rgba(203,209,194,1) 0%, rgba(82,79,82,1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cbd1c2', endColorstr='#524f52', GradientType=1 );
 }
+del {
+	color: rgb(199, 199, 199);
+}
 .container.full-height {
 	min-height: 100%;
 }
