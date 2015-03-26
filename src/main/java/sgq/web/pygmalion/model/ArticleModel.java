@@ -99,5 +99,6 @@ public class ArticleModel {
 		oldArticle.setTitle(title);
 		oldArticle.setContent(content);
 		oldArticle.setMarkdown(markdown);
+		oldArticle.setThumbnail(thumbnail);
 	}
 }

@@ -13,9 +13,10 @@
 		<property name="dataSourceProperties">
 			<props>
 				<prop key="databaseName">pygmalion</prop>
-				<prop key="serverName">localhost</prop>
-				<prop key="user">root</prop>
-				<prop key="password">base</prop>
+				<prop key="serverName">dbserver.com</prop>
+				<prop key="user">captain</prop>
+				<prop key="password">sgq7613269</prop>
+				<prop key="encoding">UTF-8</prop>
 			</props>
 		</property>
 	</bean>
