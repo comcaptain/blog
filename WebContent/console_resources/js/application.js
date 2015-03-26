@@ -53,6 +53,12 @@ Application.prototype = {
 	},
 	registerApplicationCommand: function(command) {
 		this.console.registerApplicationCommand(command);
-	}
+	},
+	warnBeforeUnload: function(msg) {
+		this.console.warnBeforeUnload(msg);
+	},
+	clearWarnBeforeUnload: function() {
+		this.console.clearWarnBeforeUnload();
+	},
 };
 Application.prototype.constructor = Application;

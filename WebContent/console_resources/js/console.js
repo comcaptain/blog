@@ -194,6 +194,23 @@ $(document).ready(function() {
 			isWaitingForUserInput: function() {
 				return this.userInputObj;
 			},
+			warnBeforeUnload: function(msg) {
+				if (msg == undefined) msg = "There's unsaved data, are you sure you want to leave?";
+				if (this.unloadRegistered) return;
+				if (window.onbeforeunload) {
+					this.backupOnbeforeunload = window.onbeforeunload;
+				}
+				this.unloadRegistered = true;
+				window.onbeforeunload = function() {
+					return msg;
+				};
+			},
+			clearWarnBeforeUnload: function() {
+				if (!this.unloadRegistered) return;
+				this.unloadRegistered = false;
+				window.onbeforeunload = this.backupOnbeforeunload;
+				delete this.backupOnbeforeunload;
+			},
     		displayMessage: function(message) {
     			var $cmdConsoleBlockResult = $('<div class="cmd_console_block cmd_console_block_result"></div>');
     			this.$consoleDiv.append($cmdConsoleBlockResult);

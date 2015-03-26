@@ -78,6 +78,12 @@ $.extend(JPLearner.prototype, {
 			this.$statusBox = $(statusBoxHtml);
 			this.console.$consoleDiv.append(this.$statusBox);
 		}
+		if (Object.keys(this.notSynchronizedWords).length > 0) {
+			this.warnBeforeUnload();
+		}
+		else {
+			this.clearWarnBeforeUnload();
+		}
 		if (this.paused) {
 			this.lastWordCompleteTime = (new Date()).getTime() - this.timeSpentOnCurrentWord;
 		}
@@ -328,6 +334,7 @@ $.extend(JPLearner.prototype, {
 					if (data.jsonStatus == 'success') {
 						this.notSynchronizedWords = {};
 						this.info("synchronized");
+						this.clearWarnBeforeUnload();
 						resolve();
 					}
 					else {

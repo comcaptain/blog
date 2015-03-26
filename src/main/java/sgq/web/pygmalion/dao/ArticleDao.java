@@ -13,7 +13,7 @@ public class ArticleDao extends BaseDao{
 		Session session = this.sessionFactory.openSession();
 		List<Article> articles = null;
 		try {
-			articles = session.createQuery("select new Article(articleId, title, thumbnail, createTime, updateTime, author) from Article order by create_time desc")
+			articles = session.createQuery("select new Article(articleId, title, thumbnail, createTime, updateTime, author) from Article order by update_time desc")
 					.setFirstResult(start)
 					.setMaxResults(limit)
 					.list();

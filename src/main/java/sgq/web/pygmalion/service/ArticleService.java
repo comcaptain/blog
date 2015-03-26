@@ -85,7 +85,7 @@ public class ArticleService {
 		List<ArticleMonthlyGroup> monthlyGroupList = new LinkedList<ArticleMonthlyGroup>();
 		if (thumbnails == null || thumbnails.size() == 0) return monthlyGroupList;
 		Calendar date = GregorianCalendar.getInstance();
-		date.setTime(thumbnails.get(0).getCreateTime());
+		date.setTime(thumbnails.get(0).getUpdateTime());
 		int year = date.get(Calendar.YEAR);
 		int month = date.get(Calendar.MONTH);
 		int day = date.get(Calendar.DAY_OF_MONTH);
@@ -95,7 +95,7 @@ public class ArticleService {
 		while (iterator.hasNext()) {
 			Article article = iterator.next();
 			Calendar currentDate = GregorianCalendar.getInstance();
-			currentDate.setTime(article.getCreateTime());
+			currentDate.setTime(article.getUpdateTime());
 			boolean isSameYear = currentDate.get(Calendar.YEAR) == year;
 			boolean isSameMonth = currentDate.get(Calendar.MONTH) == month;
 			boolean isSameDay = currentDate.get(Calendar.DAY_OF_MONTH) == day;
