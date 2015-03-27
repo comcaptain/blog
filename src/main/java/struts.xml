@@ -4,6 +4,7 @@
    "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<constant name="struts.action.extension" value=","/> 
 	<package name="struts-pygmalion" namespace="/" extends="struts-default">
 		<interceptors>
 			<interceptor name="accessControl" class="sgq.web.pygmalion.interceptor.LoginInterceptor"></interceptor>
