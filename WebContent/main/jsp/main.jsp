@@ -5,8 +5,8 @@
 <html>
 <head>
 <s:include value="/common/jsp/common_header.jsp"></s:include>
-<link rel="stylesheet" type="text/css" href="./main/css/main.css">
-<link rel="stylesheet" type="text/css" href="./common/css/timeline.css">
+<link rel="stylesheet" type="text/css" href="<s:url value="main/css/main.css" />">
+<link rel="stylesheet" type="text/css" href="<s:url value="common/css/timeline.css" />">
 <title>PYGMALION</title>
 </head>
 <body>
@@ -14,7 +14,7 @@
 	<s:include value="/common/jsp/navigation.jsp">
 		<s:param name="extraClass">vertical-navigation</s:param>
 	</s:include>
-	<img id="headImage" src="<s:url value="/main/images/head.jpg" />" />
+	<img id="headImage" src="<s:url value="main/images/head.jpg" />" />
 </div>
 <div class="container" id="container">
 <ul class="timeline">
@@ -28,7 +28,7 @@
 		</s:if>
 		<div class="timeline-panel">
 			<div class="timeline-heading">
-				<h4 class="timeline-title"><a href="<s:url value='/article?id=%{#thumbnail.articleId}' />"><s:property value="#thumbnail.title" /></a></h4>
+				<h4 class="timeline-title"><a href="<s:url value='article?id=%{#thumbnail.articleId}' />"><s:property value="#thumbnail.title" /></a></h4>
 				<p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> <s:date name="#thumbnail.createTime" format="yyyy.MM.dd hh:mm:ss" /></small></p>
 			</div>
 			<div class="timeline-body">
