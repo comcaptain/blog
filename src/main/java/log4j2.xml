@@ -13,13 +13,37 @@
 				<TimeBasedTriggeringPolicy />
 			</Policies>
 		</RollingFile>
+		<RollingFile name="errorFile" fileName="${logRootDir}/error.log" filePattern="${logRootDir}/error-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<charset>UTF-8</charset>
+				<Pattern>[%-5p]%d{yyyy-MM-dd HH:mm:ss.SSS} %c{1} %m%rEx{full}%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+		</RollingFile>
+		<RollingFile name="hibernate" fileName="${logRootDir}/hibernate.log" filePattern="${logRootDir}/hibernate-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<charset>UTF-8</charset>
+				<Pattern>[%-5p]%d{yyyy-MM-dd HH:mm:ss.SSS} %c{1} %m%rEx{full}%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+			</Policies>
+		</RollingFile>
 	</appenders>
 	<loggers>
 		<root level="error">
-			<AppenderRef ref="rollingFile" />
+			<AppenderRef ref="errorFile"/>
 		</root>
+		<Logger name="sgq.web" level="info">
+			<AppenderRef ref="rollingFile" />
+		</Logger>
         <Logger name="org.hibernate.type" level="debug">
+        	<AppenderRef ref="hibernate"></AppenderRef>
         </Logger>
-        <Logger name="org.hibernate.SQL" level="debug"/>
+        <Logger name="org.hibernate.SQL" level="debug">
+        	<AppenderRef ref="hibernate"></AppenderRef>
+        </Logger>
 	</loggers>
 </configuration>
