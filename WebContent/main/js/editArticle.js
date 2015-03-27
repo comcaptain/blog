@@ -194,7 +194,7 @@ MdEditor.prototype = {
 			document.execCommand('insertText', false, wrapString);
 			this.content.setSelectionRange(upperBound + wrapString.length, upperBound + wrapString.length);
 			document.execCommand('insertText', false, wrapString2 ? wrapString2 : wrapString);
-			this.content.setSelectionRange(lowerBound, upperBound + wrapString.length * 2);
+			this.content.setSelectionRange(lowerBound, upperBound + wrapString.length + (wrapString2 ? wrapString2 : wrapString).length);
 		}
 	},
 	deleteSelection: function(event) {
