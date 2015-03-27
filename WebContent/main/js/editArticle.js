@@ -66,7 +66,12 @@ MdEditor.prototype = {
 			}
 			//ctrl k
 			else if (event.keyCode == 75 && event.ctrlKey) {
-				editor.toggleSelectionIndent("    ", event);
+				if (editor.getSelectedText().indexOf("\n") < 0) {
+					editor.wrapSelection(event, "`");
+				}
+				else {
+					editor.toggleSelectionIndent("    ", event);
+				}
 			}
 			//ctrl shift b
 			else if (event.keyCode == 66 && event.ctrlKey && event.shiftKey) {
@@ -99,6 +104,11 @@ MdEditor.prototype = {
 		if (this.option.autoHeight) this.autoHeightHandler();
 		if (this.option.localCache) this.updateContentInCache();
 		this.render();
+	},
+	getSelectedText: function() {
+		var lowerSelectionBound = this.content.selectionStart;
+		var higherSelectionBound = this.content.selectionEnd;
+		return this.content.value.substring(lowerSelectionBound, higherSelectionBound);
 	},
 	onEnter: function(event) {
 		var textValue = this.content.value;
