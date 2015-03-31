@@ -90,7 +90,7 @@ $(document).ready(function() {
     			}
     		},
 			onEnter: function(ele, event) {
-				var inputStr = $.trim(this.$currentInput.text());
+				var inputStr = $.trim(this.$currentInput.prop("tagName") == 'INPUT' ? this.$currentInput.val() : this.$currentInput.text());
 				var cmdConsole = this;
 				if (this.isWaitingForUserInput()) {
 					this.processUserInput(inputStr);
@@ -166,19 +166,30 @@ $(document).ready(function() {
 				}
 				this.startNewInput();
 			},
-			startNewInput: function() {
+			startNewInput: function(isPassword) {
     			var $inputBlock = $('<div class="cmd_console_block cmd_console_block_input cmd_console_line"></div>');
     			this.$consoleDiv.append($inputBlock);
-    			if (!this.isApplicationRunning() || this.isApplicationCommandRegistered()) $inputBlock.append('<span class="cmd_console_arrow">&gt;</span>');
-    			var $cmdConsoleInput = $('<span contenteditable="true" spellcheck="false" class="cmd_console_input"></span>');
-    			if (this.$currentInput) this.$currentInput.removeAttr("contenteditable");
+    			if (!this.isWaitingForUserInput()) $inputBlock.append('<span class="cmd_console_arrow">&gt;</span>');
+    			var $cmdConsoleInput = "";
+    			if (isPassword) {
+    				$cmdConsoleInput = $('<input type="password" class="cmd_console_input" />');
+    			}
+    			else {
+    				$cmdConsoleInput = $('<span contenteditable="true" spellcheck="false" class="cmd_console_input"></span>');
+    			}
+    			if (this.$currentInput) {
+    				this.$currentInput.removeAttr("contenteditable");
+    				if (this.$currentInput.attr("type") == "password") {
+    					this.$currentInput.attr("disabled", "disabled");
+    				}
+    			}
     			this.$currentInput = $cmdConsoleInput;
     			$inputBlock.append($cmdConsoleInput);
     			this.utils.scrollToBottom();
     			this.utils.moveCursorToEnd($cmdConsoleInput[0]);
     			$cmdConsoleInput.focus();
 			},
-			getUserInput: function(prompt, check, errorMessage) {
+			getUserInput: function(prompt, check, errorMessage, isPassword) {
 				return new Promise(function(resolve, reject) {
 					this.info(prompt);
 					this.userInputObj = {
@@ -188,7 +199,7 @@ $(document).ready(function() {
 						check: check,
 						errorMessage: errorMessage
 					};
-					this.startNewInput();
+					this.startNewInput(isPassword);
 				}.bind(this));
 			},
 			isWaitingForUserInput: function() {

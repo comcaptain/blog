@@ -7,6 +7,11 @@
 	margin: 0;
 	overflow-y: auto;
 }
+.cmd_console_input {
+	background: black;
+	border: none;
+	color: white;
+}
 .non-ascii {
 	font-family: "Microsoft YaHei";
 }

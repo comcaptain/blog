@@ -139,7 +139,11 @@ public class WordsetDao extends BaseDao{
 	
 	private void mergeWordMemoryRecord(WordMemoryRecord target, WordMemoryRecord updateData) {
 		java.sql.Date today = new java.sql.Date(GregorianCalendar.getInstance().getTimeInMillis());
-		if (target.getNextReviewDate() == null && updateData.getPassCount() > 0) {
+		if (updateData.getLevel() == WordMemoryLevelEnum.COOKED) {
+			target.setNextReviewDate(null);
+			target.setLevel(WordMemoryLevelEnum.COOKED);
+		}
+		else if (target.getNextReviewDate() == null && updateData.getPassCount() > 0) {
 			target.setLevel(WordMemoryLevelEnum.FIRST_BLOOD);
 			target.setNextReviewDate(WordMemoryLogic.getNextReviewDate(target.getLevel()));
 		}

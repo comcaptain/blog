@@ -252,7 +252,7 @@ $.extend(JPLearner.prototype, {
 			learner.getUserInput("请输入用户名：")
 			.then(function(inputStr) {
 				learner.userName = inputStr;
-				return learner.getUserInput("请输入密码");
+				return learner.getUserInput("请输入密码", undefined, undefined, true);
 			})
 			.then(function(inputStr) {
 				learner.password = inputStr;
@@ -388,6 +388,7 @@ $.extend(JPLearner.prototype, {
 		this.registerApplicationCommand(this._tickCommand("u"));
 		this.registerApplicationCommand(this._tickCommand("y"));
 		this.registerApplicationCommand(this._tickCommand("n"));
+		this.registerApplicationCommand(this._tickCommand("x"));
 		this.registerApplicationCommand(this._exitCommand());
 		this.registerApplicationCommand(this._pauseCommand());
 		this.registerApplicationCommand(this._resumeCommand());
@@ -441,7 +442,7 @@ $.extend(JPLearner.prototype, {
 				app.statistics.passCount++;
 				if (!app.currentWord.passCount) app.currentWord.passCount = 1;
 				else app.currentWord.passCount++;
-				app.currentWord = COOKED;
+				app.currentWord.level = COOKED;
 			}
 			app.updateStatus();
 			if (!app.notSynchronizedWords[wordId])
