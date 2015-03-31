@@ -4,6 +4,11 @@
 <s:set name="showEdit">hidden${param.showEdit}</s:set>
 <s:set name="showDelete">hidden${param.showDelete}</s:set>
 <s:set name="showArticle">hidden${param.showArticle}</s:set>
+<s:set name="showPublish">hidden${param.showPublish}</s:set>
+<%
+boolean isPublished = Boolean.parseBoolean(request.getParameter("isPublished"));
+pageContext.setAttribute("publishClass", isPublished ? "marked" : "");
+%>
 <ul id="navigation" class="${param.extraClass}">
 	<li style="position: relative; left: -2px;">
 		<s:a value="home" title="首页"><span class="glyphicon glyphicon-home navigation-item"></span></s:a>
@@ -21,6 +26,11 @@
 	<s:if test="%{#showDelete != 'hidden' && #showDelete != 'hiddenfalse'}">
 	<li>
 		<a id="deleteArticle" class="confirm" href="deleteArticle?id=${param.navArticleId}" title="删除"><span class="glyphicon glyphicon-trash navigation-item"></span></a>
+	</li>
+	</s:if>
+	<s:if test="%{#showPublish != 'hidden' && #showPublish != 'hiddenfalse'}">
+	<li>
+		<a id="publishArticle" href="javascript:void" articleId="${param.navArticleId}" title="发表"><span class="glyphicon glyphicon-leaf navigation-item ${publishClass}"></span></a>
 	</li>
 	</s:if>
 	<s:if test="%{#showArticle != 'hidden' && #showArticle != 'hiddenfalse'}">

@@ -14,6 +14,7 @@
 			</Policies>
 		</RollingFile>
 		<RollingFile name="errorFile" fileName="${logRootDir}/error.log" filePattern="${logRootDir}/error-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
 			<PatternLayout>
 				<charset>UTF-8</charset>
 				<Pattern>[%-5p]%d{yyyy-MM-dd HH:mm:ss.SSS} %c{1} %m%rEx{full}%n</Pattern>

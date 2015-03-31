@@ -16,6 +16,7 @@ public class ArticleModel {
 	private Date createTime;
 	private Date updateTime;
 	private User author;
+	private boolean published;
 	public ArticleModel() {
 		
 	}
@@ -28,6 +29,7 @@ public class ArticleModel {
 		this.updateTime = article.getUpdateTime();
 		this.author = article.getAuthor();
 		this.articleId = article.getArticleId();
+		this.published = article.isPublished();
 	}
 	public int getArticleId() {
 		return articleId;
@@ -87,6 +89,10 @@ public class ArticleModel {
 		if (SessionUtil.getRole().containsPrivilege(PrivilegeEnum.DELETE_ARTICLE)) return true;
 		return false;
 	}
+	public boolean isPublishable() {
+		if (SessionUtil.getRole().containsPrivilege(PrivilegeEnum.PUBLISH_ARTICLE)) return true;
+		return false;
+	}
 	public Article getNewArticle() {
 		Article article = new Article();
 		article.setTitle(title);
@@ -100,5 +106,11 @@ public class ArticleModel {
 		oldArticle.setContent(content);
 		oldArticle.setMarkdown(markdown);
 		oldArticle.setThumbnail(thumbnail);
+	}
+	public boolean isPublished() {
+		return published;
+	}
+	public void setPublished(boolean published) {
+		this.published = published;
 	}
 }

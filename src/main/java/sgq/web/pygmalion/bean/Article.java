@@ -27,6 +27,8 @@ public class Article {
 	private String markdown;
 	@Column(name="thumbnail")
 	private String thumbnail;
+	@Column(name="published")
+	private boolean published;
 	@Column(name="create_time")
 	private Date createTime;
 	@Column(name="update_time")
@@ -94,5 +96,11 @@ public class Article {
 	}
 	public void setMarkdown(String markdown) {
 		this.markdown = markdown;
+	}
+	public boolean isPublished() {
+		return published;
+	}
+	public void setPublished(boolean published) {
+		this.published = published;
 	}
 }

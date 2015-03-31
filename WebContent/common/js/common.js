@@ -60,6 +60,23 @@ $(document).ready(function() {
 			window.location.href = this.getAttribute("href");
 		}
 	});
+	$("#publishArticle").on("click", function(event) {
+		var articleId = $(this).attr("articleId");
+		var link = this;
+		$.ajax({
+			url: "ajax/publishArticle",
+			method: "POST",
+			cache: false,
+			data: {
+				articleId: articleId
+			},
+			success: function(data) {
+				if (data.jsonStatus == "success") {
+					$(link).find(".glyphicon").addClass("marked");
+				}
+			}
+		});
+	});
 	$(document).on("keydown", function(event) {
 		//ctrl shift l
 		if (event.keyCode == 76 && event.shiftKey && event.ctrlKey) {

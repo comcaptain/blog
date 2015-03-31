@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public enum RoleEnum {
-	ADMIN(1, new PrivilegeEnum[]{PrivilegeEnum.EDIT_ARTICLE, PrivilegeEnum.DELETE_ARTICLE}),
-	MANAGER(2, new PrivilegeEnum[]{PrivilegeEnum.EDIT_ARTICLE}),
+	ADMIN(1, new PrivilegeEnum[]{PrivilegeEnum.EDIT_ARTICLE, PrivilegeEnum.DELETE_ARTICLE, PrivilegeEnum.PUBLISH_ARTICLE}),
+	MANAGER(2, new PrivilegeEnum[]{PrivilegeEnum.EDIT_ARTICLE, PrivilegeEnum.PUBLISH_ARTICLE}),
 	USER(300, new PrivilegeEnum[]{});
 	private final int code;
 	private final HashSet<PrivilegeEnum> privileges;

@@ -60,3 +60,6 @@ blockquote {
 	width: 60%;
 	font-size: 25px;
 }
+.glyphicon.marked {
+	color: rgb(162, 250, 132);
+}

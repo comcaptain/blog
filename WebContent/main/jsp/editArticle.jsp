@@ -11,7 +11,10 @@ var updateTime = '<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /
 <link rel="stylesheet" type="text/css" href="<s:url value="./main/css/editArticle.css"/>">
 <script type="text/javascript" src="<s:url value="./common/js/stmd.js"/>"></script>
 <script type="text/javascript" src="<s:url value="./main/js/editArticle.js"/>"></script>
-<title><s:property value="article.title" /></title>
+<title>
+	<s:if test="%{model == null}">New Article</s:if>
+	<s:else><s:property value="model.title" /></s:else>
+</title>
 </head>
 <body>
 	<div id="statusBar">
@@ -20,6 +23,8 @@ var updateTime = '<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /
 			<s:param name="navArticleId"><s:property value="model.articleId" /></s:param>
 			<s:param name="showArticle"><s:property value="model.editable" /></s:param>
 			<s:param name="showDelete"><s:property value="model.deletable" /></s:param>
+			<s:param name="showPublish"><s:property value="model.publishable" /></s:param>
+			<s:param name="isPublished"><s:property value="model.published" /></s:param>
 		</s:include>
 		<span id="cursorPosition">行<span id="rowNo"></span>，列<span id="columnNo"></span></span>
 		<span id="messageArea"></span>	

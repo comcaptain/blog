@@ -7,8 +7,8 @@
 	<constant name="struts.action.extension" value=","/> 
 	<package name="struts-pygmalion" namespace="/" extends="struts-default">
 		<interceptors>
-			<interceptor name="accessControl" class="sgq.web.pygmalion.interceptor.LoginInterceptor"></interceptor>
 			<interceptor name="log4j2ExceptionCatcher" class="sgq.web.pygmalion.interceptor.Log4j2ExceptionInterceptor"></interceptor>
+			<interceptor name="accessControl" class="sgq.web.pygmalion.interceptor.LoginInterceptor"></interceptor>
 		</interceptors>
 		<global-results>
 			<result name="redirectToLogin">warning.html</result>
@@ -19,7 +19,7 @@
 		</global-results>
 		<global-exception-mappings>
 			<exception-mapping result="redirectToLogin" exception="sgq.web.pygmalion.exception.LoginException"></exception-mapping>
-			<exception-mapping result="redirectToHacker" exception="sgq.web.pygmalion.exception.LoginPrivilege"></exception-mapping>
+			<exception-mapping result="redirectToHacker" exception="sgq.web.pygmalion.exception.PrivilegeException"></exception-mapping>
 			<exception-mapping result="redirectToHome" exception="java.lang.Exception"></exception-mapping>
 		</global-exception-mappings>
 	</package>
@@ -27,8 +27,8 @@
 		<interceptors>
 			<interceptor-stack name="globalStack">
 				<interceptor-ref name="defaultStack"/>
-				<interceptor-ref name="accessControl"></interceptor-ref>
 				<interceptor-ref name="log4j2ExceptionCatcher"></interceptor-ref>
+				<interceptor-ref name="accessControl"></interceptor-ref>
 			</interceptor-stack>
 		</interceptors>
 		<default-interceptor-ref name="globalStack"></default-interceptor-ref>
