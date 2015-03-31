@@ -13,7 +13,7 @@ $(document).ready(function() {
 (function( $ ) { 
     $.cmdConsole = function(options, $consoleDiv) {
     	this.settings = $.extend({
-    		info: "This is just for fun.\nWeb console UI. \nversion 0.4",
+    		info: "This is just for fun.\nWeb console UI.",
     		rightPaste: true
     	}, options);
     	this.$consoleDiv = $consoleDiv;

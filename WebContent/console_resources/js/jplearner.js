@@ -29,7 +29,7 @@ $(document).ready(function() {
 	});
 }) 
 function JPLearner() {
-	this.listSize = 5;
+	this.listSize = 20;
 	this.repeatTimes = 2;
 	this.repeatCount = 0;
 	this.name = "JPLearner";
@@ -309,9 +309,10 @@ $.extend(JPLearner.prototype, {
 			}
 		}.bind(this));
 	},
-	finishLearningCycle: function(forceRestart) {
+	finishLearningCycle: function(forceRestart, isExit) {
 		return this.synchronize().then(function() {
 			this.resetLearningCycleData();
+			if (isExit) return;
 			this.repeatCount++;
 			if (forceRestart || this.repeatCount >= this.repeatTimes) {
 				return this.startLearningCycle();
@@ -479,7 +480,7 @@ $.extend(JPLearner.prototype, {
 		var app = this;
 		var cmd = new Command("exit", "exit the application");
 		cmd.executeImpl = function(data, resolve, reject) {
-			app.synchronize().then(function() {
+			app.finishLearningCycle(true, true).then(function() {
 				resolve({exitApplication: true});
 			}, function() {
 				reject();
