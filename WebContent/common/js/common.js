@@ -61,8 +61,11 @@ $(document).ready(function() {
 		}
 	});
 	$("#publishArticle").on("click", function(event) {
-		var articleId = $(this).attr("articleId");
-		var link = this;
+		var $link = $(this);
+		var articleId = $link.attr("articleId");
+		if (!confirm("你确定要" + this.getAttribute("title") + "吗？")) {
+			return false;
+		}
 		$.ajax({
 			url: "ajax/publishArticle",
 			method: "POST",
@@ -71,8 +74,13 @@ $(document).ready(function() {
 				articleId: articleId
 			},
 			success: function(data) {
-				if (data.jsonStatus == "success") {
-					$(link).find(".glyphicon").addClass("marked");
+				if (data.published) {
+					$link.find(".glyphicon").addClass("marked");
+					$link.attr("title", "取消发表");
+				}
+				else {
+					$link.find(".glyphicon").removeClass("marked");
+					$link.attr("title", "发表");
 				}
 			}
 		});

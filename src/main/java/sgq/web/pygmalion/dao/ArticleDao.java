@@ -6,14 +6,31 @@ import java.util.List;
 import org.hibernate.Session;
 
 import sgq.web.pygmalion.bean.Article;
+import sgq.web.pygmalion.util.SessionUtil;
 
 public class ArticleDao extends BaseDao{
 	@SuppressWarnings("unchecked")
-	public List<Article> getThumbnailList(int start, int limit) {
+	public List<Article> getPublishedThumbnailList(int start, int limit) {
 		Session session = this.sessionFactory.openSession();
 		List<Article> articles = null;
 		try {
-			articles = session.createQuery("select new Article(articleId, title, thumbnail, createTime, updateTime, author) from Article order by update_time desc")
+			articles = session.createQuery("select new Article(articleId, title, thumbnail, createTime, updateTime, author) from Article where published = 1 order by update_time desc")
+					.setFirstResult(start)
+					.setMaxResults(limit)
+					.list();
+		}
+		finally {
+			session.close();
+		}
+		return articles;
+	}
+	@SuppressWarnings("unchecked")
+	public List<Article> getPrivateThumbnailList(int start, int limit) {
+		Session session = this.sessionFactory.openSession();
+		List<Article> articles = null;
+		try {
+			articles = session.createQuery("select new Article(articleId, title, thumbnail, createTime, updateTime, author) from Article ar where ar.published = 0 and ar.author.userId = :userId order by update_time desc")
+					.setParameter("userId", SessionUtil.getCurrentUserId())
 					.setFirstResult(start)
 					.setMaxResults(limit)
 					.list();

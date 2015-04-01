@@ -32,9 +32,14 @@ public class ArticleService {
 		return this.articleDao.getArticleById(articleId);
 	}
 	
-	public List<ArticleMonthlyGroup> getThumbnailGroupsOfRecentArticles(int page) {
-		List<Article> articles = this.articleDao.getThumbnailList((page - 1) * PAGE_ITEM_COUNT, PAGE_ITEM_COUNT);
-		return this.groupThrumbnails(articles);
+	public List<ArticleMonthlyGroup> getThumbnailGroupsOfPublishedArticles(int page) {
+		List<Article> articles = this.articleDao.getPublishedThumbnailList((page - 1) * PAGE_ITEM_COUNT, PAGE_ITEM_COUNT);
+		return this.groupThumbnails(articles);
+	}
+	
+	public List<ArticleMonthlyGroup> getThumbnailGroupsOfPrivateArticles(int page) {
+		List<Article> articles = this.articleDao.getPrivateThumbnailList((page - 1) * PAGE_ITEM_COUNT, PAGE_ITEM_COUNT);
+		return this.groupThumbnails(articles);
 	}
 	
 	public Article save(ArticleModel articleData) throws PrivilegeException {
@@ -81,7 +86,7 @@ public class ArticleService {
 		return false;
 	}
 
-	private List<ArticleMonthlyGroup> groupThrumbnails(List<Article> thumbnails) {
+	private List<ArticleMonthlyGroup> groupThumbnails(List<Article> thumbnails) {
 		List<ArticleMonthlyGroup> monthlyGroupList = new LinkedList<ArticleMonthlyGroup>();
 		if (thumbnails == null || thumbnails.size() == 0) return monthlyGroupList;
 		Calendar date = GregorianCalendar.getInstance();
@@ -125,5 +130,15 @@ public class ArticleService {
 			monthlyGroupList.add(new ArticleMonthlyGroup(dailyGroupList, year, month + 1));
 		}
 		return monthlyGroupList;
+	}
+
+	public Article togglePublish(int articleId) throws PrivilegeException {
+		if (!SessionUtil.getRole().containsPrivilege(PrivilegeEnum.PUBLISH_ARTICLE)) {
+			throw new PrivilegeException(SessionUtil.getCurrentUserId() + " wants to illegally toggle article [" + articleId + "]'s published column");
+		}
+		Article article = this.articleDao.getArticleById(articleId);
+		article.setPublished(!article.isPublished());
+		article = this.articleDao.saveArticle(article);
+		return article;
 	}
 }

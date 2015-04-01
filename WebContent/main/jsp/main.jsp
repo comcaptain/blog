@@ -7,7 +7,7 @@
 <s:include value="/common/jsp/common_header.jsp"></s:include>
 <link rel="stylesheet" type="text/css" href="<s:url value="main/css/main.css" />">
 <link rel="stylesheet" type="text/css" href="<s:url value="common/css/timeline.css" />">
-<title>PYGMALION</title>
+<title>PYGMALION - <s:property value="title" /></title>
 </head>
 <body>
 <div class="page-header" id="titleArea">
@@ -29,15 +29,15 @@
 		<div class="timeline-panel">
 			<div class="timeline-heading">
 				<h4 class="timeline-title"><a href="<s:url value='article?id=%{#thumbnail.articleId}' />"><s:property value="#thumbnail.title" /></a></h4>
-				<p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> <s:date name="#thumbnail.createTime" format="yyyy.MM.dd hh:mm:ss" /></small></p>
+				<p><small class="text-muted"><i class="glyphicon glyphicon-time" title="最后修改"></i> <s:date name="#thumbnail.updateTime" format="yyyy.MM.dd hh:mm:ss" /></small></p>
 			</div>
 			<div class="timeline-body">
 				<s:property value="#thumbnail.thumbnail" />
 			</div>
 		</div>
 	</li>
-		</s:iterator>
 	<s:set var="isEven" value="%{!#isEven}" />
+		</s:iterator>
 	</s:iterator>
 	<li>
 		<div class="timeline-badge timeline-seperator-badge"><s:property value="#thumbnailMonthlyGroup.label" /></div>

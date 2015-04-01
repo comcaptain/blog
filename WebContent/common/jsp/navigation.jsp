@@ -8,12 +8,16 @@
 <%
 boolean isPublished = Boolean.parseBoolean(request.getParameter("isPublished"));
 pageContext.setAttribute("publishClass", isPublished ? "marked" : "");
+pageContext.setAttribute("publishTitle", isPublished ? "取消发表" : "发表");
 %>
 <ul id="navigation" class="${param.extraClass}">
 	<li style="position: relative; left: -2px;">
 		<s:a value="home" title="首页"><span class="glyphicon glyphicon-home navigation-item"></span></s:a>
 	</li>
 	<s:if test="%{createArticleEnabled}">
+	<li>
+		<s:a value="igloo" title="私人领地"><span class="glyphicon glyphicon-tint navigation-item"></span></s:a>
+	</li>
 	<li>
 		<s:a value="newArticle" title="发表文章"><span class="glyphicon glyphicon-file navigation-item"></span></s:a>
 	</li>
@@ -30,7 +34,7 @@ pageContext.setAttribute("publishClass", isPublished ? "marked" : "");
 	</s:if>
 	<s:if test="%{#showPublish != 'hidden' && #showPublish != 'hiddenfalse'}">
 	<li>
-		<a id="publishArticle" href="javascript:void" articleId="${param.navArticleId}" title="发表"><span class="glyphicon glyphicon-leaf navigation-item ${publishClass}"></span></a>
+		<a id="publishArticle" href="javascript:void" articleId="${param.navArticleId}" title="${publishTitle}"><span class="glyphicon glyphicon-leaf navigation-item ${publishClass}"></span></a>
 	</li>
 	</s:if>
 	<s:if test="%{#showArticle != 'hidden' && #showArticle != 'hiddenfalse'}">

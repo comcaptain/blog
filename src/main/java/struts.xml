@@ -11,7 +11,7 @@
 			<interceptor name="accessControl" class="sgq.web.pygmalion.interceptor.LoginInterceptor"></interceptor>
 		</interceptors>
 		<global-results>
-			<result name="redirectToLogin">warning.html</result>
+			<result name="redirectToLogin">404.html</result>
 			<result name="redirectToHacker">warning.html</result>
 			<result name="redirectToHome" type="redirectAction">
 				<param name="actionName">home</param>
@@ -33,6 +33,9 @@
 		</interceptors>
 		<default-interceptor-ref name="globalStack"></default-interceptor-ref>
 		<action name="home" class="homeAction" method="home">
+			<result name="success">/main/jsp/main.jsp</result>
+		</action>
+		<action name="igloo" class="homeAction" method="igloo">
 			<result name="success">/main/jsp/main.jsp</result>
 		</action>
 		<action name="article" class="articleAction" method="display">
@@ -103,6 +106,11 @@
 				<param name="includeProperties">
 					jsonStatus
 				</param>
+			</result>
+		</action>
+		<action name="publishArticle" class="articleAction" method="togglePublish">
+			<result name="success" type="json">
+				<param name="includeProperties">published</param>
 			</result>
 		</action>
 	</package>

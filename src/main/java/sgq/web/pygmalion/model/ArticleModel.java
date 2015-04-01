@@ -21,6 +21,9 @@ public class ArticleModel {
 		
 	}
 	public ArticleModel(Article article) {
+		this.updateArticle(article);
+	}
+	public void updateArticle(Article article) {
 		this.title = article.getTitle();
 		this.content = article.getContent();
 		this.markdown = article.getMarkdown();
@@ -29,7 +32,7 @@ public class ArticleModel {
 		this.updateTime = article.getUpdateTime();
 		this.author = article.getAuthor();
 		this.articleId = article.getArticleId();
-		this.published = article.isPublished();
+		this.setPublished(article.isPublished());
 	}
 	public int getArticleId() {
 		return articleId;
