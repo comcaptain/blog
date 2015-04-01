@@ -549,6 +549,10 @@ $.extend(JPLearner.prototype, {
 					reject("current word does not have kanji");
 					return;
 				}
+				if (index > kanji.length) {
+					reject("超过汉字长度");
+					return;
+				}
 				keyWord = kanji.charAt(index);
 			}
 			var result = app.searchByKanji(keyWord);
