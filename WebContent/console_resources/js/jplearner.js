@@ -296,10 +296,13 @@ $.extend(JPLearner.prototype, {
 		window.clearInterval(this.clock);
 	},
 	nextWord: function(optionStr) {
-		this.currentIndex++;
-		this.currentWord = this.pickedWordList[this.currentIndex];
+		do {
+			this.currentIndex++;
+			this.currentWord = this.pickedWordList[this.currentIndex];
+		} while(this.currentWord && this.currentWord.level == COOKED);
 		return new Promise(function(resolve, reject) {
 			if (!this.currentWord) {
+				this.repeatCount++;
 				this.finishLearningCycle().then(resolve, reject);
 			}
 			else {
@@ -313,7 +316,6 @@ $.extend(JPLearner.prototype, {
 		return this.synchronize().then(function() {
 			this.resetLearningCycleData();
 			if (isExit) return;
-			this.repeatCount++;
 			if (forceRestart || this.repeatCount >= this.repeatTimes) {
 				return this.startLearningCycle();
 			}
@@ -325,7 +327,7 @@ $.extend(JPLearner.prototype, {
 	},
 	synchronize: function(callback) {
 		return new Promise(function(resolve, reject) {
-			if (Object.keys(this.notSynchronizedWords).length > 0) {
+			if (Object.keys(this.notSynchronizedWords).length > 0 && this.repeatCount >= this.repeatTimes) {
 				this.displayMessage(new ConsoleMessage("Synchronizing, please wait...", "gray"));
 				this.executeServerAction("synchronizeJpLearnerUserData",{
 					notSynchronizedWordsInJson: JSON.stringify(this.notSynchronizedWords),
@@ -348,7 +350,6 @@ $.extend(JPLearner.prototype, {
 				}.bind(this));
 			}
 			else {
-				this.info("nothing to synchronize");
 				resolve();
 			}
 		}.bind(this));
@@ -395,7 +396,7 @@ $.extend(JPLearner.prototype, {
 		this.registerApplicationCommand(this._allCommand());
 		this.registerApplicationCommand(this._statusCommand());
 		this.registerApplicationCommand(this._findCommand());
-		this.registerApplicationCommand(this._syncCommand());
+//		this.registerApplicationCommand(this._syncCommand());
 		this.registerApplicationCommand(this._endCommand());
 	},
 	defaultZero: function(str) {
@@ -562,17 +563,17 @@ $.extend(JPLearner.prototype, {
 		this._findCommandCache = cmd;
 		return cmd;
 	},
-	_syncCommand: function() {
-		if (this._syncCommandCache != undefined) return this._syncCommandCache;
-		var app = this;
-		var cmd = new Command("sync", "synchronize user data with server");
-		cmd.executeImpl = function(data, resolve, reject) {
-			var thisCmd = this;
-			app.synchronize().then(resolve, reject);
-		};
-		this._syncCommandCache = cmd;
-		return cmd;
-	},
+//	_syncCommand: function() {
+//		if (this._syncCommandCache != undefined) return this._syncCommandCache;
+//		var app = this;
+//		var cmd = new Command("sync", "synchronize user data with server");
+//		cmd.executeImpl = function(data, resolve, reject) {
+//			var thisCmd = this;
+//			app.synchronize().then(resolve, reject);
+//		};
+//		this._syncCommandCache = cmd;
+//		return cmd;
+//	},
 	_endCommand: function() {
 		if (this._endCommandCache != undefined) return this._endCommandCache;
 		var app = this;
