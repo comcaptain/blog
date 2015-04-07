@@ -67,3 +67,7 @@ local.properties
 
 #mac
 **/_DS_Store
+
+# nodejs
+node_modules/*
+test/*

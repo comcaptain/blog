@@ -8,9 +8,9 @@ var articleId = '<s:property value="model.articleId" />';
 var updateTime = '<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" />';
 </script>
 <s:include value="/common/jsp/common_header.jsp"></s:include>
-<link rel="stylesheet" type="text/css" href="<s:url value="./main/css/editArticle.css"/>">
-<script type="text/javascript" src="<s:url value="./common/js/stmd.js"/>"></script>
-<script type="text/javascript" src="<s:url value="./main/js/editArticle.js"/>"></script>
+<link rel="stylesheet" type="text/css" href="main/css/editArticle.css">
+<script type="text/javascript" src="common/js/stmd.js"></script>
+<script type="text/javascript" src="main/js/editArticle.js"></script>
 <title>
 	<s:if test="%{model == null}">New Article</s:if>
 	<s:else><s:property value="model.title" /></s:else>
@@ -31,7 +31,7 @@ var updateTime = '<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /
 	</div>
 	<div id="left" class="col-md-6">
 		<s:textfield name="model.title" id="title"></s:textfield>
-		<s:textarea id="content" name="model.markdown"></s:textarea>
+		<s:textarea spellcheck="false" id="content" name="model.markdown"></s:textarea>
 	</div>
 	<div id="right" class="col-md-6">
 		<div id="preview">

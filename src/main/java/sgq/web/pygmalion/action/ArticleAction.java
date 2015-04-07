@@ -5,6 +5,7 @@ import sgq.web.pygmalion.bean.Article;
 import sgq.web.pygmalion.exception.PrivilegeException;
 import sgq.web.pygmalion.model.ArticleModel;
 import sgq.web.pygmalion.service.ArticleService;
+import sgq.web.pygmalion.util.SessionUtil;
 
 import com.opensymphony.xwork2.ModelDriven;
 
@@ -18,7 +19,11 @@ public class ArticleAction extends BaseAction implements ModelDriven<ArticleMode
 	
 	private int id;
 	
-	public String display() {
+	public String display() throws PrivilegeException {
+		Article article = this.articleService.getArticleById(this.id);
+		if (!article.isPublished() && (!SessionUtil.isLoggedIn() || article.getAuthor().getUserId() != SessionUtil.getCurrentUserId())) {
+			throw new PrivilegeException((SessionUtil.isLoggedIn() ? SessionUtil.getCurrentUserId() : "anonymous") + " wants to illegally visit article " + this.id);
+		}
 		this.setModel(this.articleService.getArticleById(this.id));
 		return SUCCESS;
 	}

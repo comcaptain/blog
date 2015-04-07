@@ -5,7 +5,7 @@
 <html>
 <head>
 <s:include value="/common/jsp/common_header.jsp"></s:include>
-<link rel="stylesheet" type="text/css" href="./main/css/article.css">
+<link rel="stylesheet" type="text/css" href="main/css/article.css">
 <title><s:property value="model.title" /></title>
 </head>
 <body>

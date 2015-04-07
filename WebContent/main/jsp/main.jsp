@@ -5,8 +5,8 @@
 <html>
 <head>
 <s:include value="/common/jsp/common_header.jsp"></s:include>
-<link rel="stylesheet" type="text/css" href="<s:url value="main/css/main.css" />">
-<link rel="stylesheet" type="text/css" href="<s:url value="common/css/timeline.css" />">
+<link rel="stylesheet" type="text/css" href="main/css/main.css">
+<link rel="stylesheet" type="text/css" href="common/css/timeline.css">
 <title>PYGMALION - <s:property value="title" /></title>
 </head>
 <body>
