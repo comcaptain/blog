@@ -1,5 +1,7 @@
 package sgq.web.pygmalion.interceptor;
 
+import org.apache.struts2.ServletActionContext;
+
 import sgq.web.pygmalion.annotation.LoginProtected;
 import sgq.web.pygmalion.exception.LoginException;
 import sgq.web.pygmalion.util.SessionUtil;
@@ -13,7 +15,10 @@ public class LoginInterceptor extends AbstractInterceptor{
 	public String intercept(ActionInvocation invocation) throws Exception {
 		LoginProtected annotation = invocation.getAction().getClass().getMethod(invocation.getProxy().getMethod()).getAnnotation(LoginProtected.class);
 		if (annotation != null) {
-			if (!SessionUtil.isLoggedIn()) throw new LoginException("Please login first");
+			if (!SessionUtil.isLoggedIn()) {
+				ServletActionContext.getResponse().setHeader("cache-control", "no-cache");
+				throw new LoginException("Please login first");
+			}
 		}
 		return invocation.invoke();
 	}
