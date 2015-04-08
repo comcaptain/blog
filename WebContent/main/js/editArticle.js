@@ -343,12 +343,8 @@ $(document).ready(function() {
 				success: function(data) {
 					if (data.articleId) {
 						showMessage("保存成功");
-						if (!window.articleId) {
-							window.history.replaceState( {} , title, "editArticle?id=" + data.articleId );
-						}
-						window.updateTime = data.updateTime;
-						window.articleId = data.articleId;
-						editor.refreshCacheInfo(data.updateTime, data.articleId);
+						window.onbeforeunload = undefined;
+						window.location.href = "editArticle?id=" + data.articleId;
 					}
 					else {
 						showMessage("保存失败");
