@@ -1,6 +1,6 @@
 ### 技术选型 ###
 
-- j2ee架构
+- java7
 - 数据库用mysql
 - web容器是tomcat7
 - http服务器是Apache，和tomcat通过mod_proxy基于ajp协议连接，静态文件用Apache托管
