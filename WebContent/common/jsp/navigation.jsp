@@ -42,4 +42,7 @@ pageContext.setAttribute("publishTitle", isPublished ? "取消发表" : "发表"
 		<a id="navToArticle" href="article?id=${param.navArticleId}" title="查看文章"><span class="glyphicon glyphicon-flash navigation-item"></span></a>
 	</li>
 	</s:if>
+	<li>
+		<a href="mailto:master@pygmalion.click" title="联系我"><span class="glyphicon glyphicon-envelope navigation-item"></span></a>
+	</li>
 </ul>
