@@ -8,8 +8,8 @@ function MdEditor(title, content, titlePreview, contentPreview, option) {
 	this.titlePreview = titlePreview;
 	this.$titlePreview = $(titlePreview);
 	this.option = option;
-	this.reader = new stmd.DocParser();
-	this.writer = new stmd.HtmlRenderer();
+	this.reader = new commonmark.Parser();
+	this.writer = new commonmark.HtmlRenderer();
 	
 	this.rowNo = 0;
 	this.colNo = 0;
@@ -288,11 +288,23 @@ MdEditor.prototype = {
 		sessionStorage.setItem("title", this.title.value);
 		sessionStorage.setItem("content", this.content.value);
 	},
+	preprocessMd: function(parsedMd) {
+		var nodeList = [parsedMd];
+		var tempNodeList = [];
+		while (nodeList.length > 0) {
+//			if 
+		}
+	},
+	preprocessImagesInMd: function(imageNode) {
+		
+	},
 	render: function(isSync) {
 		if (typeof this.timer != "undefined") clearTimeout(this.timer);
 		var editor = this;
 		function localRender() {
-			var html = editor.writer.renderBlock(editor.reader.parse(editor.content.value));
+			var parsedMd = editor.reader.parse(editor.content.value);
+//			parsedMd = editor.preprocessMd(parsedMd);
+			var html = editor.writer.render(parsedMd);
 			editor.titlePreview.innerText = editor.$title.val();
 			editor.contentPreview.innerHTML = html;
 		}
