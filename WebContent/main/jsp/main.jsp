@@ -29,7 +29,7 @@
 		<div class="timeline-panel">
 			<div class="timeline-heading">
 				<h4 class="timeline-title"><a href="<s:url value='article?id=%{#thumbnail.articleId}' />"><s:property value="#thumbnail.title" /></a></h4>
-				<p><small class="text-muted"><i class="glyphicon glyphicon-time" title="最后修改"></i> <s:date name="#thumbnail.updateTime" format="yyyy.MM.dd hh:mm:ss" /></small></p>
+				<p><small class="text-muted"><i class="glyphicon glyphicon-time" title="最后修改"></i> <s:date name="#thumbnail.updateTime" format="yyyy.MM.dd HH:mm:ss" /></small></p>
 			</div>
 			<div class="timeline-body">
 				<s:property value="#thumbnail.thumbnail" />
