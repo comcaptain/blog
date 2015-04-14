@@ -70,7 +70,9 @@ MdEditor.prototype = {
 					editor.wrapSelection(event, "`");
 				}
 				else {
-					editor.toggleSelectionIndent("    ", event);
+					editor.toggleSelectionIndent("", event);
+					var preLineIndent = editor.getPrevLineIndent();
+					editor.wrapSelection(event, preLineIndent + "```\n", "\n" + preLineIndent + "```");
 				}
 			}
 			//ctrl shift b
@@ -88,6 +90,10 @@ MdEditor.prototype = {
 			//ctrl d
 			else if (event.keyCode == 68 && event.ctrlKey) {
 				editor.deleteSelection(event);
+			}
+			//shift tab
+			else if (event.keyCode == 9 && event.shiftKey) {
+				editor.clearIndent(event);
 			}
 		});
 	},
@@ -110,6 +116,20 @@ MdEditor.prototype = {
 		var higherSelectionBound = this.content.selectionEnd;
 		return this.content.value.substring(lowerSelectionBound, higherSelectionBound);
 	},
+	clearIndent: function(event) {
+		event.preventDefault();
+		var text = this.content.value;
+		var bounds = this.extendSelectionToFullLines(this.content.selectionStart, this.content.selectionEnd);
+		var lowerBound = bounds.lowerBound;
+		var upperBound = bounds.upperBound;
+		var selectedLines = text.substring(lowerBound, upperBound);
+		if (text.substring(this.content.selectionStart, this.content.selectionEnd).indexOf("\n") < 0) {
+			var matches = selectedLines.match(/^(\s*)((?:(?:\d+\.)|-|\+|\*) +)?/);
+			if (!matches || !matches[0]) return;
+			this.content.setSelectionRange(lowerBound, lowerBound + matches[0].length);
+			document.execCommand('delete', false, undefined);
+		}
+	},
 	onEnter: function(event) {
 		var textValue = this.content.value;
 		var lowerSelectionBound = this.content.selectionStart;
@@ -122,14 +142,17 @@ MdEditor.prototype = {
 			}
 			lineStart--;
 		}
-		var listMatches = textValue.substring(lineStart, lowerSelectionBound).match(/^(\s*)((?:(?:\d+\.)|-|\+|\*) )/);
-		if (listMatches) {
+		var matches = textValue.substring(lineStart, lowerSelectionBound).match(/^(\s*)((?:(?:\d+\.)|-|\+|\*) )?/);
+		if (matches) {
 			event.preventDefault();
-			var listSign = listMatches[2];
-			if (listSign.match(/^\d+\. $/)) {
-				listSign = parseInt(listSign.substring(0, listSign.length - 1)) + 1 + ". ";
+			var insertValue = "\n" + matches[1];
+			if (matches.length > 2 && matches[2] != undefined) {
+				var listSign = matches[2];
+				if (listSign.match(/^\d+\. $/)) {
+					listSign = parseInt(listSign.substring(0, listSign.length - 1)) + 1 + ". ";
+				}
+				insertValue += listSign;
 			}
-			var insertValue = "\n" + listMatches[1] + listSign;
 			if (document.queryCommandSupported('insertText')) {
 				document.execCommand('insertText', false, insertValue);
 			}
@@ -140,31 +163,33 @@ MdEditor.prototype = {
 			}
 		}
 	},
+	generateSpaces: function(count) {
+		var result = "";
+		for (var i = 0; i < count; i++) result += " ";
+		return result;
+	},
 	toggleSelectionIndent: function(indentText, event) {
 		if (document.queryCommandSupported('forwardDelete') && document.queryCommandSupported('insertText')) {
 			var text = this.content.value;
-			var lowerSelectionBound = this.content.selectionStart;
-			var higherSelectionBound = this.content.selectionEnd;
+			var extendedBounds = this.extendSelectionToFullLines(this.content.selectionStart, this.content.selectionEnd);
+			var lowerSelectionBound = extendedBounds.lowerBound;
+			var higherSelectionBound = extendedBounds.upperBound;
 			event.preventDefault();
-			while (lowerSelectionBound > 0) {
-				if (text.charAt(lowerSelectionBound - 1) == '\n') {
-					break;
-				}
-				lowerSelectionBound--;
-			}
 			var selectedLines = text.substring(lowerSelectionBound, higherSelectionBound);
 			var lineMatch = selectedLines.match(/\n/g);
-			var lineCount = (lineMatch ? lineMatch.length : 0) + 1;
-			var indentMatch = selectedLines.match(new RegExp("(?:\n|^)" + indentText,"g"));
-			var indentCount = indentMatch ? indentMatch.length : 0;
+			var lineCount = (lineMatch ? lineMatch.length : 0) + (selectedLines.match(/\n$/) ? 0 : 1);
+			var preLineIndent = this.getPrevLineIndent();
+			var indentMatch = selectedLines.match(new RegExp("(?:\n|^)" + preLineIndent + indentText,"g"));
+			var wellIndentedCount = indentMatch ? indentMatch.length : 0;
 			//delete mode
-			if (lineCount == indentCount) {
+			if (lineCount == wellIndentedCount) {
+				if (indentText.length == 0) return;
 				var isLineStart = true;
 				var indexDiff = 0;
 				for (var i = lowerSelectionBound; i == lowerSelectionBound || i < higherSelectionBound; i++) {
 					if (isLineStart) {
-						this.content.setSelectionRange(i - indexDiff , i - indexDiff);
-						for (var j = 0; j < indentText.length; j++) document.execCommand('forwardDelete', false, undefined);
+						this.content.setSelectionRange(i + preLineIndent.length - indexDiff , i + preLineIndent.length + indentText.length - indexDiff);
+						document.execCommand('delete', false, undefined);
 						isLineStart = false;
 						indexDiff += indentText.length;
 					}
@@ -176,6 +201,17 @@ MdEditor.prototype = {
 			}
 			//indent mode
 			else {
+				var selectedIndentMatches = selectedLines.match(/(\n|^)\s*/g);
+				var minimumIndentLength = selectedLines.length;
+				for (var i = 0; i < selectedIndentMatches.length; i ++) {
+					var match = selectedIndentMatches[i];
+					if (match.charAt(0) == "\n") match = match.substring(1);
+					if (match.length < minimumIndentLength) minimumIndentLength = match.length;
+				}
+				var indentDiff = preLineIndent.length - minimumIndentLength;
+				for (var i = 0; i < indentDiff; i++) {
+					indentText = " " + indentText;
+				}
 				var isLineStart = true;
 				var indexDiff = 0;
 				for (var i = lowerSelectionBound; i == lowerSelectionBound || i < higherSelectionBound; i++) {
@@ -207,29 +243,87 @@ MdEditor.prototype = {
 			this.content.setSelectionRange(lowerBound, upperBound + wrapString.length + (wrapString2 ? wrapString2 : wrapString).length);
 		}
 	},
+	extendSelectionToFullLines: function(lowerBound, upperBound) {
+		if (lowerBound > upperBound) {
+			var temp = lowerBound;
+			lowerBound = upperBound;
+			upperBound = temp;
+		}
+		var text = this.content.value;
+		if (text.charAt(lowerBound) == '\n') {
+			lowerBound--;
+		}
+		while (lowerBound > 0) {
+			if (text.charAt(lowerBound) == '\n') {
+				lowerBound++;
+				break;
+			}
+			lowerBound--;
+		}
+		while (upperBound < text.length) {
+			if (text.charAt(upperBound) == '\n') {
+				upperBound++;
+				break;
+			}
+			upperBound++;
+		}
+		return {lowerBound: lowerBound, upperBound: upperBound}
+	},
+	getLine: function(index) {
+		var bounds = this.extendSelectionToFullLines(index, index);
+		return this.content.value.substring(bounds.lowerBound, bounds.upperBound);
+	},
+	getPrevLineIndent: function(index) {
+		if (index == undefined) index = this.getSelectionLowerBound();
+		var preLine = this.getPrevLine(index);
+		var length = preLine.match(/^( *)((?:(?:\d+\.)|-|\+|\*) )?/)[0].length;
+		return this.generateSpaces(length);
+	},
+	getPrevLine: function(index) {
+		var text = this.content.value;
+		var upperBound = index;
+		var char = text.charAt(upperBound);
+		while (char != "\n" && upperBound > 0) {
+			upperBound--;
+			char = text.charAt(upperBound);
+		}
+		if (upperBound == 0) return 0;
+		var lowerBound = upperBound - 1;
+		char = text.charAt(lowerBound);
+		while (char != "\n" && lowerBound > 0) {
+			lowerBound--;
+			char = text.charAt(lowerBound)
+		}
+		if (lowerBound != 0) lowerBound++;
+		return text.substring(lowerBound, upperBound);
+	},
+	getIndexRowCol: function(index) {
+		var text = this.content.value;
+		var lineBreakCount = 0;
+		var colNo = 0;
+		for (var i = 0; i < index; i++) {
+			colNo++;
+			if (text.charAt(i) === "\n") {
+				lineBreakCount++;
+				colNo = 0;
+			}
+		}
+		return {
+			rowNo: lineBreakCount + 1,
+			colNo: colNo
+		};
+	},
+	getSelectionLowerBound: function() {
+		var lowerBound = this.content.selectionStart;
+		var higherBound = this.content.selectionEnd;
+		return lowerBound < higherBound ? lowerBound : higherBound;
+	},
 	deleteSelection: function(event) {
 		if (document.queryCommandSupported('forwardDelete')) {
 			event.preventDefault();
-			var lowerBound = this.content.selectionStart;
-			var upperBound = this.content.selectionEnd;
-			var text = this.content.value;
-			if (text.charAt(lowerBound) == '\n') {
-				lowerBound--;
-			}
-			while (lowerBound > 0) {
-				if (text.charAt(lowerBound) == '\n') {
-					lowerBound++;
-					break;
-				}
-				lowerBound--;
-			}
-			while (upperBound < text.length) {
-				if (text.charAt(upperBound) == '\n') {
-					upperBound++;
-					break;
-				}
-				upperBound++;
-			}
+			var extendedBounds = this.extendSelectionToFullLines(this.content.selectionStart, this.content.selectionEnd);
+			var lowerBound = extendedBounds.lowerBound;
+			var upperBound = extendedBounds.upperBound;
 			this.content.setSelectionRange(lowerBound, upperBound);
 			document.execCommand('forwardDelete', false, undefined);
 		}
@@ -252,20 +346,14 @@ MdEditor.prototype = {
 		this.updateContentInCache();
 		this.hashCode = hashCode(this.title.value + this.content.value);
 	},
+	getCursorIndex: function() {
+		return (this.content.selectionDirection === "forward" ? this.content.selectionStart : this.content.selectionEnd);
+	},
 	updateCursorPosition: function() {
-		var text = this.content.value;
-		var cursorIndex = (this.content.selectionDirection === "forward" ? this.content.selectionStart : this.content.selectionEnd);
-		var lineBreakCount = 0;
-		var colNo = 0;
-		for (var i = 0; i < cursorIndex; i++) {
-			colNo++;
-			if (text.charAt(i) === "\n") {
-				lineBreakCount++;
-				colNo = 0;
-			}
-		}
-		this.rowNo = lineBreakCount + 1;
-		this.colNo = colNo;
+		var cursorIndex = this.getCursorIndex();
+		var position = this.getIndexRowCol(cursorIndex);
+		this.rowNo = position.rowNo;
+		this.colNo = position.colNo;
 	},
 	autoHeightHandler: function() {
 		var matches = this.content.value.match(/\n/g);
