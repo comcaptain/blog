@@ -22,6 +22,10 @@ body {
 	outline: none;
 	border: 0;
 	resize: none;
+	z-index: 10;
+}
+#content.dragover {
+	border: 5px dashed silver;
 }
 #left, #right {
 	min-height: 100%;

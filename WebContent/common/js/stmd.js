@@ -1033,7 +1033,7 @@ var renderNodes = function(block) {
             if (entering) {
                 if (disableTags === 0) {
                     out('<img src="' + esc(node.destination, true) +
-                        '" alt="');
+                        '" ' + (node.dataUrlSourceId != undefined ? 'dataUrlSourceId = "' + node.dataUrlSourceId + '"' : '') + ' alt="');
                 }
                 disableTags += 1;
             } else {
@@ -4302,6 +4302,11 @@ Object.defineProperty(proto, 'literal', {
 Object.defineProperty(proto, 'destination', {
     get: function() { return this._destination; },
     set: function(s) { this._destination = s; }
+});
+
+Object.defineProperty(proto, 'dataUrlSourceId', {
+    get: function() { return this._dataUrlSourceId; },
+    set: function(s) { this._dataUrlSourceId = s; }
 });
 
 Object.defineProperty(proto, 'title', {

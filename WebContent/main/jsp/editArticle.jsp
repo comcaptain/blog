@@ -35,8 +35,8 @@ var updateTime = '<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /
 	</div>
 	<div id="right" class="col-md-6">
 		<div id="preview">
-		<h1 id="title_preview"></h1>
-		<div id="content_preview"></div>
+		<h1 id="title_preview"><s:property value="model.title"/></h1>
+		<div id="content_preview"><s:property escape="false" value="model.content"/></div>
 		</div>
 	</div>
 </body>
