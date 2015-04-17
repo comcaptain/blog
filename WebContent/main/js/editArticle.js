@@ -51,6 +51,20 @@ MdEditor.prototype = {
 			editor.dataUrlMap[this.getAttribute("dataUrlSourceId")] = this.getAttribute("src");
 		});
 	},
+	insertImage: function(imageFile) {
+		var editor = this;
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var imageDataUrl = e.target.result;
+			if (editor.maxDataUrlId == undefined) editor.maxDataUrlId = 0;
+			editor.maxDataUrlId++;
+			if (editor.dataUrlMap == undefined) editor.dataUrlMap = {};
+			editor.dataUrlMap[editor.maxDataUrlId] = imageDataUrl;
+			editor.insertAtCursor('![pygmalion-image](' + editor.imagePrefix + editor.maxDataUrlId + ')');
+			editor.onChange();
+		};
+		reader.readAsDataURL(imageFile);
+	},
 	bindEvents: function() {
 		var editor = this;
 		window.onbeforeunload = function() {
@@ -58,6 +72,15 @@ MdEditor.prototype = {
 				return "有未保存的修改，确定离开吗？";
 			}
 		}
+		this.content.addEventListener("paste", function(event) {
+			var files = event.clipboardData.items;
+			Array.prototype.forEach.call(files, function(file) {
+				if (file.type.indexOf("image") < 0)
+					return;
+				file = file.getAsFile();
+				editor.insertImage(file);
+			});
+		});
 		this.$content.on("click paste mouseup keyup cut", $.proxy(function() {
 			this.onChange();
 		}, editor));
@@ -92,17 +115,7 @@ MdEditor.prototype = {
 			for (var i = 0; i < files.length; i++) {
 				var file = files[i];
 				if (file.type.indexOf("image") < 0) continue;
-				var reader = new FileReader();
-				reader.onload = function(e) {
-					var imageDataUrl = e.target.result;
-					if (editor.maxDataUrlId == undefined) editor.maxDataUrlId = 0;
-					editor.maxDataUrlId++;
-					if (editor.dataUrlMap == undefined) editor.dataUrlMap = {};
-					editor.dataUrlMap[editor.maxDataUrlId] = imageDataUrl;
-					editor.insertAtCursor('![pygmalion-image](' + editor.imagePrefix + editor.maxDataUrlId + ')');
-					editor.onChange();
-				};
-				reader.readAsDataURL(file);
+				editor.insertImage(file);
 			}
 		})
 		this.$content.on("keydown", function(event) {

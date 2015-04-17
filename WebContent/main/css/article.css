@@ -21,7 +21,9 @@
 	padding-bottom: 62px;
 	overflow-x: hidden;
 }
-
+#content img {
+	max-width: 800px;
+}
 #timeBox {
 	text-align: right;
 	position: absolute;
