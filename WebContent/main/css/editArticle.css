@@ -18,11 +18,10 @@ body {
 #content {
 	width: 100%;
 	outline: none;
-	min-height: 520px;
+	height: calc(100% - 70px);
 	outline: none;
 	border: 0;
 	resize: none;
-	z-index: 10;
 }
 #content.dragover {
 	border: 5px dashed silver;
@@ -49,7 +48,7 @@ body {
 	padding-left: 20px;
 }
 #preview {
-	height: 600px;
+	height: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
