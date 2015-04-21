@@ -294,7 +294,7 @@ MdEditor.prototype = {
 		var upperBound = this.content.selectionEnd;
 		this.content.setSelectionRange(lowerBound, lowerBound);
 		document.execCommand('insertText', false, wrapString);
-		this.content.setSelectionRange(upperBound + wrapString.length, upperBound + wrapString.length);
+		this.content.setSelectionRange(upperBound + wrapString.length - 1, upperBound + wrapString.length - 1);
 		document.execCommand('insertText', false, wrapString2 ? wrapString2 : wrapString);
 		this.content.setSelectionRange(lowerBound, upperBound + wrapString.length + (wrapString2 ? wrapString2 : wrapString).length);
 	},
