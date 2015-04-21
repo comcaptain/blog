@@ -14,7 +14,18 @@
 	<s:include value="/common/jsp/navigation.jsp">
 		<s:param name="extraClass">vertical-navigation</s:param>
 	</s:include>
-	<img id="headImage" src="<s:url value="main/images/head.jpg" />" />
+	<div id="flipSensor"></div>
+	<section id="flipContainer">
+	<div id="imageFlipper">
+		<img id="headImage" class="front" src="<s:url value="main/images/head.jpg" />" />
+		<div class="back">
+			<div id="backContent" class="container">
+				<p>Author: Sun Guoqiang</p>
+				<p>Email: master@pygmalion.click</p>
+			</div>
+		</div>
+	</div>
+	</section>
 </div>
 <div class="container" id="container">
 <ul class="timeline">

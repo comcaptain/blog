@@ -12,3 +12,42 @@
 .timeline {
 	min-height: 78vh;
 }
+#flipSensor {
+	position: absolute;
+	width: 30%;
+	height: 133px;
+	left: 35%;
+	z-index: 100;
+}
+#flipContainer {
+	perspective: 600px;
+	position: relative;
+	z-index: 1;
+}
+#flipSensor:hover + #flipContainer #imageFlipper {
+	transform: rotateY(180deg)
+}
+#imageFlipper {
+	transition: transform 1s;
+	transform-style: preserve-3d;
+}
+#imageFlipper > * {
+	backface-visibility: hidden;
+}
+#imageFlipper .back {
+	position: absolute;
+	transform: rotateY(180deg);
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	color: white;
+}
+#backContent  {
+	font-size: 20px;
+	padding: 20px 0 0 0;
+}
+
+#navigation {
+	z-index: 10;
+}
