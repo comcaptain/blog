@@ -47,9 +47,13 @@ MdEditor.prototype = {
 	rebuildDataUrlMap: function() {
 		this.dataUrlMap = {};
 		var editor = this;
+		var max = 0;
 		this.$contentPreview.find("img[dataUrlSourceId]").each(function() {
-			editor.dataUrlMap[this.getAttribute("dataUrlSourceId")] = this.getAttribute("src");
+			var sourceId = parseInt(this.getAttribute("dataUrlSourceId"));
+			editor.dataUrlMap[sourceId] = this.getAttribute("src");
+			if (sourceId > max) max = sourceId;
 		});
+		this.maxDataUrlId = max;
 	},
 	insertImage: function(imageFile) {
 		var editor = this;
