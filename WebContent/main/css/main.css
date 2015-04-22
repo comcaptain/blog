@@ -43,6 +43,12 @@
 	top: 0;
 	left: 0;
 	color: white;
+	display: none;
+}
+@supports (backface-visibility: hidden) {
+	#imageFlipper .back {
+		display: block;
+	}
 }
 #backContent  {
 	font-size: 20px;
