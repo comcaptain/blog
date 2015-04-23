@@ -276,21 +276,21 @@ MdEditor.prototype = {
 			}
 			var isLineStart = true;
 			var indexDiff = 0;
-				for (var i = lowerSelectionBound; i == lowerSelectionBound || i < higherSelectionBound; i++) {
-					if (isLineStart) {
-						this.content.setSelectionRange(i + indexDiff , i + indexDiff);
-						document.execCommand('insertText', false, indentText);
-						isLineStart = false;
-						indexDiff += indentText.length;
-					}
-					if (text.charAt(i) == "\n") {
-						isLineStart = true;
-					}
+			for (var i = lowerSelectionBound; i == lowerSelectionBound || i < higherSelectionBound; i++) {
+				if (isLineStart) {
+					this.content.setSelectionRange(i + indexDiff , i + indexDiff);
+					document.execCommand('insertText', false, indentText);
+					isLineStart = false;
+					indexDiff += indentText.length;
 				}
-				higherSelectionBound += indexDiff;
+				if (text.charAt(i) == "\n") {
+					isLineStart = true;
+				}
 			}
-			//recover selection range
-			this.content.setSelectionRange(lowerSelectionBound, higherSelectionBound);
+			higherSelectionBound += indexDiff;
+		}
+		//recover selection range
+		this.content.setSelectionRange(lowerSelectionBound, higherSelectionBound);
 	},
 	wrapSelection: function(event, wrapString, wrapString2) {
 		event.preventDefault();
@@ -298,7 +298,7 @@ MdEditor.prototype = {
 		var upperBound = this.content.selectionEnd;
 		this.content.setSelectionRange(lowerBound, lowerBound);
 		document.execCommand('insertText', false, wrapString);
-		this.content.setSelectionRange(upperBound + wrapString.length - 1, upperBound + wrapString.length - 1);
+		this.content.setSelectionRange(upperBound + wrapString.length, upperBound + wrapString.length);
 		document.execCommand('insertText', false, wrapString2 ? wrapString2 : wrapString);
 		this.content.setSelectionRange(lowerBound, upperBound + wrapString.length + (wrapString2 ? wrapString2 : wrapString).length);
 	},
@@ -321,7 +321,6 @@ MdEditor.prototype = {
 		}
 		while (upperBound < text.length) {
 			if (text.charAt(upperBound) == '\n') {
-				upperBound++;
 				break;
 			}
 			upperBound++;
@@ -335,6 +334,7 @@ MdEditor.prototype = {
 	getPrevLineIndent: function(index) {
 		if (index == undefined) index = this.getSelectionLowerBound();
 		var preLine = this.getPrevLine(index);
+		if (preLine == undefined || preLine.length == 0) return "";
 		var length = preLine.match(/^( *)((?:(?:\d+\.)|-|\+|\*) )?/)[0].length;
 		return this.generateSpaces(length);
 	},
@@ -346,7 +346,7 @@ MdEditor.prototype = {
 			upperBound--;
 			char = text.charAt(upperBound);
 		}
-		if (upperBound == 0) return 0;
+		if (upperBound == 0) return;
 		var lowerBound = upperBound - 1;
 		char = text.charAt(lowerBound);
 		while (char != "\n" && lowerBound > 0) {
@@ -382,7 +382,7 @@ MdEditor.prototype = {
 		var extendedBounds = this.extendSelectionToFullLines(this.content.selectionStart, this.content.selectionEnd);
 		var lowerBound = extendedBounds.lowerBound;
 		var upperBound = extendedBounds.upperBound;
-		this.content.setSelectionRange(lowerBound, upperBound);
+		this.content.setSelectionRange(lowerBound, upperBound + 1);//uppserBound + 1 to delete \n
 		document.execCommand('forwardDelete', false, undefined);
 	},
 	onCursorChange: function() {
