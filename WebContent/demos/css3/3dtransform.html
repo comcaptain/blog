@@ -1,20 +1,19 @@
 <html>
 <head>
-	<title>3D tranform</title>
-	<style type="text/css" id="injectCss"></style>
+	<title>to do list</title>
 	<link rel="stylesheet" type="text/css" href="3dtransform.css">
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 	<script type="text/javascript" src="3dtransform.js"></script>
+	<style type="text/css" id="injectCss"></style>
 </head>
 <body>
 <section id="controller">
-	number: <input id="number" type="text" value="64" />
-	duration: <input id="duration" type="text" value="18" />
-	<button id="toggle">toggle pause</button>
-	<button id="start">start</button>
+	task count: <input id="taskCount" type="text" value="100" />
+	<input type="button" id="start" value="start" />
+	<input type="button" id="toggle" value="toggle" />
 </section>
 <section id="container">
-	<div id="circle">
+	<div id="circle" class="animate">
 	</div>
 </section>
 </body>

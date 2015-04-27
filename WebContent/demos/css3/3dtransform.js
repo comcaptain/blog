@@ -1,61 +1,103 @@
-var index = 1;
-var num = 100;
-var unitAngle = 360 / num;;
-var width = 50;
-var distance = width / 2 / Math.tan(unitAngle / 180 * Math.PI / 2);
-function showIndex(index) {
-	var transform = 'rotate3d(1, -1, 0, -45deg) rotateY(' + (-(index - 1) * unitAngle) + 'deg) translateZ(-' + distance + 'px)';
-	$("#circle").css("transform", transform);
-	$("#circle").css("transition", "transform 3s");
-}
 function getRandomColor(opacity) {
 	if (opacity == undefined) opacity = 0.3;
 	return 'rgba(' + parseInt(Math.random() * 256) + ', ' + parseInt(Math.random() * 256) + ', ' + parseInt(Math.random() * 256) + ', ' + opacity + ')';
 }
-function initCircle(container, circle) {
-	circle.style.transformOrigin = "center center -" + distance + "px";
-	for (var i = 1; i <= num; i++) {
+function calcParameters(count) {
+	var data = loadData();
+	var statusMap = {};
+	if (data && data.count == count) {
+		statusMap = data.statusMap;
+	}
+	var unitAngle = 360 / count;
+	var width = 60;
+	var distance = width / 2 / Math.tan(unitAngle / 180 * Math.PI / 2);
+	var result = {
+		count: count,
+		unitAngle: unitAngle,
+		distance: distance,
+		statusMap: statusMap,
+		overallRotate: 'rotate3d(1, 0, 0, -10deg)'
+	}
+	return result;
+}
+function initCircle(circle, count) {
+	window.parameters = calcParameters(count);
+	save(parameters);
+	pause(circle);
+	circle.innerHTML = "";
+	circle.style.webkitAnimationDuration = (0.5 * count) + "s";
+	circle.style.transformOrigin = "center center -" + parameters.distance + "px";
+	var statusMap = parameters.statusMap;
+	for (var i = 1; i <= count; i++) {
 		var slide = document.createElement("figure");
-		slide.style.transform = 'rotateY(' + ((i - 1) * unitAngle) + 'deg) translateZ(' + distance + 'px)';
+		slide.style.transform = 'rotateY(' + ((i - 1) * parameters.unitAngle) + 'deg) translateZ(' + parameters.distance + 'px)';
 		slide.textContent = i;
+		if (statusMap[i] == 1) {
+			slide.setAttribute("class", "completed");
+		}
 		slide.style.background = getRandomColor(0.7);
 		circle.appendChild(slide);
 	}
-}
-function initKeyFrames() {
 	var css = '@-webkit-keyframes roll {\n';
-	css += "from {transform:" + 'rotate3d(1, -1, 0, -45deg) rotateY(0deg) translateZ(-' + distance + 'px)' + "}\n";
-	css += "to {transform:" + 'rotate3d(1, -1, 0, -45deg) rotateY(360deg) translateZ(-' + distance + 'px)' + "}\n";
+	css += "from {transform:" + parameters.overallRotate + ' rotateY(0deg) translateZ(-' + parameters.distance + 'px)' + "}\n";
+	css += "to {transform:" + parameters.overallRotate + ' rotateY(360deg) translateZ(-' + parameters.distance + 'px)' + "}\n";
 	css += "}";
 	document.getElementById("injectCss").innerHTML = css;
+	return circle;
 }
-function restart() {
-	index = 1;
-	num = parseInt($("#number").val());
-	unitAngle = 360 / num;;
-	width = 50;
-	distance = width / 2 / Math.tan(unitAngle / 180 * Math.PI / 2);
-	document.getElementById("circle").innerHTML = "";
-	var circle = document.getElementById("circle");
-	initCircle(document.getElementById("container"), circle);
-	circle.style.webkitAnimationDuration = $("#duration").val() + "s";
-	initKeyFrames();
-	showIndex(index);
+function start(circle) {
+	circle.style.webkitAnimationPlayState = "running";
+}
+function pause(circle) {
+	circle.style.webkitAnimationPlayState = "paused";
+}
+function loadData() {
+	var data = localStorage.getItem("todolistData");
+	if (data == null) return {};
+	data = JSON.parse(data);
+	return data;
+}
+function saveData(data) {
+	localStorage.setItem("todolistData", JSON.stringify(data));
+}
+function save(p) {
+	if (p == undefined) p = window.parameters;
+	saveData({
+		count: p.count,
+		statusMap: p.statusMap
+	});
 }
 $(document).ready(function() {
-	restart();
-		$("#circle").addClass("animate");
-	$("#toggle").click(function() {
-		var circle = document.getElementById("circle");
-		if (circle.style.webkitAnimationPlayState == "paused") {
-			circle.style.webkitAnimationPlayState = "running";
+	var circle = document.getElementById("circle");
+	$("#start").click(function() {
+		initCircle(circle, parseInt($("#taskCount").val()));
+		start(circle);
+	});
+	$(circle).on("click", "figure", function() {
+		var id = this.textContent;
+		var $this = $(this);
+		if ($this.hasClass("completed")) {
+			window.parameters.statusMap[id] = 0;
+			$this.removeClass("completed");
 		}
 		else {
-			circle.style.webkitAnimationPlayState = "paused";
+			window.parameters.statusMap[id] = 1;
+			$this.addClass("completed");
+		}
+		save();
+	});
+	$("#toggle").click(function() {
+		if (circle.style.webkitAnimationPlayState == "paused") {
+			start(circle);
+		}
+		else {
+			pause(circle);
 		}
 	});
-	$("#start").click(function() {
-		restart();
-		$("#circle").addClass("animate");
-	});
+	var data = loadData();
+	if (data) {
+		var count = parseInt(data.count);
+		if (!isNaN(count)) $("#taskCount").val(count);
+		$("#start").click();
+	}
 });
