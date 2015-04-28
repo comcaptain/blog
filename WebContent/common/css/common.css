@@ -38,7 +38,14 @@ blockquote {
 	line-height: 30px;
 	color: white;
 	font-size: 20px;
+	text-shadow: 3px 2px 2px rgb(70, 64, 64);
 }
+.vertical-navigation li span:active {
+	position: relative;
+	left: 3px;
+	text-shadow: none;
+}
+
 .navigation-item {
 	cursor: pointer;
 }
@@ -54,6 +61,12 @@ blockquote {
 }
 .horizontal-navigation li span {
 	color: white;
+	text-shadow: 3px 1px 2px rgba(71, 64, 64, 0.7);
+}
+.horizontal-navigation li span:active {
+	position: relative;
+	left: 3px;
+	text-shadow: none;
 }
 #globalAlert {
 	position: fixed;
