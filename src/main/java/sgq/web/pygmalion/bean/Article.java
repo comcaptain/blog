@@ -12,6 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.struts2.json.annotations.JSON;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
+import sgq.web.pygmalion.enums.PublicStatusEnum;
 
 @Entity
 @Table(name="article")
@@ -27,8 +31,13 @@ public class Article {
 	private String markdown;
 	@Column(name="thumbnail")
 	private String thumbnail;
-	@Column(name="published")
-	private boolean published;
+	@Type(type="sgq.web.pygmalion.enums.EnumUserType",
+			parameters={
+				@Parameter(name="enumClass",value="sgq.web.pygmalion.enums.PublicStatusEnum"),
+		    }
+		)
+	@Column(name="public_status")
+	private PublicStatusEnum publicStatus;
 	@Column(name="create_time")
 	private Date createTime;
 	@Column(name="update_time")
@@ -97,10 +106,10 @@ public class Article {
 	public void setMarkdown(String markdown) {
 		this.markdown = markdown;
 	}
-	public boolean isPublished() {
-		return published;
+	public PublicStatusEnum getPublicStatus() {
+		return publicStatus;
 	}
-	public void setPublished(boolean published) {
-		this.published = published;
+	public void setPublicStatus(PublicStatusEnum publicStatus) {
+		this.publicStatus = publicStatus;
 	}
 }

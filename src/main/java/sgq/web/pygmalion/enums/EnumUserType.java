@@ -31,7 +31,7 @@ public class EnumUserType implements UserType, ParameterizedType {
 	 * three parameters are needed
 	 * 1. enumClass: necessary
 	 * 2. identifierMethod: optional, default is identifier. Its return type is the type of the corresponding column
-	 * 3. valueOfMethod: optional, default is valueOf. Its parameter type is return type of identifierMethod
+	 * 3. valueOfMethod: optional, default is getEnum. Its parameter type is return type of identifierMethod
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override

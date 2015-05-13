@@ -42,37 +42,6 @@ function loginHandler(event) {
 	});
 }
 $(document).ready(function() {
-	$(document).on("click", "a.confirm", function(event) {
-		event.preventDefault();
-		if (confirm("你确定要" + this.getAttribute("title") + "吗？")) {
-			window.location.href = this.getAttribute("href");
-		}
-	});
-	$("#publishArticle").on("click", function(event) {
-		var $link = $(this);
-		var articleId = $link.attr("articleId");
-		if (!confirm("你确定要" + this.getAttribute("title") + "吗？")) {
-			return false;
-		}
-		$.ajax({
-			url: "ajax/publishArticle",
-			method: "POST",
-			cache: false,
-			data: {
-				articleId: articleId
-			},
-			success: function(data) {
-				if (data.published) {
-					$link.find(".glyphicon").addClass("marked");
-					$link.attr("title", "取消发表");
-				}
-				else {
-					$link.find(".glyphicon").removeClass("marked");
-					$link.attr("title", "发表");
-				}
-			}
-		});
-	});
 	$(document).on("keydown", function(event) {
 		//ctrl shift l
 		if (event.keyCode == 76 && event.shiftKey && event.ctrlKey) {

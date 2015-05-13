@@ -3,6 +3,7 @@ package sgq.web.pygmalion.action;
 import sgq.web.pygmalion.annotation.LoginProtected;
 import sgq.web.pygmalion.bean.Article;
 import sgq.web.pygmalion.enums.PrivilegeEnum;
+import sgq.web.pygmalion.enums.PublicStatusEnum;
 import sgq.web.pygmalion.exception.PrivilegeException;
 import sgq.web.pygmalion.model.ArticleModel;
 import sgq.web.pygmalion.service.ArticleService;
@@ -22,8 +23,16 @@ public class ArticleAction extends BaseAction implements ModelDriven<ArticleMode
 	
 	public String display() throws PrivilegeException {
 		Article article = this.articleService.getArticleById(this.id);
-		if (!article.isPublished() && (!SessionUtil.isLoggedIn() || article.getAuthor().getUserId() != SessionUtil.getCurrentUserId())) {
-			if (!SessionUtil.getRole().containsPrivilege(PrivilegeEnum.EDIT_ARTICLE)) {
+		//if article is private, and the owner is not logged in
+		if (article.getPublicStatus() == PublicStatusEnum.PRIVATE) {
+			boolean checkPassed = true;
+			if (!SessionUtil.isLoggedIn()) {
+				checkPassed = false;
+			}
+			else if (SessionUtil.getCurrentUserId() != article.getAuthor().getUserId() && !SessionUtil.getRole().containsPrivilege(PrivilegeEnum.EDIT_ARTICLE)) {
+				checkPassed = false;
+			}
+			if (!checkPassed) {
 				throw new PrivilegeException((SessionUtil.isLoggedIn() ? SessionUtil.getCurrentUserId() : "anonymous") + " wants to illegally visit article " + this.id);
 			}
 		}
@@ -50,8 +59,8 @@ public class ArticleAction extends BaseAction implements ModelDriven<ArticleMode
 		return SUCCESS;
 	}
 	@LoginProtected
-	public String togglePublish() throws PrivilegeException {
-		this.setModel(this.articleService.togglePublish(article.getArticleId()));
+	public String updatePublicStatus() throws PrivilegeException {
+		this.setModel(this.articleService.updatePublicStatus(article.getArticleId(), article.getEnumPublicStatus()));
 		return SUCCESS;
 	}
 

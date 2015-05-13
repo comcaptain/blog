@@ -20,6 +20,7 @@
 	font-size: 16px;
 	padding-bottom: 62px;
 	overflow-x: hidden;
+	z-index: 10;
 }
 #content img {
 	max-width: 800px;

@@ -16,8 +16,8 @@
 		<s:param name="showCreate"><s:property value="model.creatable" /></s:param>
 		<s:param name="showEdit"><s:property value="model.editable" /></s:param>
 		<s:param name="showDelete"><s:property value="model.deletable" /></s:param>
-		<s:param name="showPublish"><s:property value="model.publishable" /></s:param>
-		<s:param name="isPublished"><s:property value="model.published" /></s:param>
+		<s:param name="publishable"><s:property value="model.publishable" /></s:param>
+		<s:param name="publicStatus"><s:property value="model.publicStatus" /></s:param>
 	</s:include>
 	<h1 id="title"><s:property value="model.title" /></h1>
 	<div id="author"><s:property value="model.author.userName" /></div>

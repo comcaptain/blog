@@ -29,18 +29,21 @@ blockquote {
 	list-style-type: none;
 	position: fixed;
 	top: 5px;
+	z-index: 12;
 }
-.vertical-navigation li {
+.vertical-navigation > li {
 	height: 40px;
 	width: 50px;
+	position: relative;
 }
-.vertical-navigation li span {
+.vertical-navigation > li span {
 	line-height: 30px;
 	color: white;
 	font-size: 20px;
 	text-shadow: 3px 2px 2px rgb(70, 64, 64);
+	line-height: 40px;
 }
-.vertical-navigation li span:active {
+.vertical-navigation > li span:active {
 	position: relative;
 	left: 3px;
 	text-shadow: none;
@@ -75,6 +78,44 @@ blockquote {
 	width: 60%;
 	font-size: 25px;
 }
-.glyphicon.marked {
+#updatePublicStatus.published span {
 	color: rgb(162, 250, 132);
+}
+
+#updatePublicStatus.public span {
+	color: rgb(224, 145, 246);
+}
+
+.horizontalPopup {
+	list-style: none;
+	padding: 0;
+	position: absolute;
+	left: 33px;
+	top: 0;
+	height: 40px;
+	line-height: 40px;
+	width: 120px;
+	display: none;
+	transition: opacity .3s;
+	opacity: 0;
+}
+.horizontalPopup.fadeIn {
+	opacity: 1;
+}
+.horizontalPopup li {
+	display: inline-block;
+	padding: 0 10px;
+	width: auto;
+	height: 30px;
+	line-height: 30px;
+	margin-top: 5px;
+	text-align: center;
+	border-radius: 3px;
+	background: linear-gradient(to bottom,#727476,#484646);
+	color: white;
+	cursor: pointer;
+	margin-right: 3px;
+}
+.horizontalPopup li:hover {
+	background: linear-gradient(to bottom, #2d2f32, #1a1a1a);
 }

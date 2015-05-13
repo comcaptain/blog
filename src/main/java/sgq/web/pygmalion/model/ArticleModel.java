@@ -5,6 +5,7 @@ import java.util.Date;
 import sgq.web.pygmalion.bean.Article;
 import sgq.web.pygmalion.bean.User;
 import sgq.web.pygmalion.enums.PrivilegeEnum;
+import sgq.web.pygmalion.enums.PublicStatusEnum;
 import sgq.web.pygmalion.util.SessionUtil;
 
 public class ArticleModel {
@@ -16,7 +17,7 @@ public class ArticleModel {
 	private Date createTime;
 	private Date updateTime;
 	private User author;
-	private boolean published;
+	private PublicStatusEnum publicStatus;
 	public ArticleModel() {
 		
 	}
@@ -32,7 +33,7 @@ public class ArticleModel {
 		this.updateTime = article.getUpdateTime();
 		this.author = article.getAuthor();
 		this.articleId = article.getArticleId();
-		this.setPublished(article.isPublished());
+		this.publicStatus = article.getPublicStatus();
 	}
 	public int getArticleId() {
 		return articleId;
@@ -83,16 +84,19 @@ public class ArticleModel {
 		this.author = author;
 	}
 	public boolean isEditable() {
+		if (!SessionUtil.isLoggedIn()) return false;
 		if (SessionUtil.getCurrentUserId() == this.getAuthor().getUserId()) return true;
 		if (SessionUtil.getRole().containsPrivilege(PrivilegeEnum.EDIT_ARTICLE)) return true;
 		return false;
 	}
 	public boolean isDeletable() {
+		if (!SessionUtil.isLoggedIn()) return false;
 		if (SessionUtil.getCurrentUserId() == this.getAuthor().getUserId()) return true;
 		if (SessionUtil.getRole().containsPrivilege(PrivilegeEnum.DELETE_ARTICLE)) return true;
 		return false;
 	}
 	public boolean isPublishable() {
+		if (!SessionUtil.isLoggedIn()) return false;
 		if (SessionUtil.getRole().containsPrivilege(PrivilegeEnum.PUBLISH_ARTICLE)) return true;
 		return false;
 	}
@@ -102,6 +106,7 @@ public class ArticleModel {
 		article.setContent(content);
 		article.setMarkdown(markdown);
 		article.setThumbnail(thumbnail);
+		article.setPublicStatus(PublicStatusEnum.PRIVATE);
 		return article;
 	}
 	public void mergeArticle(Article oldArticle) {
@@ -110,10 +115,16 @@ public class ArticleModel {
 		oldArticle.setMarkdown(markdown);
 		oldArticle.setThumbnail(thumbnail);
 	}
-	public boolean isPublished() {
-		return published;
+	public PublicStatusEnum getEnumPublicStatus() {
+		return publicStatus;
 	}
-	public void setPublished(boolean published) {
-		this.published = published;
+	public int getPublicStatus() {
+		return publicStatus.code();
+	}
+	public void setEnumPublicStatus(PublicStatusEnum publicStatus) {
+		this.publicStatus = publicStatus;
+	}
+	public void setPublicStatus(int publicStatus) {
+		this.publicStatus = PublicStatusEnum.getEnum(publicStatus);
 	}
 }

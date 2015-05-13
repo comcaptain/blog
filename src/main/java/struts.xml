@@ -108,9 +108,9 @@
 				</param>
 			</result>
 		</action>
-		<action name="publishArticle" class="articleAction" method="togglePublish">
+		<action name="updatePublicStatus" class="articleAction" method="updatePublicStatus">
 			<result name="success" type="json">
-				<param name="includeProperties">published</param>
+				<param name="includeProperties">publicStatus</param>
 			</result>
 		</action>
 	</package>

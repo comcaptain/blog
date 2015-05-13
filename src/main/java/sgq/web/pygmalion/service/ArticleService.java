@@ -12,6 +12,7 @@ import sgq.web.pygmalion.bean.ArticleMonthlyGroup;
 import sgq.web.pygmalion.bean.User;
 import sgq.web.pygmalion.dao.ArticleDao;
 import sgq.web.pygmalion.enums.PrivilegeEnum;
+import sgq.web.pygmalion.enums.PublicStatusEnum;
 import sgq.web.pygmalion.exception.PrivilegeException;
 import sgq.web.pygmalion.model.ArticleModel;
 import sgq.web.pygmalion.util.SessionUtil;
@@ -132,12 +133,12 @@ public class ArticleService {
 		return monthlyGroupList;
 	}
 
-	public Article togglePublish(int articleId) throws PrivilegeException {
-		if (!SessionUtil.getRole().containsPrivilege(PrivilegeEnum.PUBLISH_ARTICLE)) {
-			throw new PrivilegeException(SessionUtil.getCurrentUserId() + " wants to illegally toggle article [" + articleId + "]'s published column");
+	public Article updatePublicStatus(int articleId, PublicStatusEnum newPublicStatus) throws PrivilegeException {
+		if (!SessionUtil.getRole().containsPrivilege(PrivilegeEnum.PUBLISH_ARTICLE) && newPublicStatus == PublicStatusEnum.PUBLISHED) {
+			throw new PrivilegeException(SessionUtil.getCurrentUserId() + " wants to illegally publish article [" + articleId + "]");
 		}
 		Article article = this.articleDao.getArticleById(articleId);
-		article.setPublished(!article.isPublished());
+		article.setPublicStatus(newPublicStatus);
 		article = this.articleDao.saveArticle(article);
 		return article;
 	}
