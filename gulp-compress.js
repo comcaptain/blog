@@ -6,6 +6,7 @@ var testConfig = {
 				"common/js/jquery-1.11.1.min.js",
 				"common/js/bootstrap.min.js",
 				"common/js/common.js",
+				"common/js/common_css_assistant.js",
 				"common/js/navigation.js",
 			],
 			"common/css/common_lib.css": [
