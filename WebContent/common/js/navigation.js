@@ -38,7 +38,7 @@ function updatePublicStatusHandler(data) {
 }
 $(document).ready(function() {
 	$(document).click(function() {
-		$(".horizontalPopup").removeClass("fadeIn").hide();
+		$("#navigation .popup").removeClass("fadeIn").hide();
 	});
 	$(document).on("click", "a.confirm", function(event) {
 		event.preventDefault();
@@ -52,7 +52,7 @@ $(document).ready(function() {
 	});
 	updatePublicStatusTitle();
 	$("#publishPopup").on("click", "li", function(event) {
-		$(".horizontalPopup").removeClass("fadeIn").hide();
+		$("#navigation .popup").removeClass("fadeIn").hide();
 		updatePublicStatus($("#updatePublicStatus").attr("articleId"), this.getAttribute("publicStatus")).then(updatePublicStatusHandler);
 	});
 	$("#updatePublicStatus").on("click", function(event) {

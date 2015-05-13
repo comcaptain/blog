@@ -22,8 +22,9 @@ catch (Exception e) {
 }
 pageContext.setAttribute("publicStatusClass", publicStatusClass);
 pageContext.setAttribute("showEdit", "true".equals(request.getParameter("showEdit")));
-pageContext.setAttribute("showDelete", "true".equals(request.getParameter("showEdit")));
-pageContext.setAttribute("showArticle", "true".equals(request.getParameter("showEdit")));
+pageContext.setAttribute("showDelete", "true".equals(request.getParameter("showDelete")));
+pageContext.setAttribute("showArticle", "true".equals(request.getParameter("showArticle")));
+pageContext.setAttribute("showPublicStatus", "true".equals(request.getParameter("showPublicStatus")));
 %>
 <ul id="navigation" class="${param.extraClass}">
 	<li style="position: relative; left: -2px;">
@@ -47,12 +48,12 @@ pageContext.setAttribute("showArticle", "true".equals(request.getParameter("show
 		<a id="deleteArticle" class="confirm" href="deleteArticle?id=${param.navArticleId}" title="删除"><span class="glyphicon glyphicon-trash navigation-item"></span></a>
 	</li>
 	</s:if>
-	<s:if test="%{#attr.showEdit}">
+	<s:if test="%{#attr.showPublicStatus}">
 	<li>
 		<a id="updatePublicStatus" href="javascript:;" class="${publicStatusClass}" articleId="${param.navArticleId}" publicStatus="${param.publicStatus}" publishable="${param.publishable}">
 		<span class="glyphicon glyphicon-leaf navigation-item ${publishClass}"></span>
 		</a>
-		<ul class="horizontalPopup" id="publishPopup">
+		<ul class="popup" id="publishPopup">
 		</ul>
 	</li>
 	</s:if>

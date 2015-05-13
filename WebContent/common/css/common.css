@@ -61,6 +61,7 @@ blockquote {
 .horizontal-navigation li {
 	display: inline-block;
 	width: 30px;
+	position: relative;
 }
 .horizontal-navigation li span {
 	color: white;
@@ -83,26 +84,27 @@ blockquote {
 }
 
 #updatePublicStatus.public span {
-	color: rgb(224, 145, 246);
+	color: rgb(250, 240, 116);
 }
-
-.horizontalPopup {
+#navigation .popup {
 	list-style: none;
 	padding: 0;
 	position: absolute;
+	transition: opacity .3s;
+	opacity: 0;
+	display: none;
+}
+.vertical-navigation .popup {
 	left: 33px;
 	top: 0;
 	height: 40px;
 	line-height: 40px;
 	width: 120px;
-	display: none;
-	transition: opacity .3s;
-	opacity: 0;
 }
-.horizontalPopup.fadeIn {
+#navigation .popup.fadeIn {
 	opacity: 1;
 }
-.horizontalPopup li {
+.vertical-navigation .popup li {
 	display: inline-block;
 	padding: 0 10px;
 	width: auto;
@@ -111,11 +113,31 @@ blockquote {
 	margin-top: 5px;
 	text-align: center;
 	border-radius: 3px;
-	background: linear-gradient(to bottom,#727476,#484646);
 	color: white;
 	cursor: pointer;
 	margin-right: 3px;
+	background: linear-gradient(to bottom,#727476,#484646);
 }
-.horizontalPopup li:hover {
+.vertical-navigation .popup li:hover {
 	background: linear-gradient(to bottom, #2d2f32, #1a1a1a);
+}
+.horizontal-navigation .popup {
+	top: 20px;
+	left: 0;
+}
+.horizontal-navigation .popup li {
+	display: block;
+	background: blue;
+	color: white;
+	width: 60px;
+	text-align: center;
+	border-radius: 3px;
+	margin-bottom: 2px;
+	height: 25px;
+	line-height: 25px;
+	cursor: pointer;
+	background: linear-gradient(to bottom, #7F55FA, #444AB2);
+}
+.horizontal-navigation .popup li:hover {
+	background: linear-gradient(to bottom, #8e6af5, #6d47e7);
 }
