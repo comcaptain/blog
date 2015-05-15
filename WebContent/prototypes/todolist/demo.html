@@ -1,0 +1,53 @@
+<html>
+<head>
+	<title>to do list demo</title>
+	<link rel="stylesheet" type="text/css" href="demo.css">
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="demo_server.js"></script>
+	<script type="text/javascript" src="demo.js"></script>
+	<meta charset="UTF-8">
+</head>
+<body>
+	<div id="templateContainer">
+		<ul>
+			<li id="userProgressTemplate">
+				<label class="executorName">赵</label>
+				<div class="progressBarSlot"><div class="progressBar">30%</div></div>
+			</li>
+		</ul>
+		<ul>
+			<li id="taskTemplate" class="task">
+				<ul class="executors">
+					<li class="executor" id="executorTemplate">
+						<input class="completeTaskCheckbox enterSave" type="checkbox" id="" />
+						<label class="executorName" for="">赵</label>
+					</li>
+					<div class="arrow"></div>
+				</ul>
+				<div class="taskContainer">
+					<label class="taskTitleLabel"><span class="taskTitle"></span><span title="编辑" class="glyphicon glyphicon-edit editTask"></span></label>
+					<label class="timeHolder">10:12</label>
+					<button class="delete">&times;</button>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="container">
+		<h2>今天的任务</h2>
+		<div>
+			<ul id="progressBars">
+			</ul>
+		</div>
+		<ul id="taskList">
+		</ul>
+		<button id="uncollapseNewTask" title="添加新任务">+</button>
+		<div id="addTaskContainer" class="updateTaskContainer">
+			<input type="text" class="taskTitleInput enterSave" /><input class="enterSave dailyStartTime" type="text" maxlength="5" />
+			<ul class="executors right">
+				<div class="arrow"></div>
+			</ul>
+			<button class="saveTask">添加任务</button><button id="collapseNewTask">取消</button>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,314 @@
+@font-face {
+    font-family: bootstrapIcons;
+    src: url(glyphicons-halflings-regular.woff2);
+}
+.glyphicon {
+	font-family: bootstrapIcons;
+}
+.glyphicon-edit::after {
+	content: "\e065";
+}
+body, button, input {
+	font-family: Microsoft YaHei;
+	font-size: 16px;
+}
+#templateContainer {
+	display: none;
+}
+.container {
+	width: 900px;
+	margin: 20px auto;
+}
+ul {
+	list-style: none;
+	padding: 0;
+}
+#taskList > li {
+	height: 50px;
+	line-height: 50px;
+	position: relative;
+}
+.timeHolder {
+	width: 40px;
+	margin-left: -50px;
+	color: rgb(0, 140, 0);
+}
+input[type=checkbox] {
+	position: absolute;
+	width: 1px; 
+	height: 0;
+	margin: 0; 
+	margin-top: 4px; 
+	outline: none;
+	border: 1px solid transparent; 
+	background-color: transparent;
+}
+input[type=checkbox] + label::after {
+	content: "";
+	position: relative;
+	display: inline-block;
+	width: 20px;
+	margin: 0;
+	padding: 0;
+	vertical-align: middle;
+	height: 20px;
+	background: url(unchecked.png);
+	margin-left: 5px;
+}
+input[type=checkbox]:focus + label::after {
+	box-shadow: rgb(135, 24, 223) 0 0 5px;
+	border-radius: 5px;
+}
+input[type=checkbox]:checked + label::after {
+	background: url(checked.png);
+}
+.taskTitleLabel {
+	display: inline-block;
+	width: 870px;
+	font-size: 18px;
+	border-bottom: 1px dashed silver;
+}
+.taskTitleLabel > * {
+	vertical-align: middle;
+}
+.taskTitleInput, .dailyStartTime {
+	line-height: 30px;
+	height: 40px;
+	display: inline-block;
+	font-size: 18px;
+	padding: 5px;
+	outline: none;
+	border: 1px solid silver;
+	border-radius: 3px;
+	margin: 0;
+}
+.taskTitleInput {
+	width: 810px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.dailyStartTime {
+	width: 60px;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-left: none;
+	text-align: center;
+}
+.saveTask {
+	background: linear-gradient(to bottom, #f62b2b, #d20202);
+	color: white;
+	border-radius: 3px;
+	height: 30px;
+	line-height: 30px;
+	margin-top: 10px;
+}
+button {
+	border: none;
+	outline: none;
+	cursor: pointer;
+	font-size: 15px;
+}
+#uncollapseNewTask {
+	line-height: 20px;
+	font-size: 30px;
+	padding: 0;
+	background: white;
+	font-weight: bold;
+	font-family: consolas;
+	cursor: pointer;
+}
+#addTaskContainer {
+	position: relative;
+	display: none;
+}
+#collapseNewTask {
+	background: white;
+}
+.delete {
+	position: absolute;
+	right: 0px;
+	width: 20px;
+	background: white;
+	color: black;
+	outline: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	font-size: 20px;
+	cursor: pointer;
+	display: none;
+}
+#taskList > li:hover .delete {
+	display: inline-block;
+}
+.editTask {
+	display: none;
+	margin-left: 10px;
+	color: rgb(118, 118, 118);
+	cursor: pointer;
+}
+#taskList > li:hover .editTask {
+	display: inline;
+}
+#taskList > li:hover .executors, .executors:hover {
+	display: block!important;
+}
+.executors > li, .executors > li::after, .executors::after {
+	border-color: silver;
+	border-style: solid;
+	border-width: 0;
+}
+.taskContainer {
+	display: inline-block;
+	width: 100%;
+}
+.executors {
+	position: absolute;
+	width: 54px;
+	top: -5px;
+	margin: 0;
+}
+.executors.left {
+	left: -64px;
+	padding-right: 15px;
+	display: none;
+}
+.executors.right {
+	top: -25px;
+	right: -35px;
+	padding-left: 15px;
+}
+.executors > li {
+	height: 30px;
+	line-height: 30px;
+	position: relative;
+}
+.executors.left > li {
+	border-right-width: 1px;
+}
+.executors.right > li {
+	padding-left: 10px;
+	border-left-width: 1px;
+}
+.executors label.executorName {
+	display: inline-block;
+	width: 45px;
+	height: 30px;
+}
+.executors.left li:first-child, .executors.left li:last-of-type {
+	border-right-width: 0;
+}
+.executors.right li:first-child, .executors.right li:last-of-type {
+	border-left-width: 0;
+}
+.executors li:first-child::after, .executors > li:last-of-type::after {
+	content: " ";
+	width: 5px;
+	height: 70%;
+	border-top-width: 1px;
+	position: absolute;
+	top: 30%;
+}
+.executors.left li:first-child::after, .executors.left > li:last-of-type::after {
+	right: 0;
+}
+.executors.right li:first-child::after, .executors.right > li:last-of-type::after {
+	left: 0;
+}
+.executors.left li:first-child::after {
+	border-right-width: 1px;
+	border-top-right-radius: 3px;
+}
+.executors.right li:first-child::after {
+	border-left-width: 1px;
+	border-top-left-radius: 3px;
+}
+.executors > li:last-of-type::after {
+	position: absolute;
+	top: 0;
+}
+.executors.left > li:last-of-type::after {
+	right: 0;
+	border-width: 0 1px 1px 0;
+	border-bottom-right-radius: 3px;
+}
+.executors.right > li:last-of-type::after {
+	left: 0;
+	border-width: 0 0 1px 1px;
+	border-bottom-left-radius: 3px;
+}
+.executors.noBracket > li::after {
+	display: none;
+}
+.executors .arrow {
+	position: absolute;
+	width: 0;
+	top: calc(50% - 5px);
+	height: 0;
+	border-bottom-width: 1px;
+	border-color: rgba(0,0,0,0) white rgba(0,0,0,0) silver;
+	border-style: solid;
+}
+.executors.noBracket .arrow{
+	display: none;
+}
+.executors.left .arrow {
+	right: 10px;
+	border-width: 5px 0 5px 5px;
+	border-color: rgba(0,0,0,0) white rgba(0,0,0,0) silver;
+}
+.executors.right .arrow {
+	left: 10px;
+	border-width: 5px 5px 5px 0;
+	border-color: rgba(0,0,0,0) silver rgba(0,0,0,0) white;
+}
+.executors .arrow::after {
+	content: "";
+	width: 0;
+	height: 0;
+	position: absolute;
+	border-style: solid;
+	top: -5px;
+}
+.executors.left .arrow::after {
+	border-width: 5px 0 5px 5px;
+	border-color: rgba(255,255,255,0) rgba(255,255,255,0) rgba(255,255,255,0) white;
+	left: -7px;
+}
+.executors.right .arrow::after {
+	border-width: 5px 5px 5px 0;
+	border-color: rgba(255,255,255,0) white rgba(255,255,255,0) rgba(255,255,255,0);
+	right: -7px;
+}
+.progressBarSlot {
+	width: 800px;
+	height: 20px;
+	display: inline-block;
+	background: #f5f5f5;
+	border-radius: 3px;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.21);
+	vertical-align: middle;
+}
+.progressBar {
+	width: 30%;
+	height: 20px;
+	background: rgb(92,184,92);
+	border-radius: 3px;
+	display: inline-block;
+	color: white;
+	text-align: center;
+	font-size: 16px;
+}
+#progressBars li {
+	height: 20px;
+	line-height: 20px;
+	margin-bottom: 10px;
+}
+#progressBars li label {
+	vertical-align: middle;
+}
+.temporaryShow {
+	display: block!important;
+	opacity: 0!important;
+}
