@@ -1,61 +1,3 @@
-var executorData = {
-	1: {
-		executor_name: "赵",
-		progress: 0.3
-	},
-	2: {
-		executor_name: "钱",
-		progress: 0.45
-	},
-	3: {
-		executor_name: "孙",
-		progress: 0.60
-	}
-};
-var taskData = [
-{
-	task_id: 1,
-	task_title: "买一个新的ipad",
-	daily_start_time: "19:32"
-},
-{
-	task_id: 2,
-	task_title: "添加特性列表",
-	daily_start_time: "12:32"
-},
-{
-	task_id: 3,
-	task_title: "缩短todo list",
-	daily_start_time: "13:32"
-},
-{
-	task_id: 4,
-	task_title: "做一些有意思的事情",
-	daily_start_time: "19:32"
-},
-{
-	task_id: 5,
-	task_title: "做一些测试",
-	daily_start_time: "15:32"
-},
-{
-	task_id: 6,
-	task_title: "添加新的task",
-	daily_start_time: "16:32"
-}
-];
-var relationData = {
-	1: [1, 2, 3],
-	2: [2],
-	3: [1, 2],
-	4: [1, 2],
-	5: [2,	 3],
-	6: [1, 2, 3],
-};
-var taskCompleteData = {
-	1: {1: 1, 2: 1},
-	6: {2: 1},
-};
 // {
 // 	1: {
 // 		executor_name: "赵",
@@ -108,10 +50,10 @@ function updateTasks() {
 		renderTask(task, relationData[taskId]);
 	}
 }
-function renderTask(newTask, executorIds) {
+function renderTask(task, executorIds) {
 	var taskContainer = document.getElementById("taskList");
 	var taskTemplate = document.getElementById('taskTemplate');
-	var taskId = newTask.task_id;
+	var taskId = task.task_id;
 	var taskEle = taskTemplate.cloneNode(true);
 	taskEle.removeAttribute("id");
 	var templateExecutor = taskEle.getElementsByClassName("executor")[0];
@@ -130,7 +72,7 @@ function renderTask(newTask, executorIds) {
 		}
 		var checkbox = executorEle.getElementsByClassName("completeTaskCheckbox")[0];
 		checkbox.checked = (taskCompleteData[taskId] && taskCompleteData[taskId][executorId] === 1 ? true : false);
-		checkbox.setAttribute("executorId", executorId);
+		checkbox.dataset.executorId = executorId;
 		var id = "task" + taskId + "_executor" + executorId;
 		checkbox.id = id;
 		var label = executorEle.getElementsByClassName("executorName")[0];
@@ -138,8 +80,9 @@ function renderTask(newTask, executorIds) {
 		label.setAttribute("for", id);
 		executorEle = undefined;
 	}
-	taskEle.getElementsByClassName("taskTitle")[0].textContent = newTask.task_title;
-	taskEle.getElementsByClassName("timeHolder")[0].textContent = newTask.daily_start_time;
+	taskEle.getElementsByClassName("taskTitle")[0].textContent = task.task_title;
+	taskEle.getElementsByClassName("timeHolder")[0].textContent = task.daily_start_time;
+	taskEle.dataset.taskId = taskId;
 	taskContainer.appendChild(taskEle);
 	adjustExecutorList(parent);
 }
@@ -178,7 +121,7 @@ function refreshUpdateTaskExecutors(taskId) {
 		var id = "update_task_" + (taskId === undefined ? "x" : taskId) + "_executor" + executorId;
 		label.setAttribute("for", id);
 		checkbox.setAttribute("id", id);
-		checkbox.setAttribute("executorId", executorId);
+		checkbox.dataset.executorId = executorId;
 		label.textContent = executorData[executorId].executor_name;
 		checkbox.checked = false;
 		i++;
@@ -206,6 +149,14 @@ function clearUpdateTaskContainer($container) {
 	$container.find(".taskTitleInput").val("");
 	$container.find(".dailyStartTime").val("");
 	$container.find(".completeTaskCheckbox").removeAttr("checked");
+}
+function addTask(newTask, executorIds) {
+	return syncNewTask(newTask, executorIds).then(function(taskId) {
+		newTask.task_id = taskId;
+		taskData.push(newTask);
+		relationData[taskId] = executorIds;
+		renderTask(newTask, executorIds);
+	});
 }
 document.addEventListener("DOMContentLoaded", function() {
 	updateUserProgresses();
@@ -235,9 +186,10 @@ document.addEventListener("DOMContentLoaded", function() {
 			executorIds.push(this.getAttribute("executorId"));
 		});
 		if (!checkTaskParameter(newTask, executorIds)) return;
-		renderTask(newTask, executorIds);
-		clearUpdateTaskContainer($container);
-		$container.find(".taskTitleInput").focus();
+		addTask(newTask, executorIds).then(function() {
+			clearUpdateTaskContainer($container);
+			$container.find(".taskTitleInput").focus();
+		});
 	});
 	$(".dailyStartTime").on("keydown", function(event) {
 		var value = this.value;
@@ -256,11 +208,31 @@ document.addEventListener("DOMContentLoaded", function() {
 	$("#uncollapseNewTask").click(function() {
 		$(this).hide();
 		$("#addTaskContainer").show();
+		$("#addTaskContainer").find(":input").eq(0).focus();
 	});
 	$("#collapseNewTask").click(function() {
 		var $container = $("#addTaskContainer");
 		clearUpdateTaskContainer($container);
 		$container.hide();
 		$("#uncollapseNewTask").show();
+	});
+	$(document).on("change", "#taskList .completeTaskCheckbox", function() {
+		var executorId = this.dataset.executorId;
+		var taskId = $(this).parents("li.task").data("taskId");
+		if (this.checked) {
+			var executors = taskCompleteData[taskId];
+			if (!executors) {
+				executors = {};
+			}
+			executors[executorId] = 1;
+			taskCompleteData[taskId] = executors;
+		}
+		else {
+			var executors = taskCompleteData[taskId];
+			if (!executors) {
+				return;
+			}
+			delete executors[executorId];
+		}
 	});
 });

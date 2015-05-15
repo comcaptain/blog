@@ -116,6 +116,7 @@ button {
 	font-weight: bold;
 	font-family: consolas;
 	cursor: pointer;
+	color: rgb(75, 189, 40);
 }
 #addTaskContainer {
 	position: relative;
