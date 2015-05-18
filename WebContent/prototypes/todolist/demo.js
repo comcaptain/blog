@@ -54,21 +54,36 @@ function renderTask(task, executorIds) {
 	var taskContainer = document.getElementById("taskList");
 	var taskTemplate = document.getElementById('taskTemplate');
 	var taskId = task.task_id;
-	var taskEle = taskTemplate.cloneNode(true);
+	var taskEle = undefined;
+	if (taskId) {
+		taskEle = $("li.task[data-task-id=" + taskId + "]")[0];
+	}
+	var isUpdateMode = false;
+	if (!taskEle) {
+		taskEle = taskTemplate.cloneNode(true);
+	}
+	else {
+		isUpdateMode = true;
+	}
 	taskEle.removeAttribute("id");
-	var templateExecutor = taskEle.getElementsByClassName("executor")[0];
+	var currentExecutorElements = taskEle.querySelectorAll(".executor");
+	var templateExecutor = currentExecutorElements[0];
 	templateExecutor.removeAttribute("id");
-	var executorEle = templateExecutor;
-	var parent = executorEle.parentNode;
-	$(parent).addClass("left");
-	var lastEle = parent.getElementsByClassName("arrow")[0];
+	var executorsEle = templateExecutor.parentNode;
+	$(executorsEle).addClass("left");
+	var lastEle = executorsEle.getElementsByClassName("arrow")[0];
+	var j = 0;
 	//update executors
-	for (var j = 0; j < executorIds.length; j++) {
+	for (; j < executorIds.length; j++) {
 		var executorId = executorIds[j];
 		var executor = executorData[executorId];
-		if (executorEle == undefined) {
+		var executorEle;
+		if (j < currentExecutorElements.length) {
+			executorEle = currentExecutorElements[j];
+		}
+		else {
 			executorEle = templateExecutor.cloneNode(true);
-			parent.insertBefore(executorEle, lastEle);
+			executorsEle.insertBefore(executorEle, lastEle);
 		}
 		var checkbox = executorEle.getElementsByClassName("completeTaskCheckbox")[0];
 		checkbox.checked = (taskCompleteData[taskId] && taskCompleteData[taskId][executorId] === 1 ? true : false);
@@ -80,11 +95,14 @@ function renderTask(task, executorIds) {
 		label.setAttribute("for", id);
 		executorEle = undefined;
 	}
+	for (; j < currentExecutorElements.length; j++) {
+		executorsEle.removeChild(currentExecutorElements[j]);
+	}
 	taskEle.getElementsByClassName("taskTitle")[0].textContent = task.task_title;
 	taskEle.getElementsByClassName("timeHolder")[0].textContent = task.daily_start_time;
 	taskEle.dataset.taskId = taskId;
-	taskContainer.appendChild(taskEle);
-	adjustExecutorList(parent);
+	if (!isUpdateMode) taskContainer.appendChild(taskEle);
+	adjustExecutorList(executorsEle);
 }
 function adjustExecutorList(executorContainer, relativeHeightEle) {
 	var $executorContainer = $(executorContainer);
@@ -100,10 +118,11 @@ function adjustExecutorList(executorContainer, relativeHeightEle) {
 	executorContainer.style.top = (parentHeight - height) / 2 + "px";
 }
 function refreshUpdateTaskExecutors(taskId, container) {
-	if(container === undefined) container = document.querySelector("#addTaskContainer .executors");
+	if(container === undefined) container = document.querySelector("#addTaskContainer");
+	var executorsEle = container.querySelector(".executors");
 	var template = document.getElementById("executorTemplate");
-	var currentExecutorElements = container.querySelectorAll(".executor");
-	var lastEle = container.querySelector(".arrow");
+	var currentExecutorElements = executorsEle.querySelectorAll(".executor");
+	var lastEle = executorsEle.querySelector(".arrow");
 	var i = 0;
 	for (var executorId in executorData) {
 		var executorName = executorData[executorId].executor_name;
@@ -111,7 +130,7 @@ function refreshUpdateTaskExecutors(taskId, container) {
 		if (currentExecutorElements.length < i + 1) {
 			executorEle = template.cloneNode(true);
 			executorEle.removeAttribute("id");
-			container.insertBefore(executorEle, lastEle);
+			executorsEle.insertBefore(executorEle, lastEle);
 		}
 		else {
 			executorEle = currentExecutorElements[i];
@@ -123,16 +142,15 @@ function refreshUpdateTaskExecutors(taskId, container) {
 		checkbox.setAttribute("id", id);
 		checkbox.dataset.executorId = executorId;
 		label.textContent = executorData[executorId].executor_name;
-		checkbox.checked = (taskId === undefined ? false : relationData[taskId] && relationData[taskId].indexOf(executorId) > -1);
+		checkbox.checked = (taskId === undefined ? false : relationData[taskId] && relationData[taskId].indexOf(parseInt(executorId)) > -1);
 		i++;
 	}
-	i--;
 	for (; i < currentExecutorElements.length; i++) {
-		container.removeChild(currentExecutorElements[i]);
+		executorsEle.removeChild(currentExecutorElements[i]);
 	}
-	$("#addTaskContainer").addClass("temporaryShow");
-	adjustExecutorList(container, document.querySelector("#addTaskContainer .taskTitleInput"));
-	$("#addTaskContainer").removeClass("temporaryShow");
+	$(container).addClass("temporaryShow");
+	adjustExecutorList(executorsEle, container.querySelector(".taskTitleInput"));
+	$(container).removeClass("temporaryShow");
 }
 function checkTaskParameter(task, executorIds) {
 	if (task.task_title === undefined || task.task_title === "" || executorIds.length === 0) return false;
@@ -155,20 +173,29 @@ function addTask(newTask, executorIds) {
 		newTask.task_id = taskId;
 		taskData.push(newTask);
 		relationData[taskId] = executorIds;
-		renderTask(newTask, executorIds);
+	});
+}
+function updateTask(updatedTask, executorIds) {
+	return syncUpdatedTask(updatedTask, executorIds).then(function() {
+		var taskIndex = getTaskIndexById(updatedTask.task_id);
+		taskData[taskIndex] = updatedTask;
+		relationData[updatedTask.task_id] = executorIds;
 	});
 }
 function getTaskById(taskId) {
+	return taskData[getTaskIndexById(taskId)];
+}
+function getTaskIndexById(taskId) {
 	for (var i = 0; i < taskData.length; i++) {
-		if (taskData[i].task_id == taskId) return taskData[i];
+		if (taskData[i].task_id == taskId) return i;
 	}
 }
 function fillUpdateContainer(container, task) {
 	container.querySelector(".taskTitleInput").value = task.task_title;
 	container.querySelector(".dailyStartTime").value = task.daily_start_time;
-	refreshUpdateTaskExecutors(task.task_id, container.querySelector(".executors"));
+	refreshUpdateTaskExecutors(task.task_id, container);
 }
-document.addEventListener("DOMContentLoaded", function() {
+$(document).ready(function() {
 	updateUserProgresses();
 	updateTasks();
 	refreshUpdateTaskExecutors();
@@ -183,8 +210,9 @@ document.addEventListener("DOMContentLoaded", function() {
 		var taskId = $li.data("taskId");
 		var updateContainer = document.getElementById("addTaskContainer").cloneNode(true);
 		updateContainer.removeAttribute("id");
+		updateContainer.querySelector(".saveTask").textContent = "更新任务";
+		$(updateContainer).insertAfter($li).addClass("updateMode").data("taskId", taskId).show();
 		fillUpdateContainer(updateContainer, getTaskById(taskId));
-		$(updateContainer).insertAfter($li).show();
 	});
 	$(document).on("click", ".saveTask", function() {
 		var $container = $(this).parents(".updateTaskContainer").eq(0);
@@ -195,13 +223,36 @@ document.addEventListener("DOMContentLoaded", function() {
 		};
 		var executorIds = [];
 		$container.find(".completeTaskCheckbox:checked").each(function() {
-			executorIds.push(this.dataset.executorId);
+			executorIds.push(parseInt(this.dataset.executorId));
 		});
 		if (!checkTaskParameter(newTask, executorIds)) return;
-		addTask(newTask, executorIds).then(function() {
+		if (newTask.task_id) {
+			updateTask(newTask, executorIds).then(function() {
+				$("li.task[data-task-id=" + newTask.task_id + "]").show();
+				$container.remove();
+				renderTask(newTask, executorIds);
+			});
+		}
+		else {
+			addTask(newTask, executorIds).then(function() {
+				renderTask(newTask, executorIds);
+				clearUpdateTaskContainer($container);
+				$container.find(".taskTitleInput").focus();
+			});
+		}
+	});
+	$(document).on("click", ".cancel", function() {
+		var $container = $(this).parents(".updateTaskContainer").eq(0);
+		var taskId = $container.data("taskId");
+		if (taskId) {
+			$("li.task[data-task-id=" + taskId + "]").show();
+			$container.remove();
+		}
+		else {
 			clearUpdateTaskContainer($container);
-			$container.find(".taskTitleInput").focus();
-		});
+			$container.hide();
+			$("#uncollapseNewTask").show();
+		}
 	});
 	$(".dailyStartTime").on("keydown", function(event) {
 		var value = this.value;
@@ -221,12 +272,6 @@ document.addEventListener("DOMContentLoaded", function() {
 		$(this).hide();
 		$("#addTaskContainer").show();
 		$("#addTaskContainer").find(":input").eq(0).focus();
-	});
-	$("#collapseNewTask").click(function() {
-		var $container = $("#addTaskContainer");
-		clearUpdateTaskContainer($container);
-		$container.hide();
-		$("#uncollapseNewTask").show();
 	});
 	$(document).on("change", "#taskList .completeTaskCheckbox", function() {
 		var executorId = this.dataset.executorId;

@@ -6,3 +6,8 @@ function syncNewTask(task, executorIds) {
 		resolve(fakeServerData.taskId++);
 	});
 }
+function syncUpdatedTask() {
+	return new Promise(function(resolve, reject) {
+		resolve();
+	});
+}

@@ -66,7 +66,15 @@ input[type=checkbox]:checked + label::after {
 	display: inline-block;
 	width: 870px;
 	font-size: 18px;
-	border-bottom: 1px dashed silver;
+	border-style: dashed;
+	border-color: silver;
+	border-width: 0 0 1px 0;
+}
+.updateMode {
+	padding: 5px 0;
+}
+.updateMode + li.task .taskTitleLabel{
+	border-top-width: 1px;
 }
 .taskTitleLabel > * {
 	vertical-align: middle;
@@ -119,10 +127,9 @@ button {
 	color: rgb(75, 189, 40);
 }
 #addTaskContainer {
-	position: relative;
 	display: none;
 }
-#collapseNewTask {
+.cancel {
 	background: white;
 }
 .delete {
@@ -312,4 +319,7 @@ button {
 .temporaryShow {
 	display: block!important;
 	opacity: 0!important;
+}
+.updateTaskContainer {
+	position: relative;
 }
