@@ -22,13 +22,13 @@
 	</s:include>
 	<h1 id="title"><s:property value="model.title" /></h1>
 	<div id="author"><s:property value="model.author.userName" /></div>
-	<div id="content">
+	<article id="content">
 		<div id="contentContainer"><s:property escapeHtml="false" value="model.content" /></div>
 		<div id="timeBox">
 			<div id="createTime"><small class="text-muted timestamp">创建时间 <s:date name="model.createTime" format="yyyy.MM.dd HH:mm:ss" /></small></div>
 			<div id="updateTime"><small class="text-muted timestamp">更新时间 <s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /></small></div>
 		</div>
-	</div>
+	</article>
 </div>
 </body>
 </html>

@@ -20,10 +20,10 @@
 		<img id="headImage" class="front" src="<s:url value="main/images/head.jpg" />" />
 		<div class="back">
 			<div id="backContent" class="container">
-				<div id="authorInfo">
+				<address id="authorInfo">
 					<p>Author: Sun Guoqiang</p>
 					<p>Email: master@pygmalion.click</p>
-				</div>
+				</address>
 			</div>
 		</div>
 	</div>

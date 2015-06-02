@@ -1,7 +1,7 @@
 var publicStatusNamesMap = {};
-publicStatusNamesMap[PUBLIC_STATUS_ENUM_RPIVATE] = ["private", "不公开", "未公开"];
-publicStatusNamesMap[PUBLIC_STATUS_ENUM_PUBLIC] = ["public", "公开", "公开中"];
-publicStatusNamesMap[PUBLIC_STATUS_ENUM_PUBLISHED] = ["published", "发表", "发表中"]; 
+publicStatusNamesMap[PUBLIC_STATUS_ENUM_RPIVATE] = ["private", "不公开"];
+publicStatusNamesMap[PUBLIC_STATUS_ENUM_PUBLIC] = ["public", "公开"];
+publicStatusNamesMap[PUBLIC_STATUS_ENUM_PUBLISHED] = ["published", "发表"]; 
 function updatePublicStatus(articleId, newPublicStatus) {
 	return new Promise(function(resolve, reject) {
 		$.ajax({
@@ -24,7 +24,7 @@ function updatePublicStatus(articleId, newPublicStatus) {
 function updatePublicStatusTitle(publicStatusEle) {
 	if (publicStatusEle == undefined) publicStatusEle = document.getElementById("updatePublicStatus");
 	if (!publicStatusEle) return;
-	publicStatusEle.setAttribute("title", publicStatusNamesMap[publicStatusEle.getAttribute("publicStatus")][2]);
+	publicStatusEle.setAttribute("title", publicStatusNamesMap[publicStatusEle.getAttribute("publicStatus")][1]);
 }
 function updatePublicStatusHandler(data) {
 	var publicStatus = data.publicStatus;
@@ -80,7 +80,9 @@ $(document).ready(function() {
 			for (var publicStatus in options) {
 				var ele = document.createElement("li");
 				ele.setAttribute("publicStatus", publicStatus);
-				ele.textContent = options[publicStatus][1];
+				ele.setAttribute("title", options[publicStatus][1]);
+				ele.classList.add(options[publicStatus][0]);
+				ele.innerHTML = '<span class="glyphicon glyphicon-leaf navigation-item"></span>';
 				optionContainer.appendChild(ele);
 			}
 			$optionContainer.show();
