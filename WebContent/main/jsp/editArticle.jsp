@@ -17,7 +17,7 @@ var updateTime = '<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /
 </title>
 </head>
 <body>
-	<div id="statusBar">
+	<header id="statusBar">
 		<s:include value="/common/jsp/navigation.jsp">
 			<s:param name="extraClass">horizontal-navigation</s:param>
 			<s:param name="navArticleId"><s:property value="model.articleId" /></s:param>
@@ -29,16 +29,16 @@ var updateTime = '<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /
 		</s:include>
 		<span id="cursorPosition">行<span id="rowNo"></span>，列<span id="columnNo"></span></span>
 		<span id="messageArea"></span>	
-	</div>
-	<div id="left" class="col-md-6">
+	</header>
+	<section id="left" class="col-md-6">
 		<s:textfield name="model.title" id="title"></s:textfield>
 		<s:textarea spellcheck="false" id="content" name="model.markdown"></s:textarea>
-	</div>
-	<div id="right" class="col-md-6">
+	</section>
+	<section id="right" class="col-md-6">
 		<div id="preview">
 		<h1 id="title_preview"><s:property value="model.title"/></h1>
 		<div id="content_preview"><s:property escape="false" value="model.content"/></div>
 		</div>
-	</div>
+	</section>
 </body>
 </html>

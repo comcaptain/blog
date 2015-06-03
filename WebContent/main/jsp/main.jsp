@@ -10,7 +10,7 @@
 <title>PYGMALION - <s:property value="title" /></title>
 </head>
 <body>
-<div class="page-header" id="titleArea">
+<header class="page-header" id="titleArea">
 	<s:include value="/common/jsp/navigation.jsp">
 		<s:param name="extraClass">vertical-navigation</s:param>
 	</s:include>
@@ -28,7 +28,7 @@
 		</div>
 	</div>
 	</section>
-</div>
+</header>
 <div class="container" id="container">
 <ul class="timeline">
 <s:set var="isEven" value="false" />
@@ -39,15 +39,18 @@
 		<s:if test="%{#rowstatus.isFirst()}">
 		<div class="timeline-badge timeline-day-badge"><s:property value="#dailyGroup.label" /></div>
 		</s:if>
-		<div class="timeline-panel">
-			<div class="timeline-heading">
+		<section class="timeline-panel">
+			<header class="timeline-heading">
 				<h4 class="timeline-title"><a href="<s:url value='article?id=%{#thumbnail.articleId}' />"><s:property value="#thumbnail.title" /></a></h4>
-				<p><small class="text-muted"><i class="glyphicon glyphicon-time" title="最后修改"></i> <s:date name="#thumbnail.updateTime" format="yyyy.MM.dd HH:mm:ss" /></small></p>
-			</div>
+				<p class="text-muted small">
+					<span class="glyphicon glyphicon-time" title="最后修改"></span>
+					<time datetime="<s:date name="#thumbnail.updateTime" format="yyyy.MM.dd HH:mm:ss" />"><s:date name="#thumbnail.updateTime" format="yyyy.MM.dd HH:mm:ss" /></time>
+				</p>
+			</header>
 			<div class="timeline-body">
 				<s:property value="#thumbnail.thumbnail" />
 			</div>
-		</div>
+		</section>
 	</li>
 	<s:set var="isEven" value="%{!#isEven}" />
 		</s:iterator>
