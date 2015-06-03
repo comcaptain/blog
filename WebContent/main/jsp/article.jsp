@@ -28,8 +28,8 @@
 		<div id="contentContainer">
 			<s:property escapeHtml="false" value="model.content" />
 			<div id="timeBox">
-				<div id="createTime"><small class="text-muted timestamp">创建时间 <s:date name="model.createTime" format="yyyy.MM.dd HH:mm:ss" /></small></div>
-				<div id="updateTime"><small class="text-muted timestamp">更新时间 <s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /></small></div>
+				<div id="createTime" class="text-muted timestamp">创建时间 <time datetime="<s:date name="model.createTime" format="yyyy.MM.dd HH:mm:ss" />" pubdate><s:date name="model.createTime" format="yyyy.MM.dd HH:mm:ss" /></time></div>
+				<div id="updateTime" class="text-muted timestamp">更新时间 <time datetime="<s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" />"><s:date name="model.updateTime" format="yyyy.MM.dd HH:mm:ss" /></time></div>
 			</div>
 		</div>
 	</article>

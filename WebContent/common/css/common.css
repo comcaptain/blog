@@ -23,51 +23,52 @@ del {
 blockquote {
 	font-size: 13px;
 }
-.vertical-navigation {
-	padding: 0;
-	margin: 0 auto;
+nav ul {
 	list-style-type: none;
+	padding: 0;
+}
+.vertical-navigation {
+	margin: 0 auto;
 	position: fixed;
 	top: 5px;
 	z-index: 12;
 }
-.vertical-navigation > li {
+.vertical-navigation .navigation-item {
 	height: 40px;
 	width: 50px;
 	position: relative;
 }
-.vertical-navigation > li span {
+.vertical-navigation .navigation-icon {
 	line-height: 30px;
 	color: white;
 	font-size: 20px;
 	text-shadow: 3px 2px 2px rgb(70, 64, 64);
 	line-height: 40px;
 }
-.vertical-navigation > li span:active {
+.vertical-navigation .navigation-item span:active {
 	position: relative;
 	left: 3px;
 	text-shadow: none;
 }
 
-.navigation-item {
+.navigation-icon {
 	cursor: pointer;
 }
 .horizontal-navigation {
 	display: inline-block;
 	padding: 0;
 	margin: 0;
-	list-style-type: none;
 }
-.horizontal-navigation li {
+.horizontal-navigation .navigation-item {
 	display: inline-block;
 	width: 30px;
 	position: relative;
 }
-.horizontal-navigation li span {
+.horizontal-navigation .navigation-icon {
 	color: white;
 	text-shadow: 3px 1px 2px rgba(71, 64, 64, 0.7);
 }
-.horizontal-navigation li span:active {
+.horizontal-navigation .navigation-icon:active {
 	position: relative;
 	left: 3px;
 	text-shadow: none;
@@ -79,14 +80,14 @@ blockquote {
 	width: 60%;
 	font-size: 25px;
 }
-#navigation .published span {
+nav .published .navigation-icon {
 	color: rgb(162, 250, 132);
 }
 
-#navigation .public span {
+nav .public .navigation-icon {
 	color: rgb(250, 240, 116);
 }
-#navigation .popup {
+nav .popup {
 	list-style: none;
 	padding: 0;
 	position: absolute;
@@ -101,7 +102,7 @@ blockquote {
 	line-height: 40px;
 	width: 120px;
 }
-#navigation .popup.fadeIn {
+nav .popup.fadeIn {
 	opacity: 1;
 }
 .vertical-navigation .popup li {

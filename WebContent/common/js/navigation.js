@@ -1,7 +1,7 @@
 var publicStatusNamesMap = {};
-publicStatusNamesMap[PUBLIC_STATUS_ENUM_RPIVATE] = ["private", "不公开"];
-publicStatusNamesMap[PUBLIC_STATUS_ENUM_PUBLIC] = ["public", "公开"];
-publicStatusNamesMap[PUBLIC_STATUS_ENUM_PUBLISHED] = ["published", "发表"]; 
+publicStatusNamesMap[PUBLIC_STATUS_ENUM_RPIVATE] = ["private", "不公开", "未公开"];
+publicStatusNamesMap[PUBLIC_STATUS_ENUM_PUBLIC] = ["public", "公开", "公开中"];
+publicStatusNamesMap[PUBLIC_STATUS_ENUM_PUBLISHED] = ["published", "发表", "发表中"]; 
 function updatePublicStatus(articleId, newPublicStatus) {
 	return new Promise(function(resolve, reject) {
 		$.ajax({
@@ -24,7 +24,7 @@ function updatePublicStatus(articleId, newPublicStatus) {
 function updatePublicStatusTitle(publicStatusEle) {
 	if (publicStatusEle == undefined) publicStatusEle = document.getElementById("updatePublicStatus");
 	if (!publicStatusEle) return;
-	publicStatusEle.setAttribute("title", publicStatusNamesMap[publicStatusEle.getAttribute("publicStatus")][1]);
+	publicStatusEle.setAttribute("title", publicStatusNamesMap[publicStatusEle.getAttribute("publicStatus")][2]);
 }
 function updatePublicStatusHandler(data) {
 	var publicStatus = data.publicStatus;
@@ -38,7 +38,7 @@ function updatePublicStatusHandler(data) {
 }
 $(document).ready(function() {
 	$(document).click(function() {
-		$("#navigation .popup").removeClass("fadeIn").hide();
+		$("nav .popup").removeClass("fadeIn").hide();
 	});
 	$(document).on("click", "a.confirm", function(event) {
 		event.preventDefault();
@@ -52,7 +52,7 @@ $(document).ready(function() {
 	});
 	updatePublicStatusTitle();
 	$("#publishPopup").on("click", "li", function(event) {
-		$("#navigation .popup").removeClass("fadeIn").hide();
+		$("nav .popup").removeClass("fadeIn").hide();
 		updatePublicStatus($("#updatePublicStatus").attr("articleId"), this.getAttribute("publicStatus")).then(updatePublicStatusHandler);
 	});
 	$("#updatePublicStatus").on("click", function(event) {
@@ -82,7 +82,7 @@ $(document).ready(function() {
 				ele.setAttribute("publicStatus", publicStatus);
 				ele.setAttribute("title", options[publicStatus][1]);
 				ele.classList.add(options[publicStatus][0]);
-				ele.innerHTML = '<span class="glyphicon glyphicon-leaf navigation-item"></span>';
+				ele.innerHTML = '<span class="glyphicon glyphicon-leaf navigation-icon"></span>';
 				optionContainer.appendChild(ele);
 			}
 			$optionContainer.show();
