@@ -309,6 +309,7 @@ button {
 	color: white;
 	text-align: center;
 	font-size: 16px;
+	transition: width cubic-bezier(0.09, 0.92, 0.59, 1.13) .5s;
 }
 #progressBars li {
 	height: 20px;
@@ -324,4 +325,7 @@ button {
 }
 .updateTaskContainer {
 	position: relative;
+}
+li.task.completed .taskTitle {
+	text-decoration: line-through;
 }

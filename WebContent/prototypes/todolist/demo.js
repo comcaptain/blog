@@ -10,17 +10,25 @@ function updateUserProgresses() {
 }
 function renderUserProgresses() {
 	var progressBars = document.getElementById("progressBars");
-	progressBars.innerHTML = "";
+	var existingBars = progressBars.querySelectorAll(".userProgress");
 	var template = document.getElementById("userProgressTemplate");
+	var i = 0;
 	for (var executorId in executorData) {
 		var progress = executorData[executorId];
-		var progressNode = document.importNode(template.content, true).firstElementChild;
+		var progressNode;
+		if (i < existingBars.length) {
+			progressNode = existingBars[i];
+		}
+		else {
+			progressNode = document.importNode(template.content, true).firstElementChild;
+			progressBars.appendChild(progressNode);
+		}
 		progressNode.querySelector(".executorName").textContent = progress.executor_name;
 		var bar = progressNode.querySelector(".progressBar");
-		var percentStr = (progress.progress * 100) + "%";
+		var percentStr = Math.round(progress.progress * 100) + "%";
 		bar.textContent = percentStr;
 		bar.style.width = percentStr;
-		progressBars.appendChild(progressNode);
+		i++;
 	}
 }
 function recalProgresses() {
@@ -97,48 +105,63 @@ function renderTask(task, executorIds) {
 	else {
 		isUpdateMode = true;
 	}
-	var currentExecutorElements = taskEle.querySelectorAll(".executor");
-	var executorTemplate = document.getElementById("executorTemplate");
-	var executorsEle = taskEle.querySelector(".executors");
-	$(executorsEle).addClass("left");
-	var lastEle = executorsEle.querySelector(".arrow");
-	var j = 0;
-	//update executors
-	for (; j < executorIds.length; j++) {
-		var executorId = executorIds[j];
-		var executor = executorData[executorId];
-		var executorEle;
-		if (j < currentExecutorElements.length) {
-			executorEle = currentExecutorElements[j];
+	if (executorIds !== undefined) {
+		var currentExecutorElements = taskEle.querySelectorAll(".executor");
+		var executorTemplate = document.getElementById("executorTemplate");
+		var executorsEle = taskEle.querySelector(".executors");
+		$(executorsEle).addClass("left");
+		var lastEle = executorsEle.querySelector(".arrow");
+		var j = 0;
+		//update executors
+		for (; j < executorIds.length; j++) {
+			var executorId = executorIds[j];
+			var executor = executorData[executorId];
+			var executorEle;
+			if (j < currentExecutorElements.length) {
+				executorEle = currentExecutorElements[j];
+			}
+			else {
+				executorEle = document.importNode(executorTemplate.content, true).firstElementChild;
+				executorEle = executorsEle.insertBefore(executorEle, lastEle);
+			}
+			var checkbox = executorEle.querySelector("[type=checkbox]");
+			checkbox.classList.add("completeTaskCheckbox");
+			if (taskCompleteData[taskId] && taskCompleteData[taskId][executorId] === 1) {
+				checkbox.checked = true;
+			}
+			else {
+				checkbox.checked = false;
+			}
+			checkbox.dataset.executorId = executorId;
+			var id = "task" + taskId + "_executor" + executorId;
+			checkbox.id = id;
+			var label = executorEle.querySelector(".executorName");
+			label.textContent = executor.executor_name;
+			label.setAttribute("for", id);
+			executorEle = undefined;
 		}
-		else {
-			executorEle = document.importNode(executorTemplate.content, true).firstElementChild;
-			executorEle = executorsEle.insertBefore(executorEle, lastEle);
+		for (; j < currentExecutorElements.length; j++) {
+			executorsEle.removeChild(currentExecutorElements[j]);
 		}
-		var checkbox = executorEle.querySelector(".completeTaskCheckbox");
-		checkbox.checked = (taskCompleteData[taskId] && taskCompleteData[taskId][executorId] === 1 ? true : false);
-		checkbox.dataset.executorId = executorId;
-		var id = "task" + taskId + "_executor" + executorId;
-		checkbox.id = id;
-		var label = executorEle.querySelector(".executorName");
-		label.textContent = executor.executor_name;
-		label.setAttribute("for", id);
-		executorEle = undefined;
 	}
-	for (; j < currentExecutorElements.length; j++) {
-		executorsEle.removeChild(currentExecutorElements[j]);
-	}
+	var completedExecutorCount = taskCompleteData[taskId] !== undefined ? Object.keys(taskCompleteData[taskId]).length : 0;
+	var executorCount = relationData[taskId].length;
 	taskEle.querySelector(".taskTitle").textContent = task.task_title;
 	taskEle.querySelector(".timeHolder").textContent = task.daily_start_time;
 	taskEle.dataset.taskId = taskId;
+	taskEle.style.opacity = 0.5 - (completedExecutorCount / executorCount / 2) + 0.5;
+	if (completedExecutorCount === executorCount) taskEle.classList.add("completed");
 	if (!isUpdateMode) taskContainer.appendChild(taskEle);
-	renderExecutorList(executorsEle);
+	if (executorIds !== undefined) renderExecutorList(executorsEle);
 }
 function renderExecutorList(executorContainer, relativeHeightEle) {
 	var $executorContainer = $(executorContainer);
 	var executors = executorContainer.querySelectorAll(".executor");
 	if (!executors || executors.length < 2) {
 		$(executorContainer).addClass("noBracket");
+	}
+	else {
+		$(executorContainer).removeClass("noBracket");
 	}
 	if (relativeHeightEle === undefined) relativeHeightEle = executorContainer.parentNode;
 	var parentHeight = relativeHeightEle.clientHeight;
@@ -164,7 +187,7 @@ function renderUpdateTaskExecutors(taskId, container) {
 		else {
 			executorEle = currentExecutorElements[i];
 		}
-		var checkbox = executorEle.querySelector('.completeTaskCheckbox');
+		var checkbox = executorEle.querySelector('input[type=checkbox]');
 		var label = executorEle.querySelector('.executorName');
 		var id = "update_task_" + (taskId === undefined ? "x" : taskId) + "_executor" + executorId;
 		label.setAttribute("for", id);
@@ -195,7 +218,7 @@ function checkTaskParameter(task, executorIds) {
 function clearUpdateTaskContainer($container) {
 	$container.find(".taskTitleInput").val("");
 	$container.find(".dailyStartTime").val("");
-	$container.find(".completeTaskCheckbox").removeAttr("checked");
+	$container.find("[type=checkbox]").removeAttr("checked");
 }
 function addTask(newTask, executorIds) {
 	return syncNewTask(newTask, executorIds).then(function(taskId) {
@@ -251,7 +274,7 @@ $(document).ready(function() {
 			daily_start_time: $container.find(".dailyStartTime").val()
 		};
 		var executorIds = [];
-		$container.find(".completeTaskCheckbox:checked").each(function() {
+		$container.find("[type=checkbox]:checked").each(function() {
 			executorIds.push(parseInt(this.dataset.executorId));
 		});
 		if (!checkTaskParameter(newTask, executorIds)) return;
@@ -304,7 +327,7 @@ $(document).ready(function() {
 		$("#addTaskContainer").show();
 		$("#addTaskContainer").find(":input").eq(0).focus();
 	});
-	$(document).on("change", "#taskList .completeTaskCheckbox", function() {
+	$(document).on("change", ".completeTaskCheckbox", function() {
 		var executorId = this.dataset.executorId;
 		var taskId = $(this).parents("li.task").data("taskId");
 		if (this.checked) {
@@ -322,6 +345,7 @@ $(document).ready(function() {
 			}
 			delete executors[executorId];
 		}
+		renderTask(getTaskById(taskId));
 		updateUserProgresses();
 	});
 });
