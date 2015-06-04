@@ -1,15 +1,12 @@
 var executorData = {
 	1: {
-		executor_name: "赵",
-		progress: 0.3
+		executor_name: "赵"
 	},
 	2: {
-		executor_name: "钱",
-		progress: 0.45
+		executor_name: "钱"
 	},
 	3: {
-		executor_name: "孙",
-		progress: 0.60
+		executor_name: "孙"
 	}
 };
 var taskData = [

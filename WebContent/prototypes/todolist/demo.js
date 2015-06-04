@@ -5,19 +5,51 @@
 // 	},....
 // }
 function updateUserProgresses() {
+	recalProgresses();
+	renderUserProgresses();
+}
+function renderUserProgresses() {
 	var progressBars = document.getElementById("progressBars");
 	progressBars.innerHTML = "";
 	var template = document.getElementById("userProgressTemplate");
 	for (var executorId in executorData) {
 		var progress = executorData[executorId];
-		var progressNode = template.cloneNode(true);
-		progressNode.removeAttribute("id");
-		progressNode.getElementsByClassName("executorName")[0].textContent = progress.executor_name;
-		var bar = progressNode.getElementsByClassName("progressBar")[0];
+		var progressNode = document.importNode(template.content, true).firstElementChild;
+		progressNode.querySelector(".executorName").textContent = progress.executor_name;
+		var bar = progressNode.querySelector(".progressBar");
 		var percentStr = (progress.progress * 100) + "%";
 		bar.textContent = percentStr;
 		bar.style.width = percentStr;
 		progressBars.appendChild(progressNode);
+	}
+}
+function recalProgresses() {
+	//executor_id -> task_count
+	var executorTaskCounts = {};
+	for (var taskId in relationData) {
+		var executorIds = relationData[taskId];
+		executorIds.forEach(function(executorId) {
+			if (executorTaskCounts[executorId] === undefined) executorTaskCounts[executorId] = 1;
+			else executorTaskCounts[executorId] += 1;
+		});
+	}
+	//executor_id -> task_complete_count
+	var executorCompletedTaskCounts = {};
+	for (var taskId in taskCompleteData) {
+		for (var executorId in taskCompleteData[taskId]) {
+			if (taskCompleteData[taskId][executorId] !== 1) continue;
+			if (executorCompletedTaskCounts[executorId] === undefined) executorCompletedTaskCounts[executorId] = 1;
+			else executorCompletedTaskCounts[executorId] += 1;
+		}
+	}
+	for (var executorId in executorData) {
+		var taskCount = executorTaskCounts[executorId];
+		var completedTaskCount = executorCompletedTaskCounts[executorId];
+		var progress = 0;
+		if (taskCount !== undefined && completedTaskCount !== undefined) {
+			progress = Math.round(completedTaskCount / taskCount * 100) / 100;
+		}
+		executorData[executorId].progress = progress;
 	}
 }
 // task data:
@@ -60,18 +92,16 @@ function renderTask(task, executorIds) {
 	}
 	var isUpdateMode = false;
 	if (!taskEle) {
-		taskEle = taskTemplate.cloneNode(true);
+		taskEle = document.importNode(taskTemplate.content, true).firstElementChild;
 	}
 	else {
 		isUpdateMode = true;
 	}
-	taskEle.removeAttribute("id");
 	var currentExecutorElements = taskEle.querySelectorAll(".executor");
-	var templateExecutor = currentExecutorElements[0];
-	templateExecutor.removeAttribute("id");
-	var executorsEle = templateExecutor.parentNode;
+	var executorTemplate = document.getElementById("executorTemplate");
+	var executorsEle = taskEle.querySelector(".executors");
 	$(executorsEle).addClass("left");
-	var lastEle = executorsEle.getElementsByClassName("arrow")[0];
+	var lastEle = executorsEle.querySelector(".arrow");
 	var j = 0;
 	//update executors
 	for (; j < executorIds.length; j++) {
@@ -82,15 +112,15 @@ function renderTask(task, executorIds) {
 			executorEle = currentExecutorElements[j];
 		}
 		else {
-			executorEle = templateExecutor.cloneNode(true);
-			executorsEle.insertBefore(executorEle, lastEle);
+			executorEle = document.importNode(executorTemplate.content, true).firstElementChild;
+			executorEle = executorsEle.insertBefore(executorEle, lastEle);
 		}
-		var checkbox = executorEle.getElementsByClassName("completeTaskCheckbox")[0];
+		var checkbox = executorEle.querySelector(".completeTaskCheckbox");
 		checkbox.checked = (taskCompleteData[taskId] && taskCompleteData[taskId][executorId] === 1 ? true : false);
 		checkbox.dataset.executorId = executorId;
 		var id = "task" + taskId + "_executor" + executorId;
 		checkbox.id = id;
-		var label = executorEle.getElementsByClassName("executorName")[0];
+		var label = executorEle.querySelector(".executorName");
 		label.textContent = executor.executor_name;
 		label.setAttribute("for", id);
 		executorEle = undefined;
@@ -98,13 +128,13 @@ function renderTask(task, executorIds) {
 	for (; j < currentExecutorElements.length; j++) {
 		executorsEle.removeChild(currentExecutorElements[j]);
 	}
-	taskEle.getElementsByClassName("taskTitle")[0].textContent = task.task_title;
-	taskEle.getElementsByClassName("timeHolder")[0].textContent = task.daily_start_time;
+	taskEle.querySelector(".taskTitle").textContent = task.task_title;
+	taskEle.querySelector(".timeHolder").textContent = task.daily_start_time;
 	taskEle.dataset.taskId = taskId;
 	if (!isUpdateMode) taskContainer.appendChild(taskEle);
-	adjustExecutorList(executorsEle);
+	renderExecutorList(executorsEle);
 }
-function adjustExecutorList(executorContainer, relativeHeightEle) {
+function renderExecutorList(executorContainer, relativeHeightEle) {
 	var $executorContainer = $(executorContainer);
 	var executors = executorContainer.querySelectorAll(".executor");
 	if (!executors || executors.length < 2) {
@@ -117,7 +147,7 @@ function adjustExecutorList(executorContainer, relativeHeightEle) {
 	$executorContainer.removeClass("temporaryShow");
 	executorContainer.style.top = (parentHeight - height) / 2 + "px";
 }
-function refreshUpdateTaskExecutors(taskId, container) {
+function renderUpdateTaskExecutors(taskId, container) {
 	if(container === undefined) container = document.querySelector("#addTaskContainer");
 	var executorsEle = container.querySelector(".executors");
 	var template = document.getElementById("executorTemplate");
@@ -128,8 +158,7 @@ function refreshUpdateTaskExecutors(taskId, container) {
 		var executorName = executorData[executorId].executor_name;
 		var executorEle = undefined;
 		if (currentExecutorElements.length < i + 1) {
-			executorEle = template.cloneNode(true);
-			executorEle.removeAttribute("id");
+			executorEle = document.importNode(template.content, true).firstElementChild;
 			executorsEle.insertBefore(executorEle, lastEle);
 		}
 		else {
@@ -149,7 +178,7 @@ function refreshUpdateTaskExecutors(taskId, container) {
 		executorsEle.removeChild(currentExecutorElements[i]);
 	}
 	$(container).addClass("temporaryShow");
-	adjustExecutorList(executorsEle, container.querySelector(".taskTitleInput"));
+	renderExecutorList(executorsEle, container.querySelector(".taskTitleInput"));
 	$(container).removeClass("temporaryShow");
 }
 function checkTaskParameter(task, executorIds) {
@@ -193,12 +222,12 @@ function getTaskIndexById(taskId) {
 function fillUpdateContainer(container, task) {
 	container.querySelector(".taskTitleInput").value = task.task_title;
 	container.querySelector(".dailyStartTime").value = task.daily_start_time;
-	refreshUpdateTaskExecutors(task.task_id, container);
+	renderUpdateTaskExecutors(task.task_id, container);
 }
 $(document).ready(function() {
 	updateUserProgresses();
 	updateTasks();
-	refreshUpdateTaskExecutors();
+	renderUpdateTaskExecutors();
 	$(document).on("keydown", ".updateTaskContainer .enterSave", function(event) {
 		if (event.keyCode === 13) {
 			$(this).parents(".updateTaskContainer").eq(0).find(".saveTask").click();
@@ -231,6 +260,7 @@ $(document).ready(function() {
 				$("li.task[data-task-id=" + newTask.task_id + "]").show();
 				$container.remove();
 				renderTask(newTask, executorIds);
+				updateUserProgresses();
 			});
 		}
 		else {
@@ -238,6 +268,7 @@ $(document).ready(function() {
 				renderTask(newTask, executorIds);
 				clearUpdateTaskContainer($container);
 				$container.find(".taskTitleInput").focus();
+				updateUserProgresses();
 			});
 		}
 	});
@@ -291,5 +322,6 @@ $(document).ready(function() {
 			}
 			delete executors[executorId];
 		}
+		updateUserProgresses();
 	});
 });

@@ -9,30 +9,30 @@
 	<meta charset="UTF-8">
 </head>
 <body>
-	<div id="templateContainer">
-		<ul>
-			<li id="userProgressTemplate">
-				<label class="executorName">赵</label>
-				<div class="progressBarSlot"><div class="progressBar">30%</div></div>
-			</li>
-		</ul>
-		<ul>
-			<li id="taskTemplate" class="task">
-				<ul class="executors">
-					<li class="executor" id="executorTemplate">
-						<input class="completeTaskCheckbox enterSave" type="checkbox" id="" />
-						<label class="executorName" for="">赵</label>
-					</li>
-					<div class="arrow"></div>
-				</ul>
-				<div class="taskContainer">
-					<label class="taskTitleLabel"><span class="taskTitle"></span><span title="编辑" class="glyphicon glyphicon-edit editTask"></span></label>
-					<label class="timeHolder">10:12</label>
-					<button class="delete">&times;</button>
-				</div>
-			</li>
-		</ul>
-	</div>
+	<template id="userProgressTemplate">
+		<li>
+			<label class="executorName">赵</label>
+			<div class="progressBarSlot"><div class="progressBar">30%</div></div>
+		</li>
+	</template>
+	<template id="taskTemplate">
+		<li class="task">
+			<ul class="executors">
+				<div class="arrow"></div>
+			</ul>
+			<div class="taskContainer">
+				<label class="taskTitleLabel"><span class="taskTitle"></span><span title="编辑" class="glyphicon glyphicon-edit editTask"></span></label>
+				<label class="timeHolder">10:12</label>
+				<button class="delete">&times;</button>
+			</div>
+		</li>
+	</template>
+	<template id="executorTemplate">
+		<li class="executor">
+			<input class="completeTaskCheckbox enterSave" type="checkbox" id="" />
+			<label class="executorName" for="">赵</label>
+		</li>
+	</template>
 	<div class="container">
 		<h2>今天的任务</h2>
 		<div>

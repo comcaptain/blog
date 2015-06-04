@@ -203,12 +203,14 @@ button {
 	display: inline-block;
 	width: 45px;
 	height: 30px;
+	cursor: pointer;
 }
 .executors.left li:first-child, .executors.left li:last-of-type {
 	border-right-width: 0;
 }
 .executors.right li:first-child, .executors.right li:last-of-type {
 	border-left-width: 0;
+	padding-left: 11px;
 }
 .executors li:first-child::after, .executors > li:last-of-type::after {
 	content: " ";
