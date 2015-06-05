@@ -11,8 +11,8 @@
 <body>
 	<template id="userProgressTemplate">
 		<li class="userProgress">
-			<label class="executorName">赵</label>
-			<div class="progressBarSlot"><div class="progressBar">30%</div></div>
+			<label class="executorName"></label>
+			<div class="progressBarSlot"><div class="progressBar"></div></div>
 		</li>
 	</template>
 	<template id="taskTemplate">
@@ -22,19 +22,28 @@
 			</ul>
 			<div class="taskContainer">
 				<label class="taskTitleLabel"><span class="taskTitle"></span><span title="编辑" class="glyphicon glyphicon-edit editTask"></span></label>
-				<label class="timeHolder">10:12</label>
+				<label class="timeHolder"></label>
 				<button class="delete">&times;</button>
 			</div>
 		</li>
 	</template>
 	<template id="executorTemplate">
 		<li class="executor">
-			<input class="enterSave" type="checkbox" id="" />
-			<label class="executorName" for="">赵</label>
+			<input class="enterSave" type="checkbox" />
+			<label class="executorName" for=""></label>
+		</li>
+	</template>
+	<template id="executorEditorTemplate">
+		<li class="executorFieldSet">
+			<input type="text" class="nameInput" />
+			<button class="deleteExecutor glyphicon glyphicon-trash"></button>
 		</li>
 	</template>
 	<div class="container">
-		<h2>今天的任务</h2>
+		<header>
+			<h1>今天的任务</h1>
+			<button class="glyphicon glyphicon-user" id="editExecutors" title="编辑执行者"></button>
+		</header>
 		<div>
 			<ul id="progressBars">
 			</ul>
@@ -48,6 +57,19 @@
 				<div class="arrow"></div>
 			</ul>
 			<button class="saveTask">添加任务</button><button id="collapseNewTask" class="cancel">取消</button>
+		</div>
+	</div>
+	<div class="dialogBg">
+	</div>
+	<div class="dialogContainer">
+		<div class="dialog" id="executorEditDialog">
+			<ul id="executorFieldSets">
+			</ul>
+			<div class="buttonBox">
+				<button id="addNewExecutor" class="glyphicon glyphicon-plus" title="添加执行者"></button>
+				<button id="saveExecutors" class="glyphicon glyphicon-ok" title="保存"></button>
+				<button class="close glyphicon glyphicon-remove" title="关闭"></button>
+			</div>
 		</div>
 	</div>
 </body>

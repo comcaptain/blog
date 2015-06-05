@@ -8,9 +8,28 @@
 .glyphicon-edit::after {
 	content: "\e065";
 }
+.glyphicon-user:before {
+	content: "\e008";
+}
+.glyphicon-trash:before {
+	content: "\e020";
+}
+.glyphicon-plus:before {
+	content: "\2b";
+}
+.glyphicon-ok:before {
+	content: "\e013";
+}
+.glyphicon-remove:before {
+	content: "\e014";
+}
 body, button, input {
 	font-family: Microsoft YaHei;
 	font-size: 16px;
+}
+button {
+	background: none;
+	border: none;
 }
 #templateContainer {
 	display: none;
@@ -173,7 +192,6 @@ button {
 }
 .executors {
 	position: absolute;
-	width: 54px;
 	top: -5px;
 	margin: 0;
 }
@@ -194,6 +212,7 @@ button {
 }
 .executors.left > li {
 	border-right-width: 1px;
+	padding-right: 12px;
 }
 .executors.right > li {
 	padding-left: 10px;
@@ -201,7 +220,6 @@ button {
 }
 .executors label.executorName {
 	display: inline-block;
-	width: 45px;
 	height: 30px;
 	cursor: pointer;
 }
@@ -328,4 +346,73 @@ button {
 }
 li.task.completed .taskTitle {
 	text-decoration: line-through;
+}
+header {
+	border-bottom: 1px silver solid;
+	position: relative;
+	width: 870px;
+}
+header h1 {
+	margin-bottom: 10px;
+	font-size: 25px;
+	display: inline-block;
+}
+#editExecutors {
+	position: absolute;
+	right: 0;
+	bottom: 10px;
+	color: rgb(255, 55, 55);
+}
+/* dialog start */
+.dialogBg, .dialogContainer{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: none;
+}
+.dialogBg {
+	opacity: 0.2;
+	background: black;
+	display: none;
+}
+.dialog {
+	width: 120px;
+	background: white;
+	margin: 20px auto 0 auto;
+	padding: 10px 0 5px 0;
+	border-radius: 10px;
+	position: absolute;
+}
+/* dialog end */
+#executorFieldSets {
+	width: 100px;
+	margin: 0 auto;
+}
+.executorFieldSet {
+	border-bottom: 1px dashed silver;
+	padding: 10px 0 5px 0;
+}
+.executorFieldSet .nameInput {
+	width: 75px;
+	text-align: center;
+}
+.executorFieldSet .deleteExecutor {
+	width: 18px;
+	padding: 0;
+	margin: 0;
+}
+#executorEditDialog .buttonBox {
+	margin: 10px auto;
+	width: 100px;
+	text-align: center;
+}
+#executorEditDialog .buttonBox button {
+	color: rgb(75, 189, 40);
+	width: 30px;
+	padding: 0;
+	height: 25px;
+	line-height: 25px;
+	font-size: 18px;
 }

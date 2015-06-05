@@ -25,10 +25,19 @@ function renderUserProgresses() {
 		}
 		progressNode.querySelector(".executorName").textContent = progress.executor_name;
 		var bar = progressNode.querySelector(".progressBar");
-		var percentStr = Math.round(progress.progress * 100) + "%";
-		bar.textContent = percentStr;
+		var percent = Math.round(progress.progress * 100);
+		var percentStr = percent + "%";
+		if (percent > 0) {
+			bar.textContent = percentStr;
+		}
+		else {
+			bar.textContent = "";
+		}
 		bar.style.width = percentStr;
 		i++;
+	}
+	for (; i < existingBars.length; i++) {
+		progressBars.removeChild(existingBars[i]);
 	}
 }
 function recalProgresses() {
@@ -149,10 +158,21 @@ function renderTask(task, executorIds) {
 	taskEle.querySelector(".taskTitle").textContent = task.task_title;
 	taskEle.querySelector(".timeHolder").textContent = task.daily_start_time;
 	taskEle.dataset.taskId = taskId;
-	taskEle.style.opacity = 0.5 - (completedExecutorCount / executorCount / 2) + 0.5;
-	if (completedExecutorCount === executorCount) taskEle.classList.add("completed");
+	// var endColor = 0x02CD02;
+	// var startColor = rgbToHex(window.getComputedStyle(taskContainer).color);
+	// taskEle.style.color = hexToColor(parseInt(startColor + (completedExecutorCount / executorCount * (endColor - startColor))));
+	taskEle.style.opacity = executorCount === 0 ? 0.5 : 0.5 - (completedExecutorCount / executorCount * 0.5) + 0.5;
+	if (completedExecutorCount === executorCount) taskEle.classList.add("completed"); 
+	else taskEle.classList.remove("completed");
 	if (!isUpdateMode) taskContainer.appendChild(taskEle);
 	if (executorIds !== undefined) renderExecutorList(executorsEle);
+}
+function rgbToHex(rgb) {
+	var matches = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+	return (parseInt(matches[1]) << 16) + (parseInt(matches[2]) << 8) + parseInt(matches[3]);
+}
+function hexToColor(hex) {
+	return 'rgb(' + (hex >> 16) + ', ' + ((hex >> 8) & 0xff) + ', ' + (hex & 0xff) + ')';
 }
 function renderExecutorList(executorContainer, relativeHeightEle) {
 	var $executorContainer = $(executorContainer);
@@ -167,8 +187,14 @@ function renderExecutorList(executorContainer, relativeHeightEle) {
 	var parentHeight = relativeHeightEle.clientHeight;
 	$executorContainer.addClass("temporaryShow");
 	var height = executorContainer.clientHeight;
-	$executorContainer.removeClass("temporaryShow");
 	executorContainer.style.top = (parentHeight - height) / 2 + "px";
+	if (executorContainer.classList.contains("left")) {
+		executorContainer.style.left = (-(parseInt(window.getComputedStyle(executorContainer).width) + 10)) + "px";
+	}
+	else {
+		executorContainer.style.right = (-(parseInt(window.getComputedStyle(executorContainer).width) - 17)) + "px";
+	}
+	$executorContainer.removeClass("temporaryShow");
 }
 function renderUpdateTaskExecutors(taskId, container) {
 	if(container === undefined) container = document.querySelector("#addTaskContainer");
@@ -232,6 +258,9 @@ function updateTask(updatedTask, executorIds) {
 		var taskIndex = getTaskIndexById(updatedTask.task_id);
 		taskData[taskIndex] = updatedTask;
 		relationData[updatedTask.task_id] = executorIds;
+		for (var executorId in taskCompleteData[updatedTask.task_id]) {
+			if (executorIds.indexOf(parseInt(executorId)) < 0) delete taskCompleteData[updatedTask.task_id][executorId];
+		}
 	});
 }
 function getTaskById(taskId) {
@@ -247,14 +276,31 @@ function fillUpdateContainer(container, task) {
 	container.querySelector(".dailyStartTime").value = task.daily_start_time;
 	renderUpdateTaskExecutors(task.task_id, container);
 }
-$(document).ready(function() {
+function deleteTask(taskId) {
+	taskData.splice(getTaskIndexById(taskId), 1);
+	delete relationData[taskId];
+	delete taskCompleteData[taskId];
+	$("li.task[data-task-id=" + taskId + "]").remove();
+	updateUserProgresses();
+}
+
+function repaintWholePage() {
 	updateUserProgresses();
 	updateTasks();
 	renderUpdateTaskExecutors();
+}
+$(document).ready(function() {
+	repaintWholePage();
 	$(document).on("keydown", ".updateTaskContainer .enterSave", function(event) {
 		if (event.keyCode === 13) {
 			$(this).parents(".updateTaskContainer").eq(0).find(".saveTask").click();
 		}
+	});
+	$(document).on("click", ".delete", function() {
+		var $task = $(this).parents(".task").eq(0);
+		var title = $task.find(".taskTitle").text();
+		if (!confirm("你确定要删除【" + title + "】吗？")) return;
+		deleteTask($(this).parents(".task").eq(0).data("taskId"));
 	});
 	$(document).on("click", ".editTask", function() {
 		var $li = $(this).parents("li.task").eq(0);
@@ -348,4 +394,89 @@ $(document).ready(function() {
 		renderTask(getTaskById(taskId));
 		updateUserProgresses();
 	});
+	$("#editExecutors").click(function() {
+		openExecutorEditDialog();
+	});
+	$("#executorEditDialog").on("click", "#addNewExecutor", function() {
+		var parent = document.getElementById("executorFieldSets");
+		var template = document.getElementById("executorEditorTemplate");
+		var node = document.importNode(template.content, true).firstElementChild;
+		parent.appendChild(node);
+	});
+	$("#executorEditDialog").on("click", ".close", function() {
+		$(".dialogBg, .dialogContainer").hide();
+	});
+	$("#executorEditDialog").on("click", ".deleteExecutor", function() {
+
+		$(this).parents(".executorFieldSet").eq(0).remove();
+	});
+	$("#executorEditDialog").on("click", "#saveExecutors", function() {
+		if (!confirm("你确定要保存修改吗，完成记录可能会被删除")) return;
+		var nodes = document.querySelectorAll("#executorFieldSets .executorFieldSet");
+		var newExecutors = [];
+		for (var i = 0; i < nodes.length; i++) {
+			var node = nodes[i];
+			var executorId = node.dataset.executorId;
+			var executorName = node.querySelector(".nameInput").value;
+			if (executorId === undefined) {
+				newExecutors.push({executor_name: executorName});
+			}
+			else {
+				newExecutors.push({
+					executor_id: executorId,
+					executor_name: executorName
+				});
+			}
+		}
+		syncExecutors(newExecutors).then(function(updatedExecutors) {
+			executorData = updatedExecutors;
+			for (var taskId in relationData) {
+				var executorIds = relationData[taskId];
+				for (var i = 0; i < executorIds.length; i++) {
+					var executorId = executorIds[i];
+					if (executorData[executorId] === undefined) {
+						executorIds.splice(i, 1); i--;
+					}
+				}
+			}
+			for (var taskId in taskCompleteData) {
+				for (var executorId in taskCompleteData[taskId]) {
+					if (executorData[executorId] === undefined) {
+						delete taskCompleteData[taskId][executorId]
+					}
+				}
+			}
+			repaintWholePage();
+			$(".dialogBg, .dialogContainer").hide();
+		});
+	});
+
 });
+function openExecutorEditDialog() {
+	var anchorOffset = $("#editExecutors").offset();
+	var $dialog = $("#executorEditDialog");
+	anchorOffset.left -= 5 + $dialog.width();
+	$dialog.css("left", anchorOffset.left);
+	$dialog.css("top", anchorOffset.top);
+	var template = document.getElementById("executorEditorTemplate");
+	var existingNodes = document.querySelectorAll(".executorFieldSet");
+	var i = 0;
+	var parent = document.getElementById("executorFieldSets");
+	for (var executorId in executorData) {
+		var node;
+		if (i < existingNodes.length) {
+			node = existingNodes[i];
+		}
+		else {
+			node = document.importNode(template.content, true).firstElementChild;
+			parent.appendChild(node);
+		}
+		node.querySelector(".nameInput").value = executorData[executorId].executor_name;
+		node.dataset.executorId = executorId;
+		i++;
+	}
+	for (; i < existingNodes.length; i++) {
+		parent.removeChild(existingNodes[i]);
+	}
+	$(".dialogBg, .dialogContainer").show();
+}
