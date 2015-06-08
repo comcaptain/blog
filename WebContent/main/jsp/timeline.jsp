@@ -2,6 +2,7 @@
     pageEncoding="utf-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <s:set var="isEven" value="false" />
+<ul class="timeline"<s:if test="fullLoaded == true"> fullLoaded="true"</s:if>>
 <s:iterator var="thumbnailMonthlyGroup" value="thumbnailMonthlyGroups">
 	<s:iterator var="dailyGroup" value="#thumbnailMonthlyGroup.dailyGroups">
 		<s:iterator var="thumbnail" status="rowstatus" value="#dailyGroup.thumbnails">
@@ -29,3 +30,4 @@
 		<div class="timeline-badge timeline-seperator-badge"><s:property value="#thumbnailMonthlyGroup.label" /></div>
 	</li>
 </s:iterator>
+</ul>

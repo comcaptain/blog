@@ -31,9 +31,7 @@
 	</section>
 </header>
 <div class="container" id="container">
-<ul class="timeline">
 <%@include file="timeline.jsp"%>
-</ul>
 </div>
 </body>
 </html>

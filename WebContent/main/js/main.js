@@ -6,6 +6,9 @@ function NewContentLoader() {
 NewContentLoader.prototype = {
 	init: function() {
 		var loader = this;
+		if (document.querySelector(".timeline").getAttribute("fullLoaded") === "true") {
+			return;
+		}
 		window.onscroll = function() {
 			loader.loadNewContentDetector();
 		}
@@ -29,7 +32,7 @@ NewContentLoader.prototype = {
 		var params = new FormData();
 		params.append("pageIndex", (this.pageIndex + 1));
 		xhr.onload = function() {
-			var children = xhr.response.querySelectorAll("body > li");
+			var children = xhr.response.querySelectorAll(".timeline > li");
 			if (children.length > 0) {
 				var parent = document.querySelector(".timeline");
 				//remove duplicate date badge
@@ -44,6 +47,9 @@ NewContentLoader.prototype = {
 					parent.appendChild(children[i]);
 				}
 				loader.pageIndex++;
+				if (xhr.response.querySelector(".timeline").getAttribute("fullLoaded") === "true") {
+					loader.ended = true;
+				}
 			}
 			else {
 				loader.ended = true;
@@ -64,5 +70,7 @@ NewContentLoader.prototype = {
 	}
 }
 NewContentLoader.prototype.constructor = NewContentLoader;
-var loader = new NewContentLoader();
-loader.init();
+document.addEventListener("DOMContentLoaded", function() {
+	var loader = new NewContentLoader();
+	loader.init();
+});

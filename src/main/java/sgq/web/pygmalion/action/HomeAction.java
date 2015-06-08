@@ -3,6 +3,7 @@ package sgq.web.pygmalion.action;
 import java.util.List;
 
 import sgq.web.pygmalion.annotation.LoginProtected;
+import sgq.web.pygmalion.bean.Article;
 import sgq.web.pygmalion.bean.ArticleMonthlyGroup;
 import sgq.web.pygmalion.service.ArticleService;
 
@@ -14,6 +15,9 @@ public class HomeAction extends BaseAction {
 	private String title;
 	
 	private int pageIndex;
+	private boolean isPrivate;
+	
+	private boolean fullLoaded;
 
 	private static final long serialVersionUID = 7939869507632804670L;
 	
@@ -23,12 +27,22 @@ public class HomeAction extends BaseAction {
 	
 	public String home() {
 		this.setTitle("主页");
-		this.setThumbnailMonthlyGroups(this.articleService.getThumbnailGroupsOfPublishedArticles(1));
+		List<Article> articles = this.articleService.getPublishedArticles(1);
+		this.setThumbnailMonthlyGroups(this.articleService.groupThumbnails(articles));
+		this.setFullLoaded(articles.size() < ArticleService.PAGE_ITEM_COUNT);
 		return SUCCESS;
 	}
 	
 	public String loadNewContent() {
-		this.setThumbnailMonthlyGroups(this.articleService.getThumbnailGroupsOfPublishedArticles(this.pageIndex));
+		List<Article> articles;
+		if (this.isPrivate) {
+			articles = this.articleService.getPrivateArticles(pageIndex);
+		}
+		else {
+			articles = this.articleService.getPublishedArticles(pageIndex);
+		}
+		this.setThumbnailMonthlyGroups(this.articleService.groupThumbnails(articles));
+		this.setFullLoaded(articles.size() < ArticleService.PAGE_ITEM_COUNT);
 		return SUCCESS;
 	}
 	/**
@@ -38,7 +52,9 @@ public class HomeAction extends BaseAction {
 	@LoginProtected
 	public String igloo() {
 		this.setTitle("私人领地");
-		this.setThumbnailMonthlyGroups(this.articleService.getThumbnailGroupsOfPrivateArticles(1));
+		List<Article> articles = this.articleService.getPrivateArticles(1);
+		this.setThumbnailMonthlyGroups(this.articleService.groupThumbnails(articles));
+		this.setFullLoaded(articles.size() < ArticleService.PAGE_ITEM_COUNT);
 		return SUCCESS;
 	}
 
@@ -86,6 +102,22 @@ public class HomeAction extends BaseAction {
 
 	public void setPageIndex(int pageIndex) {
 		this.pageIndex = pageIndex;
+	}
+
+	public boolean isFullLoaded() {
+		return fullLoaded;
+	}
+
+	public void setFullLoaded(boolean fullLoaded) {
+		this.fullLoaded = fullLoaded;
+	}
+
+	public boolean isPrivate() {
+		return isPrivate;
+	}
+
+	public void setPrivate(boolean isPrivate) {
+		this.isPrivate = isPrivate;
 	}
 
 }

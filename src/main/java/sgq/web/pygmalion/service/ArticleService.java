@@ -33,14 +33,12 @@ public class ArticleService {
 		return this.articleDao.getArticleById(articleId);
 	}
 	
-	public List<ArticleMonthlyGroup> getThumbnailGroupsOfPublishedArticles(int page) {
-		List<Article> articles = this.articleDao.getPublishedThumbnailList((page - 1) * PAGE_ITEM_COUNT, PAGE_ITEM_COUNT);
-		return this.groupThumbnails(articles);
+	public List<Article> getPublishedArticles(int page) {
+		return this.articleDao.getPublishedThumbnailList((page - 1) * PAGE_ITEM_COUNT, PAGE_ITEM_COUNT);
 	}
 	
-	public List<ArticleMonthlyGroup> getThumbnailGroupsOfPrivateArticles(int page) {
-		List<Article> articles = this.articleDao.getPrivateThumbnailList((page - 1) * PAGE_ITEM_COUNT, PAGE_ITEM_COUNT);
-		return this.groupThumbnails(articles);
+	public List<Article> getPrivateArticles(int page) {
+		return this.articleDao.getPrivateThumbnailList((page - 1) * PAGE_ITEM_COUNT, PAGE_ITEM_COUNT);
 	}
 	
 	public Article save(ArticleModel articleData) throws PrivilegeException {
@@ -87,7 +85,7 @@ public class ArticleService {
 		return false;
 	}
 
-	private List<ArticleMonthlyGroup> groupThumbnails(List<Article> thumbnails) {
+	public List<ArticleMonthlyGroup> groupThumbnails(List<Article> thumbnails) {
 		List<ArticleMonthlyGroup> monthlyGroupList = new LinkedList<ArticleMonthlyGroup>();
 		if (thumbnails == null || thumbnails.size() == 0) return monthlyGroupList;
 		Calendar date = GregorianCalendar.getInstance();
