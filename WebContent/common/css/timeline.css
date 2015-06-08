@@ -1,27 +1,32 @@
 .timeline {
     list-style: none;
-    padding: 20px 0 20px;
+    padding: 20px 0 0 0;
     position: relative;
+    margin-bottom: 0;
 }
 
-    .timeline:before {
-        top: 0;
-        bottom: 0;
-        position: absolute;
-        content: " ";
-        width: 3px;
-        background-color: #eeeeee;
-        left: 50%;
-        margin-left: -1.5px;
-    }
+	.timeline:before {
+		top: 0;
+		bottom: 0;
+		position: absolute;
+		content: " ";
+		width: 3px;
+		background-color: #eeeeee;
+		left: 50%;
+		margin-left: -1.5px;
+	}
 
-    .timeline > li {
-        margin-bottom: 20px;
-        position: relative;
-        min-height: 75px;
-    }
+	.timeline > li {
+		margin-bottom: 20px;
+		position: relative;
+		min-height: 75px;
+	}
 
-        .timeline > li:after {
+		.timeline > li:last-child {
+			margin-bottom: 0;
+		}
+
+		.timeline > li:after {
             content: " ";
             display: block;
             clear: both;

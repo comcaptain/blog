@@ -63,3 +63,7 @@
 nav {
 	z-index: 10;
 }
+#loading {
+	text-align: center;
+	color: white;
+}

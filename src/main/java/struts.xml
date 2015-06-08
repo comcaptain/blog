@@ -35,6 +35,9 @@
 		<action name="home" class="homeAction" method="home">
 			<result name="success">/main/jsp/main.jsp</result>
 		</action>
+		<action name="loadNewContent" class="homeAction" method="loadNewContent">
+			<result name="success">/main/jsp/timeline.jsp</result>
+		</action>
 		<action name="igloo" class="homeAction" method="igloo">
 			<result name="success">/main/jsp/main.jsp</result>
 		</action>

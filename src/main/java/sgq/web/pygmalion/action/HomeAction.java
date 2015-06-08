@@ -12,6 +12,8 @@ public class HomeAction extends BaseAction {
 	private String password;
 	
 	private String title;
+	
+	private int pageIndex;
 
 	private static final long serialVersionUID = 7939869507632804670L;
 	
@@ -22,6 +24,11 @@ public class HomeAction extends BaseAction {
 	public String home() {
 		this.setTitle("主页");
 		this.setThumbnailMonthlyGroups(this.articleService.getThumbnailGroupsOfPublishedArticles(1));
+		return SUCCESS;
+	}
+	
+	public String loadNewContent() {
+		this.setThumbnailMonthlyGroups(this.articleService.getThumbnailGroupsOfPublishedArticles(this.pageIndex));
 		return SUCCESS;
 	}
 	/**
@@ -71,6 +78,14 @@ public class HomeAction extends BaseAction {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public int etPageIndex() {
+		return pageIndex;
+	}
+
+	public void setPageIndex(int pageIndex) {
+		this.pageIndex = pageIndex;
 	}
 
 }
