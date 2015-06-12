@@ -404,7 +404,7 @@ $(document).ready(function() {
 		parent.appendChild(node);
 	});
 	$("#executorEditDialog").on("click", ".close", function() {
-		$(".dialogBg, .dialogContainer").hide();
+		$(".dialogContainer").hide();
 	});
 	$("#executorEditDialog").on("click", ".deleteExecutor", function() {
 
@@ -447,7 +447,7 @@ $(document).ready(function() {
 				}
 			}
 			repaintWholePage();
-			$(".dialogBg, .dialogContainer").hide();
+			$(".dialogContainer").hide();
 		});
 	});
 
@@ -478,5 +478,5 @@ function openExecutorEditDialog() {
 	for (; i < existingNodes.length; i++) {
 		parent.removeChild(existingNodes[i]);
 	}
-	$(".dialogBg, .dialogContainer").show();
+	$(".dialogContainer").show();
 }
