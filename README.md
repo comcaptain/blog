@@ -13,3 +13,4 @@
 - jar包依赖管理用maven
 - 前端用的是jQuery和bootstrap
 - js/css归并压缩hash用的是一个自己写的基于gulp的nodejs插件
+
