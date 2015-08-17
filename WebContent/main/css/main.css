@@ -5,6 +5,7 @@
 	margin: 0;
 	padding: 0;
 	border: none;
+	position: relative;
 }
 #container {
 	padding: 0;
@@ -15,11 +16,11 @@
 #flipSensor {
 	position: absolute;
 	width: 30%;
-	height: 133px;
+	height: 100%;
 	left: 35%;
 	z-index: 100;
-	-webkit-clip-path: polygon(nonzero, 73px 83px, 157px 65px, 176px 31px, 206px 5px, 240px 0px, 252px 14px, 275px 13px, 297px 34px, 301px 69px, 339px 73px, 338px 108px, 358px 112px, 383px 134px, 0px 133px);
-	clip-path: polygon(nonzero, 73px 83px, 157px 65px, 176px 31px, 206px 5px, 240px 0px, 252px 14px, 275px 13px, 297px 34px, 301px 69px, 339px 73px, 338px 108px, 358px 112px, 383px 134px, 0px 133px);
+	-webkit-clip-path: polygon(nonzero, 13.13% 72.87%, 23.47% 58.51%, 38.53% 48.94%, 44.66% 22.87%, 50.61% 4.26%, 58.84% 0%, 61.82% 10.64%, 67.6% 10.11%, 73.03% 25.53%, 73.91% 52.13%, 83.36% 54.79%, 83.36% 54.26%, 83.19% 78.72%, 87.74% 86.17%, 94.05% 100.53%, -0.18% 100%);
+	clip-path: polygon(nonzero, 13.13% 72.87%, 23.47% 58.51%, 38.53% 48.94%, 44.66% 22.87%, 50.61% 4.26%, 58.84% 0%, 61.82% 10.64%, 67.6% 10.11%, 73.03% 25.53%, 73.91% 52.13%, 83.36% 54.79%, 83.36% 54.26%, 83.19% 78.72%, 87.74% 86.17%, 94.05% 100.53%, -0.18% 100%);
 }
 #flipContainer {
 	perspective: 600px;

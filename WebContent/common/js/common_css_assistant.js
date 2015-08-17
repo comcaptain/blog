@@ -4,13 +4,9 @@ function adjustNavigationIcons() {
 	var left = container.offsetLeft - 30;
 	navigation.style.left = left < 10 ? 10 : left;
 }
-function adjustFlipSensorHeight() {
-	$("#flipSensor").height($("#titleArea").height());
-}
 window.onload = function() {
 	if ($(".vertical-navigation").length > 0) {
 		adjustNavigationIcons();
 		$(window).resize(adjustNavigationIcons);
 	}
-	adjustFlipSensorHeight();
 }
